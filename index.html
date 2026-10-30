@@ -208,6 +208,12 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
 .acth{display:flex;justify-content:space-between;align-items:baseline;margin:22px 4px 10px}.acth .sect{margin:0}.acth span{font-size:12px;color:var(--dim)}
 #stageInfo{display:none;padding:14px;border-radius:16px;background:linear-gradient(135deg,hsla(var(--a),90%,40%,.25),rgba(14,10,30,.8));border:1px solid hsla(var(--a),100%,65%,.45);margin-bottom:6px}
 #stageInfo b{font-family:Unbounded,system-ui,sans-serif;font-size:16px}#stageInfo p{font-size:13px;color:#d9d2f5;margin-top:6px;line-height:1.5}
+.lcard.diss{border-color:hsla(350,100%,62%,.85);background:linear-gradient(160deg,rgba(70,10,24,.95),rgba(20,6,16,.96));box-shadow:0 0 44px hsla(350,100%,55%,.4)}.lcard.diss .k{color:#ff6f8f}
+.vi.diss{border-color:#ff5c7c;background:rgba(40,6,14,.8);border-radius:4px}
+.evchip{margin:-14px auto 18px;padding:8px 14px;border-radius:99px;background:linear-gradient(135deg,rgba(255,140,40,.22),rgba(120,40,200,.22));border:1px solid rgba(255,160,60,.5);font-size:13px;font-weight:600;display:none;cursor:pointer}
+body.lefty #cresbtn{right:auto;left:calc(16px + var(--sl))}body.lefty #dashbtn{right:auto;left:calc(108px + var(--sl))}
+body.lefty #vbar{left:auto;right:calc(10px + var(--sr));align-items:flex-end}body.lefty .vrow{justify-content:flex-end}
+body.bigbtn #cresbtn,body.bigbtn #dashbtn{zoom:1.2}body.bigbtn #pausebtn{zoom:1.15}
 .shake{animation:shk .35s}@keyframes shk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 #flash{position:fixed;inset:0;pointer-events:none;z-index:4;background:#fff;opacity:0}
 #rot{display:none}
@@ -243,6 +249,7 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
   <h1 class="logo"><span>H</span><span>U</span><span>S</span><span>H</span></h1>
   <div class="tag">a rhythm survival of light &amp; sound</div>
   <div class="tag2">The world forgot its song. Sing it back.</div>
+  <div class="evchip" id="evChip" data-act="event"></div>
   <div class="menu">
     <button class="btn primary" data-act="select">▶&nbsp; Play</button>
     <button class="btn" data-act="score" style="border-color:hsla(var(--a),100%,70%,.45)">♫ The Score <span class="sub" id="scoreInfo"></span></button>
@@ -417,6 +424,9 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
     <div class="set"><span>Full visual effects</span><button class="tog" id="sFx"></button></div>
     <div class="set"><span>Critical hit numbers</span><button class="tog" id="sNums"></button></div>
     <div class="set" id="setHap"><span>Vibration</span><button class="tog" id="sHap"></button></div>
+    <div class="set"><span>Left-handed buttons</span><button class="tog" id="sLefty"></button></div>
+    <div class="set"><span>Larger buttons</span><button class="tog" id="sBig"></button></div>
+    <div class="set"><span>Battery saver <small style="color:var(--dim);font-size:11px;display:block">lower resolution, 30 fps</small></span><button class="tog" id="sSaver"></button></div>
     <div class="set"><span>High-contrast Hushlings</span><button class="tog" id="sCon"></button></div>
     <div class="set"><span>Beat guide ring</span><button class="tog" id="sGuide"></button></div>
     <div class="set"><span>Timing offset <small id="latV" style="color:var(--dim)">0 ms</small><br><small style="color:var(--dim);font-size:11px">raise if PERFECTs feel early (Bluetooth audio)</small></span><input type="range" min="0" max="300" step="10" id="sLat"></div>
@@ -442,12 +452,12 @@ const fmt=s=>{s=Math.floor(s);return Math.floor(s/60)+':'+String(s%60).padStart(
 /* ---------------- save ---------------- */
 const SAVE_KEY='hush_save_v1';
 const defSave=()=>({echoes:0,lifetime:0,meta:{},singers:{lumi:1},songs:{dawn:1},ach:{},best:{time:0,kills:0},songBest:{},daily:{},
-  stats:{runs:0,kills:0,time:0,bosses:0,restored:0,quests:0},settings:{music:.8,sfx:.8,shake:1,fx:1,nums:1,haptic:1,guide:1,lat:0,contrast:0},lastSinger:'lumi',lastSong:'dawn',seenTip:0,seen:{e:{},d:{},m:{}},dailyStreak:0,lastDaily:0,dyn:{},dynSel:{},q:null,camp:{},trails:{star:1},trail:'star',mast:{}});
+  stats:{runs:0,kills:0,time:0,bosses:0,restored:0,quests:0},settings:{music:.8,sfx:.8,shake:1,fx:1,nums:1,haptic:1,guide:1,lat:0,contrast:0,lefty:0,bigbtn:0,saver:0},lastSinger:'lumi',lastSong:'dawn',seenTip:0,seen:{e:{},d:{},m:{},x:{}},dailyStreak:0,lastDaily:0,dyn:{},dynSel:{},q:null,camp:{},trails:{star:1},trail:'star',mast:{}});
 let S;
 try{const raw=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');const d=defSave();S=Object.assign(d,raw);
   for(const k of ['settings','stats','best','meta','singers','songs','ach','songBest','daily','dyn','dynSel','trails','mast','camp'])S[k]=Object.assign(d[k]||{},defSave()[k],raw[k]||{});}
 catch(e){S=defSave()}
-S.seen=Object.assign({e:{},d:{},m:{}},S.seen||{});S.seen.e=S.seen.e||{};S.seen.d=S.seen.d||{};S.seen.m=S.seen.m||{};
+S.seen=Object.assign({e:{},d:{},m:{}},S.seen||{});S.seen.e=S.seen.e||{};S.seen.d=S.seen.d||{};S.seen.m=S.seen.m||{};S.seen.x=S.seen.x||{};S.fams=S.fams||{};
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S))}catch(e){}}
 const meta=id=>S.meta[id]||0;
 const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
@@ -460,6 +470,9 @@ const SONGS={
   aurora:{name:'Aurora',mode:'Dorian · nostalgic',root:51,scale:[0,2,3,5,7,9,10],prog:[0,3,0,4],a:150,b:205,hush:330,bg:['#061612','#0b2a26','#030a08'],diff:1.5,mult:1.8,req:'Defeat The Hush 3 times',theme:[4,5,4,2,0,-1,2,-1,3,4,6,4,2,-1,-1,-1]},
   abyss:{name:'Abyss',mode:'Phrygian · ominous',root:52,scale:[0,1,3,5,7,8,10],prog:[0,1,0,6],a:12,b:345,hush:160,bg:['#16070a','#2e0b14','#080305'],diff:1.7,mult:2.1,req:'Defeat The Hush',theme:[0,1,0,-1,4,3,1,-1,0,1,3,1,0,-1,-1,-1]},
   dream:{name:'Dream',mode:'Lydian · weightless',root:53,scale:[0,2,4,6,7,9,11],prog:[0,1,4,2],a:180,b:300,hush:35,bg:['#061420','#0d2238','#03080d'],diff:2.2,mult:3,req:'Silence The Great Silence',theme:[4,6,7,-1,6,4,3,-1,4,6,9,7,6,-1,-1,-1]},
+  tide:{name:'Tide',mode:'Melodic minor · oceanic',root:49,scale:[0,2,3,5,7,9,11],prog:[0,3,5,4],a:195,b:240,hush:20,bg:['#04121c','#082a3a','#02070b'],diff:1.6,mult:2,req:'Earn 20 stars in The Score',theme:[0,2,4,6,4,-1,3,-1,2,4,5,-1,7,-1,-1,-1],gim:'tide'},
+  ember:{name:'Ember',mode:'Mixolydian · fierce',root:47,scale:[0,2,4,5,7,9,10],prog:[0,6,3,0],a:22,b:50,hush:200,bg:['#1a0904','#3a1408','#0a0302'],diff:1.9,mult:2.5,req:'Restore the song 3 times',theme:[0,-1,4,-1,6,5,4,-1,3,4,2,-1,0,-1,-1,-1],gim:'ember'},
+  hallow:{name:'Hallow',mode:'Harmonic minor · spooky',root:50,scale:[0,2,3,5,7,8,11],prog:[0,5,3,4],a:28,b:275,hush:110,bg:['#140a05','#2a1206','#060302'],diff:1.4,mult:2,req:"Only during Hallow's Hush",theme:[0,2,3,-1,6,5,3,-1,4,3,2,-1,0,-1,-1,-1],event:'hallow'},
 };
 const VOICES={
   pulse:{name:'Pulse',icon:'♪',h:48,d:['Fires a bright bolt at the nearest Hushling on every beat.','+1 bolt each beat.','Bolts pierce through one more foe.','+1 bolt and +30% damage.','Plays in double time — bolts on every eighth note.']},
@@ -592,11 +605,36 @@ const TRAILS={
   aurora:{n:'Aurora',d:'Northern light. Earned by restoring the song.',feat:'t10'},
   gilded:{n:'Gilded',d:'Pure gold. Earned by restoring a song at forte.',feat:'dyn4'},
   hollow:{n:'Hollow',d:'The silence itself, tamed. Earned at silenzio.',feat:'dyn8'},
+  jack:{n:"Jack-o'-Light",d:"Pumpkin embers and wisps. Earned by restoring the song in Hallow.",feat:'hallow'},
   staff:{n:'Staff Lines',d:'Five lines of music trail behind you. Earned by completing The Score.',feat:'act4'},
 };
 const MT=[0,150,400,800,1400,2200,3200,4500,6000,8000];
 function mLvl(id){const x=(S.mast||{})[id]||0;let l=0;for(const t of MT)if(x>=t)l++;return l}
 const trailOwned=id=>S.trails[id]||(TRAILS[id].feat&&S.ach[TRAILS[id].feat]);
+const EVENTS=[{id:'hallow',n:"Hallow's Hush",from:1020,to:1107,song:'hallow',chip:'🎃',d:'The Hallow song is open, Hushlings wear lantern faces, and Golden Notes are twice as sweet.'},
+  {id:'silent',n:'Silent Night',from:1215,to:105,song:null,chip:'❄',d:'Snow falls on every song, and every song pays 25% more Echoes.'}];
+function evActive(){const d=new Date(),v=(d.getMonth()+1)*100+d.getDate();return EVENTS.find(e=>e.from<=e.to?(v>=e.from&&v<=e.to):(v>=e.from||v<=e.to))||null}
+const songOpen=id=>S.songs[id]&&(!SONGS[id].event||(evActive()||{}).id===SONGS[id].event);
+const FAMS={
+  finch:{n:'Metronome Finch',ic:'♩',h:45,d:'Fires a bright bolt at a nearby Hushling on every beat.',cost:400},
+  moth:{n:'Lantern Moth',ic:'✧',h:55,d:'Flutters out to gather light from far away and bring it home.',cost:500},
+  bell:{n:'Little Bell',ic:'♡',h:340,d:'Rings on every downbeat, healing you a little.',cost:600},
+  shell:{n:'Hymn Shell',ic:'◍',h:200,d:'Circles close and swallows dark notes before they reach you.',cost:700},
+  firefly:{n:'Firefly',ic:'✷',h:90,d:'Darts at Hushlings and burns what it touches.',cost:800},
+  mock:{n:'Mockingbird',ic:'♬',h:300,d:'Repeats every PERFECT dash shockwave half a beat later.',cost:900},
+  jack:{n:'Jack',ic:'☾',h:28,d:"A little lantern spirit. Every two bars it flares and scares Hushlings away. Earned during Hallow's Hush.",feat:'hallow1'},
+};
+const famOwned=id=>(S.fams||{})[id]||(FAMS[id].feat&&S.ach[FAMS[id].feat]);
+const DISS={
+  brittle:{n:'Brittle Glass',ic:'⌬',d:'+60% damage. −40% max health.'},
+  frenzy:{n:'Frenzy',ic:'≫',d:'+30% speed and faster dashes. Hushlings move 25% faster.'},
+  greed:{n:'Greed',ic:'¤',d:'Echoes from this song are doubled. You take 25% more damage.'},
+  overdrive:{n:'Overdrive',ic:'⧗',d:'+45% damage. Crescendo charges 50% slower.'},
+  deafen:{n:'Deafened',ic:'⊘',d:'+60% experience. The beat lights and beat guide go dark.'},
+  swarm:{n:'Swarm Song',ic:'⁂',d:'Twice as many Hushlings. +70% experience.'},
+  requiem:{n:'Requiem',ic:'✖',d:'Silenced Hushlings burst into dark notes. +50% Echoes.'},
+  presto:{n:'Presto',ic:'»',d:'+25 BPM — every voice plays faster. New Hushlings have +30% health.'},
+};
 const BOSS=[{n:'THE HUSH',s:'a silence that devours songs',h:0},{n:'THE STILLNESS',s:'it does not move — until it does',h:70},{n:'THE LAST REST',s:'the pause at the end of every song',h:-70},{n:'THE GREAT SILENCE',s:'the last note before nothing',h:180}];
 const FOES=[
   {id:'mote',ic:'●',n:'Mote',d:'Drifts toward any sound. Alone it is nothing. It is never alone.'},
@@ -685,6 +723,13 @@ const ACH=[
   {id:'act1',i:'𝄞',n:'Overture',d:'Complete Act I of The Score',rw:80},
   {id:'act4',i:'𝄐',n:'The Score',d:'Complete every movement of The Score',rw:400},
   {id:'stars60',i:'★',n:'Sixty Stars',d:'Earn every star in The Score',rw:600},
+  {id:'hallow1',i:'🎃',n:'Spooky Season',d:"Sing a song in Hallow during Hallow's Hush",rw:60},
+  {id:'hallow',i:'☾',n:'Trick or Treat',d:'Restore the song in Hallow',rw:200},
+  {id:'tide',i:'≈',n:'Riding the Tide',d:'Survive 5 minutes in Tide',rw:100},
+  {id:'ember',i:'♨',n:'Trial by Fire',d:'Restore the song in Ember',rw:250},
+  {id:'fam',i:'✧',n:'A Little Friend',d:'Sing with a Familiar',rw:40},
+  {id:'diss',i:'⌬',n:'Dissonant',d:'Accept a Dissonance',rw:40},
+  {id:'diss3',i:'⁂',n:'Beautiful Noise',d:'Restore the song while holding 3 Dissonances',rw:250},
   {id:'call',i:'☏',n:'Answered',d:'Answer a Call & Response',rw:50},
   {id:'call5',i:'☎',n:'Antiphon',d:'Answer 5 Calls in one song',rw:120},
   {id:'solos',i:'♪',n:'Soloist',d:"Perform every Singer's Solo",rw:150},
@@ -867,7 +912,7 @@ function chordFreqs(oct=2){const song=curSong(),key=G?G.key:0;const bar=Math.flo
 const cvs=$('#c'),g=cvs.getContext('2d');
 let W=0,H=0,DPR=1,Z=1;
 let bgCan=document.createElement('canvas'),vigCan=document.createElement('canvas');
-function resize(){DPR=Math.min(2,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cvs.width=Math.floor(W*DPR);cvs.height=Math.floor(H*DPR);cvs.style.width=W+'px';cvs.style.height=H+'px';
+function resize(){DPR=Math.min(S.settings.saver?1:2,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cvs.width=Math.floor(W*DPR);cvs.height=Math.floor(H*DPR);cvs.style.width=W+'px';cvs.style.height=H+'px';
   Z=clamp(Math.sqrt(W*H)/880,.68,1.15);buildBg()}
 function buildBg(){const song=curSong();bgCan.width=Math.max(2,W>>1);bgCan.height=Math.max(2,H>>1);const x=bgCan.getContext('2d');
   const gr=x.createRadialGradient(bgCan.width/2,bgCan.height*.45,0,bgCan.width/2,bgCan.height/2,Math.max(bgCan.width,bgCan.height)*.75);
@@ -901,7 +946,7 @@ function newGame(opt){
     enemies:[],shots:[],ebul:[],gems:[],parts:[],rings:[],bolts:[],texts:[],mines:[],ripples:[],
     voices:[{id:singer.voice,lvl:1}],harm:{},bar:Math.floor(Seq.step/16),level:1,xp:0,need:xpNeed(1),pending:0,kills:0,combo:0,comboT:0,maxCombo:0,score:0,
     cres:0,cresUses:0,spawnAcc:0,nextBoss:180,boss:null,bossKills:0,lastHit:0,rerolls:meta('reroll'),revive:meta('revive'),
-    endless:false,won:false,bonusEchoes:0,arpAng:0,orbA:0,newAch:[],arpIdx:0,noteK:0,chimeK:0,dead:false,deadT:0,bonusVoice:0,dmgTaken:0,glA:0,beams:null,orbs:null,tl:[],tlK:0,tlT:0,nextGold:(70+R()*60)/(1+meta('golden')*.25),gold:null,veils:0,duets:{},perfects:0,perfStreak:0,maxPerf:0,motifs:{},chests:[],pendingMotif:0,cardMode:'level',graceT:0,fermataT:0,chestsOpened:0,elitesK:0,condK:0,golds:0,mothK:0,rib:[],ribT:0,stunMax:0,step:0,call:null,callsWon:0,nextCall:140,zones:[],nextZone:300,nextCrystal:90,crystalK:0,phantomK:0,leechOff:0,solo:null,dark:0,darkTarget:0,stormT:0,bossSpawned:0,normalBoss:0,events:{270:'circle',420:'storm'}};
+    endless:false,won:false,bonusEchoes:0,arpAng:0,orbA:0,newAch:[],arpIdx:0,noteK:0,chimeK:0,dead:false,deadT:0,bonusVoice:0,dmgTaken:0,glA:0,beams:null,orbs:null,tl:[],tlK:0,tlT:0,nextGold:(70+R()*60)/(1+meta('golden')*.25),gold:null,veils:0,duets:{},perfects:0,perfStreak:0,maxPerf:0,motifs:{},chests:[],pendingMotif:0,cardMode:'level',graceT:0,fermataT:0,chestsOpened:0,elitesK:0,condK:0,golds:0,mothK:0,rib:[],ribT:0,stunMax:0,step:0,call:null,callsWon:0,nextCall:140,zones:[],nextZone:300,nextCrystal:90,crystalK:0,phantomK:0,leechOff:0,solo:null,diss:{},fires:[],tideMag:0,F:null,mockT:0,dark:0,darkTarget:0,stormT:0,bossSpawned:0,normalBoss:0,events:{270:'circle',420:'storm'}};
   if(opt.mod)opt.mod.ap(G);
   const dl=G.dyn=opt.daily?0:(opt.dyn||0);G.eliteMul=1;G.bspd=1;G.bossHp=1;G.heal=1;G.espd=1;G.storms=0;G.tier=0;
   if(opt.stage!=null){const st=STAGES[opt.stage],r=st.r;G.stage=st;G.stageIdx=opt.stage;G.t0=r.t0||0;G.only=r.only||null;G.mod.spawn*=r.spawn||1;G.mod.xp*=2.2;G.eliteMul=r.elite||1;G.events={};
@@ -910,6 +955,7 @@ function newGame(opt){
   if(dl>=1)G.mod.ehp*=1.25;if(dl>=2)G.eliteMul=2;if(dl>=3)G.bspd=1.2;if(dl>=4)G.bossHp=1.5;if(dl>=5)G.heal=.5;if(dl>=6)G.espd=1.15;if(dl>=7)G.mod.spawn*=1.5;if(dl>=8){G.storms=1;G.nextStorm=180}
   if(G.bonusVoice){const ids=Object.keys(VOICES).filter(v=>v!==singer.voice);G.voices.push({id:ids[Math.floor(R()*ids.length)],lvl:1})}
   P={x:0,y:0,vx:0,vy:0,r:11,hp:100,maxHp:100,inv:0,face:0,trail:0,dash:0,dashCd:0,dvx:0,dvy:0,dashFx:0};
+  if(S.fam&&FAMS[S.fam]&&famOwned(S.fam)){G.F={id:S.fam,x:0,y:0,t:0,cd:0,goal:null};ach('fam')}
   if(meta('prelude')){const ks=Object.keys(MOTIFS).filter(k=>k!=='encoreseal');const k=ks[Math.floor(R()*ks.length)];G.motifs[k]=1;S.seen.m[k]=1}
   recalc();P.hp=P.maxHp;cam.x=0;cam.y=0;A.pend=0;A.chime=0;
   Seq.mode='run';
@@ -927,6 +973,7 @@ function recalc(){const s=G.singer.mods,h=id=>G.harm[id]||0;
   P.dmg*=1+.015*(mLvl(G.singer.id)-1);
   P.xpMul=(1+meta('xp')*.08+(s.xp||0)+m('hymnal')*.25)*G.mod.xp;
   P.cresMul=(1+meta('cres')*.15)*(m('dynamo')?1.5:1);
+  const x=id=>G.diss&&G.diss[id];if(x('brittle')){P.dmg*=1.6;P.maxHp=Math.max(1,Math.round(P.maxHp*.6))}if(x('frenzy'))P.spd*=1.3;if(x('overdrive')){P.dmg*=1.45;P.cresMul*=.5}if(x('deafen'))P.xpMul*=1.6;if(x('swarm'))P.xpMul*=1.7;
   const bpm=clamp(96+h('tempo')*7+G.bpmBonus+(G.endless?G.bossKills*2:0),60,178);Seq.setBpm(bpm);
   if(bpm>=140)ach('bpm');
   if(G.voices.length>=6)ach('choir');
@@ -1002,7 +1049,8 @@ function kill(e){e.dead=true;G.kills++;G.combo++;G.comboT=2.8;if(G.combo>G.maxCo
     for(let i=0;i<3;i++)G.rings.push({x:e.x,y:e.y,r:10,R:Rr*(1-i*.2),life:.45+i*.1,max:.45+i*.1,h:song.b,w:6-i});burst(e.x,e.y,song.b,26,320,3.2,.7,false);shake(4);
     A.bell(A.now()+.01,chordFreqs(4)[0],.08,'s');A.bell(A.now()+.06,chordFreqs(4)[2],.07,'s');inRadius(e.x,e.y,Rr,(o,dx,dy)=>{if(o!==e)hit(o,dm,dx,dy,350)})}
   if(e.type==='cond'){G.condK++;if(G.condK>=10)ach('cond')}if(e.type==='moth')G.mothK++;
-  if(e.type==='gold'){G.golds++;G.gold=null;G.bonusEchoes+=25;G.pending++;ach('gold');buzz(30);banner('GOLDEN NOTE','a gift from the old song');A.sBuy();burst(e.x,e.y,48,40,300,3.5,1,false);
+  if(G.diss.requiem&&e.type!=='boss'&&e.type!=='crystal'){const a=R()*TAU;G.ebul.push({x:e.x,y:e.y,vx:Math.cos(a)*120,vy:Math.sin(a)*120,r:6,life:3,dmg:8})}
+  if(e.type==='gold'){G.golds++;G.gold=null;G.bonusEchoes+=G.song==='hallow'?50:25;G.pending++;ach('gold');buzz(30);banner('GOLDEN NOTE','a gift from the old song');A.sBuy();burst(e.x,e.y,48,40,300,3.5,1,false);
     for(let i=0;i<3;i++)G.rings.push({x:e.x,y:e.y,r:8,R:90+i*60,life:.5+i*.12,max:.5+i*.12,h:48,w:4})}
   if(e.type==='boss')bossDie(e);
   if(G.stage&&!G.stageDone&&goalVal()>=goalNeed())stageClear()}
@@ -1029,7 +1077,7 @@ function finalDie(e){G.boss=null;G.bossKills++;S.stats.bosses++;$('#bossbar').cl
   else banner('SILENCE BROKEN','again');recalc()}
 function dropGem(x,y,v){if(G.gems.length>420){G.gems[Math.floor(R()*G.gems.length)].v+=v;return}
   const a=R()*TAU,s=rr(30,110);G.gems.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,v,m:false,t:R()*TAU})}
-function hurt(dmg,sx,sy){if(P.inv>0||G.dead)return;
+function hurt(dmg,sx,sy){if(P.inv>0||G.dead)return;if(G.diss.greed)dmg*=1.25;
   if(G.motifs.grace&&G.graceT<=0){G.graceT=20;P.inv=.7;flash(.25,'#9ff0e0');A.bell(A.now(),1760,.08,'s');addText(P.x,P.y-30,'grace',170,13,.8);G.rings.push({x:P.x,y:P.y,r:P.r,R:70,life:.4,max:.4,h:170,w:5});return}P.hp-=dmg;P.inv=.75;G.lastHit=G.T;G.dmgTaken+=dmg;shake(9);buzz(45);flash(.25,'#ff2d6b');A.sHurt();
   if(G.combo>10)addText(P.x,P.y-30,'chord broken',340,13,.9);G.combo=Math.floor(G.combo/2);
   burst(P.x,P.y,340,14,220,3,.5,false);
@@ -1047,19 +1095,20 @@ function dash(){if(!G||state!=='play'||G.dead||P.dashCd>0)return;
   let ix=0,iy=0;if(joy.on){ix=joy.dx;iy=joy.dy}else{if(keys.ArrowLeft||keys.KeyA)ix--;if(keys.ArrowRight||keys.KeyD)ix++;if(keys.ArrowUp||keys.KeyW)iy--;if(keys.ArrowDown||keys.KeyS)iy++}
   const a=Math.hypot(ix,iy)>.2?Math.atan2(iy,ix):P.face;P.face=a;
   const beat=60/Seq.bpm,t=A.now()-audioLat();let off=(t-lastBeatT)%beat;if(off<0)off+=beat;off=Math.min(off,beat-off);
-  const song=SONGS[G.song];P.dash=.16;P.dvx=Math.cos(a)*760;P.dvy=Math.sin(a)*760;P.dashCd=beat*.85*(G.motifs.staccato?.5:1)*(1-meta('dash')*.08);
+  const song=SONGS[G.song];P.dash=.16;P.dvx=Math.cos(a)*760;P.dvy=Math.sin(a)*760;P.dashCd=beat*.85*(G.motifs.staccato?.5:1)*(1-meta('dash')*.08)*(G.diss.frenzy?.7:1);
   const wm=G.motifs.metronome?2:1,grade=off<.085*wm?2:off<.16*wm?1:0;
   if(G.call&&G.call.t0)judgeCall(t,beat,.16*wm);
   for(const e of G.enemies)if(e.latched){e.latched=false;e.stun=.9;const la=e.la;e.kbx=Math.cos(la)*600;e.kby=Math.sin(la)*600;hit(e,(20+G.level*2)*P.dmg,0,0,0);G.leechOff++;if(G.leechOff>=20)ach('leech');addText(e.x,e.y-12,'shaken!',G.song?SONGS[G.song].b:200,12,.6)}P.dashFx=grade;
   if(grade===2){G.perfects++;G.perfStreak++;G.maxPerf=Math.max(G.maxPerf,G.perfStreak);P.inv=Math.max(P.inv,.45);G.cres=Math.min(100,G.cres+4*P.cresMul);G.comboT=Math.max(G.comboT,2.8);
-    const sf=G.motifs.sforzando?2:1,Rr=78*P.area*sf,dmg=(14+G.level*1.6)*P.dmg*sf;zoomP=Math.max(zoomP,.035);inRadius(P.x,P.y,Rr,(e,dx,dy)=>hit(e,dmg,dx,dy,320));
+    const sf=G.motifs.sforzando?2:1,Rr=78*P.area*sf,dmg=(14+G.level*1.6)*P.dmg*sf;if(G.F&&G.F.id==='mock'){G.mockT=G.T+30/Seq.bpm;G.mockP=[P.x,P.y,Rr,dmg]}zoomP=Math.max(zoomP,.035);inRadius(P.x,P.y,Rr,(e,dx,dy)=>hit(e,dmg,dx,dy,320));
     G.rings.push({x:P.x,y:P.y,r:P.r,R:Rr,life:.35,max:.35,h:song.a,w:5});burst(P.x,P.y,song.a,14,260,3,.45,false);
     addText(P.x,P.y-34,G.perfStreak>=4?'PERFECT ×'+G.perfStreak:'PERFECT',song.a,15,.8);A.bell(A.now()+.01,chordFreqs(4)[G.perfStreak%4],.07,'s');buzz(15);
     if(G.perfects>=50)ach('groove');if(G.perfStreak>=16)ach('streak16')}
   else if(grade===1){G.perfStreak=0;P.inv=Math.max(P.inv,.25);G.cres=Math.min(100,G.cres+1.5*P.cresMul);addText(P.x,P.y-30,'good',song.b,12,.6);A.bell(A.now()+.01,chordFreqs(3)[0],.04,'s')}
   else{G.perfStreak=0;P.inv=Math.max(P.inv,.12);A.sDash()}}
 function dropChest(x,y){G.chests.push({x,y,t:0});A.bell(A.now()+.05,1318,.06,'s');A.bell(A.now()+.15,1760,.06,'s')}
-function rollMotifs(n){const pool=Object.keys(MOTIFS).filter(id=>!G.motifs[id]);const out=[];while(out.length<n&&pool.length)out.push({k:'motif',id:pool.splice(Math.floor(R()*pool.length),1)[0]});if(!out.length)out.push({k:'encore'});return out}
+function rollMotifs(n){const pool=Object.keys(MOTIFS).filter(id=>!G.motifs[id]);const out=[];while(out.length<n&&pool.length)out.push({k:'motif',id:pool.splice(Math.floor(R()*pool.length),1)[0]});
+  const dp=Object.keys(DISS).filter(id=>!G.diss[id]);if(dp.length&&R()<.38){const c={k:'diss',id:dp[Math.floor(R()*dp.length)]};if(out.length>=n)out[out.length-1]=c;else out.push(c)}if(!out.length)out.push({k:'encore'});return out}
 function cardCount(){return 3+(meta('cards')?1:0)+(G.motifs.overture?1:0)}
 function edgeArrow(wx,wy,h){const sx=(wx-cam.x)*Z+W/2,sy=(wy-cam.y)*Z+H/2,m=34;if(sx>=0&&sx<=W&&sy>=0&&sy<=H)return;
   const ax=clamp(sx,m,W-m),ay=clamp(sy,m+60,H-m-110),a=Math.atan2(sy-H/2,sx-W/2);g.globalCompositeOperation='lighter';dg(h,ax,ay,26+beatPulse*8,.8);g.globalCompositeOperation='source-over';
@@ -1080,6 +1129,9 @@ function onStep(step){
   const song=SONGS[G.song];
   const muted=G.zones.some(z=>z.t>1.5&&z.t<z.life-.4&&(P.x-z.x)**2+(P.y-z.y)**2<z.r*z.r);if(muted&&s%4===0)addText(P.x,P.y-26,'muted',SONGS[G.song].hush,11,.5);
   const forceCrash=soloOn('tamsin')&&s%4===0;
+  famStep(s);
+  if(song.gim==='ember'&&s===0&&G.bar%2===0&&!G.stageDone){for(let i=0;i<3;i++){const a=R()*TAU,d=rr(90,280);G.fires.push({x:P.x+Math.cos(a)*d,y:P.y+Math.sin(a)*d,r:rr(55,85),t:0,life:6})}}
+  if(G.fires.length&&s%2===0)for(const f of G.fires)if(f.t>1)inRadius(f.x,f.y,f.r,e=>{if(e.type!=='boss')hit(e,6+G.level*.8,0,0,0)});
   for(const v of (muted?[]:G.voices)){const l=v.lvl,V=VOICES[v.id];
     switch(v.id){
     case'pulse':{if(l>=5?s%2:s%4)break;const n=1+(l>=2)+(l>=4);const tg=nearestN(P.x,P.y,n,460);const dmg=(9+4*l)*(l>=4?1.3:1)*P.dmg;
@@ -1171,6 +1223,17 @@ function updSolo(dt){const so=G.solo;if(!so||so.t<=0)return;so.t-=dt;
   if(so.id==='sable'){so.acc+=dt;while(so.acc>.1){so.acc-=.1;const tg=nearestN(P.x+rnd(-220,220),P.y+rnd(-220,220),1,420)[0];if(tg){G.bolts.push({pts:[[tg.x+rnd(-40,40),tg.y-420],[tg.x+rnd(-20,20),tg.y-200],[tg.x,tg.y]],life:.25,max:.25,h:255});hit(tg,(30+G.level*3)*P.dmg,0,0,0);burst(tg.x,tg.y,255,6,180,2.5,.3,false);shake(1)}}}
   if(so.id==='mire'){for(const e of G.enemies){if(e.dead||e.type==='boss')continue;const dx=so.x-e.x,dy=so.y-e.y,d=Math.hypot(dx,dy)||1;if(d<520){const f=Math.min(d,900*dt);e.x+=dx/d*f;e.y+=dy/d*f}}
     if(so.t<=0){buildGrid();inRadius(so.x,so.y,220*P.area,(e,dx,dy)=>hit(e,(90+G.level*7)*P.dmg,dx,dy,600));for(let i=0;i<4;i++)G.rings.push({x:so.x,y:so.y,r:10,R:200+i*70,life:.5+i*.1,max:.5+i*.1,h:160,w:8});burst(so.x,so.y,160,40,380,4,.9,false);burst(so.x,so.y,0,30,300,4,.8,true);shake(14);flash(.4,'#fff')}}}
+function updFam(dt){const F=G.F;F.t+=dt;F.cd-=dt;let tx=P.x-Math.cos(P.face)*34+Math.sin(F.t*2)*8,ty=P.y-Math.sin(P.face)*34+Math.cos(F.t*1.7)*8,k=6;
+  if(F.id==='moth'){if(!F.goal&&F.cd<=0){let best=null,bd=0;for(const gm of G.gems){const d=(gm.x-P.x)**2+(gm.y-P.y)**2;if(d>bd&&d<450*450){bd=d;best=gm}}if(best){F.goal={x:best.x,y:best.y}}F.cd=2.5}
+    if(F.goal){tx=F.goal.x;ty=F.goal.y;k=4;if((F.x-tx)**2+(F.y-ty)**2<400){for(const gm of G.gems)if((gm.x-F.x)**2+(gm.y-F.y)**2<110*110)gm.m=true;F.goal=null}}}
+  if(F.id==='firefly'){if(!F.goal&&F.cd<=0){const e=nearestN(P.x,P.y,1,260)[0];if(e)F.goal=e;F.cd=1.1}
+    if(F.goal){if(F.goal.dead)F.goal=null;else{tx=F.goal.x;ty=F.goal.y;k=9;if(Math.hypot(F.x-tx,F.y-ty)<F.goal.r+6){hit(F.goal,(9+G.level*1.3)*P.dmg,F.goal.x-P.x,F.goal.y-P.y,80);burst(F.x,F.y,90,6,140,2.5,.3,false);F.goal=null}}}}
+  if(F.id==='shell'){const a=F.t*4;tx=P.x+Math.cos(a)*28;ty=P.y+Math.sin(a)*28;k=20;if(F.cd<=0){for(let j=G.ebul.length-1;j>=0;j--){const b=G.ebul[j];if((b.x-F.x)**2+(b.y-F.y)**2<(b.r+12)**2){G.ebul.splice(j,1);burst(b.x,b.y,200,5,100,2,.3,false);F.cd=40/Seq.bpm;break}}}}
+  const kk=1-Math.exp(-dt*k);F.x=lerp(F.x||P.x,tx,kk);F.y=lerp(F.y||P.y,ty,kk)}
+function famStep(s){const F=G.F;if(!F)return;const fx=F.x,fy=F.y;
+  if(F.id==='finch'&&s%4===0){const e=nearestN(fx,fy,1,400)[0];if(e){const a=Math.atan2(e.y-fy,e.x-fx);G.shots.push({x:fx,y:fy,px:fx,py:fy,vx:Math.cos(a)*620,vy:Math.sin(a)*620,r:4,dmg:(6+G.level*.9)*P.dmg,pierce:0,life:1,h:45,k:'bolt',hits:[]})}}
+  if(F.id==='bell'&&s===0){P.hp=Math.min(P.maxHp,P.hp+(1+G.level*.05)*G.heal);G.rings.push({x:fx,y:fy,r:4,R:26,life:.4,max:.4,h:340,w:2})}
+  if(F.id==='jack'&&s===0&&G.bar%2===0){inRadius(P.x,P.y,150,(e,dx,dy)=>{if(e.type!=='boss')hit(e,(5+G.level*.5)*P.dmg,dx,dy,420)});G.rings.push({x:P.x,y:P.y,r:10,R:150,life:.5,max:.5,h:28,w:5});burst(fx,fy,28,12,180,3,.5,false)}}
 function startCall(){const pats=[[0,2],[0,1,2],[0,2,3],[1,3],[0,1,3],[0,1,2,3],[2,3],[0,3],[1,2]];G.call={pat:pats[Math.floor(R()*pats.length)],bar:(G.bar!=null?G.bar:Math.floor(Seq.step/16))+1,phase:'wait',hits:[],miss:0,t0:0};
   banner('CALL & RESPONSE','echo the golden beats');A.bell(A.now(),1568,.07,'s')}
 function judgeCall(t,beat,win){const c=G.call;if(!c||!c.t0)return;const idx=Math.round((t-c.t0)/beat);if(t<c.t0-win||idx>3)return;
@@ -1231,6 +1294,13 @@ function update(dt){
   if(lgl){const life=(1+(lgl>=2?.4:0)+(lgl>=5?.5:0))*(G.duets.silk?2:1)*(soloOn('liora')?6:1);G.ribT+=dt;if(G.ribT>.045&&Math.hypot(P.vx,P.vy)>35){G.ribT=0;G.rib.push({x:P.x,y:P.y,t:G.T})}while(G.rib.length&&G.T-G.rib[0].t>life)G.rib.shift();G.ribLife=life}else if(G.rib.length)G.rib.length=0;
   for(const c of G.enemies)if(c.type==='cond'&&!c.dead)inRadius(c.x,c.y,170,o=>{if(o!==c)o.haste=.25});
   updSolo(dt);
+  if(song.gim==='tide'){const bar=G.bar||0,on=bar%8<4,ang=Math.floor(bar/8)*2.1;G.tideMag=lerp(G.tideMag,on?78:0,1-Math.exp(-dt*1.4));G.tideA=ang;const tx=Math.cos(ang)*G.tideMag,ty=Math.sin(ang)*G.tideMag;
+    for(const e of G.enemies)if(e.type!=='boss'&&e.type!=='crystal'&&!e.latched){e.x+=tx*dt;e.y+=ty*dt}P.x+=tx*.45*dt;P.y+=ty*.45*dt;for(const gm of G.gems){gm.x+=tx*.6*dt;gm.y+=ty*.6*dt}for(const b of G.ebul){b.x+=tx*.5*dt;b.y+=ty*.5*dt}
+    if(on&&bar%8===0&&!G.tideAnn){G.tideAnn=1;showTip('≈ The tide turns',1800)}if(bar%8!==0)G.tideAnn=0;if(G.T>=300)ach('tide')}
+  if(G.fires.length){for(const f of G.fires){f.t+=dt;if(f.t>1&&!G.stageDone&&(P.x-f.x)**2+(P.y-f.y)**2<f.r*f.r&&P.inv<=0){const dr=7*dt;P.hp-=dr;G.dmgTaken+=dr;if(P.hp<=0){P.hp=.01;hurt(1,f.x,f.y)}}
+      if(Math.random()<.5)G.parts.push({x:f.x+rnd(-f.r,f.r)*.7,y:f.y+rnd(-f.r,f.r)*.7,vx:rnd(-10,10),vy:rnd(-70,-30),life:.7,max:.7,s:3,h:rnd(10,45),dark:false})}G.fires=G.fires.filter(f=>f.t<f.life)}
+  if(G.F)updFam(dt);
+  if(G.mockT&&G.T>=G.mockT){G.mockT=0;const [mx,my,mr,md]=G.mockP;inRadius(mx,my,mr,(e,dx,dy)=>hit(e,md,dx,dy,300));G.rings.push({x:mx,y:my,r:10,R:mr,life:.35,max:.35,h:FAMS.mock.h,w:5})}
   if(!G.boss&&!G.call&&!G.pending&&!G.pendingMotif&&G.T>=G.nextCall&&(G.callsOn||!G.stage)){startCall();G.nextCall=G.T+(G.callsOn?14:150)}
   if((G.zonesOn||(!G.stage&&G.T>=300))&&G.T>=G.nextZone){G.nextZone=G.T+(G.zonesOn?7:24);const a=R()*TAU,d=rr(120,280);G.zones.push({x:P.x+Math.cos(a)*d,y:P.y+Math.sin(a)*d,r:rr(95,150),t:0,life:11})}
   for(const z of G.zones)z.t+=dt;if(G.zones.length)G.zones=G.zones.filter(z=>z.t<z.life);
@@ -1245,7 +1315,7 @@ function update(dt){
   for(const e of G.enemies){if(e.dead)continue;e.t+=dt;e.flash-=dt;
     const dx=P.x-e.x,dy=P.y-e.y,d=Math.hypot(dx,dy)||1;let tvx=0,tvy=0;let sm=4;
     const stun=e.stun>0;if(stun)e.stun-=dt;if(e.haste>0)e.haste-=dt;
-    const slow=(stun?0:1)*(e.slow>0?1-e.slowAmt:1)*(G.motifs.rubato?.88:1)*(G.fermataT>0?.5:1)*(e.haste>0?1.35:1)*(G.espd||1);e.slow-=dt;
+    const slow=(stun?0:1)*(e.slow>0?1-e.slowAmt:1)*(G.motifs.rubato?.88:1)*(G.fermataT>0?.5:1)*(e.haste>0?1.35:1)*(G.espd||1)*(G.diss.frenzy?1.25:1);e.slow-=dt;
     switch(e.type){
       case'shard':tvx=e.vx;tvy=e.vy;sm=0;if(d>farD+300){e.dead=true;continue}break;
       case'crystal':tvx=0;tvy=0;break;
@@ -1307,6 +1377,7 @@ function trailFx(song){const t=S.trail||'star',x=P.x+rnd(-3,3),y=P.y+rnd(-3,3),p
     case'comet':p.vx=p.vy=0;p.h=200;p.s=3.4;p.life=p.max=1;break;
     case'aurora':p.h=[150,205,280][Math.floor(Math.random()*3)];p.vy-=25;p.life=p.max=1.2;p.s=3;break;
     case'gilded':p.h=48;p.s=3.8;p.life=p.max=.75;break;
+    case'jack':p.h=Math.random()<.7?28:275;p.vy-=35;p.s=3.4;p.life=p.max=.9;break;
     case'staff':{const sp=Math.hypot(P.vx,P.vy)||1,nx=-P.vy/sp,ny=P.vx/sp;for(let i=-2;i<=2;i++)G.parts.push({x:P.x+nx*i*5,y:P.y+ny*i*5,vx:0,vy:0,life:.7,max:.7,s:1.8,h:song.b,dark:false});return}
     case'hollow':p.dark=true;p.s=4.5;p.life=p.max=.8;G.parts.push({x,y,vx:0,vy:0,life:.5,max:.5,s:2,h:song.hush,dark:false});break}
   G.parts.push(p)}
@@ -1323,6 +1394,7 @@ function render(dt){
   g.setTransform(DPR,0,0,DPR,0,0);g.globalCompositeOperation='source-over';
   g.drawImage(bgCan,0,0,W,H);
   const cx=G?cam.x:menuT*40,cy=G?cam.y:menuT*14;
+  const evn=evActive();if(evn&&evn.id==='silent'&&S.settings.fx){g.fillStyle='rgba(255,255,255,.7)';for(let i=0;i<60;i++){const x=((i*97.31+now*12*(1+i%3))%(W+20))-10,y=((i*53.7+now*(30+i%5*8))%(H+20))-10;g.fillRect(x,y,1.6+(i%3)*.6,1.6+(i%3)*.6)}}
   // aurora
   if(S.settings.fx){g.globalCompositeOperation='lighter';
     for(let b=0;b<2;b++){const hue=b?song.b:song.a;const base=H*(.22+b*.5);const amp=40+beatPulse*14;
@@ -1360,6 +1432,9 @@ function render(dt){
   for(const z of G.zones){if(!vis(z.x,z.y,z.r))continue;const k=clamp(z.t/1.5,0,1),fade=clamp((z.life-z.t)/.5,0,1),rr2=z.r*(.3+.7*k);
     if(z.t>1.5){const gz=g.createRadialGradient(z.x,z.y,0,z.x,z.y,rr2);gz.addColorStop(0,`rgba(2,1,8,${.75*fade})`);gz.addColorStop(.85,`rgba(2,1,8,${.6*fade})`);gz.addColorStop(1,'rgba(2,1,8,0)');g.fillStyle=gz;g.beginPath();g.arc(z.x,z.y,rr2,0,TAU);g.fill()}
     g.strokeStyle=hsla(song.hush,100,70,(z.t>1.5?.5:.25+.3*Math.sin(now*14))*fade);g.lineWidth=2;g.setLineDash([8,8]);g.lineDashOffset=now*20;g.beginPath();g.arc(z.x,z.y,rr2,0,TAU);g.stroke();g.setLineDash([])}
+  for(const f of G.fires){if(!vis(f.x,f.y,f.r))continue;const k=clamp(f.t,0,1),fade=clamp((f.life-f.t)/.6,0,1),fl=1+Math.sin(now*17+f.x)*.05;
+    if(f.t>1){g.globalCompositeOperation='lighter';const gf=g.createRadialGradient(f.x,f.y,0,f.x,f.y,f.r*fl);gf.addColorStop(0,hsla(45,100,60,.45*fade));gf.addColorStop(.6,hsla(20,100,50,.3*fade));gf.addColorStop(1,hsla(10,100,40,0));g.fillStyle=gf;g.beginPath();g.arc(f.x,f.y,f.r*fl,0,TAU);g.fill();g.globalCompositeOperation='source-over'}
+    g.strokeStyle=hsla(25,100,65,(f.t>1?.5:.3+.3*Math.sin(now*14))*fade);g.lineWidth=2;g.setLineDash([5,7]);g.beginPath();g.arc(f.x,f.y,f.r*(.4+.6*k),0,TAU);g.stroke();g.setLineDash([])}
   if(G.solo&&G.solo.id==='mire'&&G.solo.t>0){const so=G.solo;for(let i=0;i<4;i++){g.strokeStyle=hsla(160,100,65,.35);g.lineWidth=3;g.beginPath();g.arc(so.x,so.y,30+i*26+Math.sin(now*8+i)*6,now*(3+i),now*(3+i)+Math.PI*1.3);g.stroke()}
     g.fillStyle='#000';g.beginPath();g.arc(so.x,so.y,22,0,TAU);g.fill()}
   // gems & mines
@@ -1394,11 +1469,14 @@ function render(dt){
     const gr=g.createLinearGradient(P.x,P.y,ex,ey);gr.addColorStop(0,hsla(h,100,70,0));gr.addColorStop(.35,hsla(h,100,70,.45));gr.addColorStop(1,hsla(h,100,82,.95));
     g.strokeStyle=gr;g.lineWidth=11+beatPulse*5;g.beginPath();g.moveTo(P.x,P.y);g.lineTo(ex,ey);g.stroke();
     g.strokeStyle=hsla(h,100,94,.95);g.lineWidth=2.5;g.beginPath();g.moveTo(P.x+Math.cos(a)*22,P.y+Math.sin(a)*22);g.lineTo(ex,ey);g.stroke();dg(h,ex,ey,24+beatPulse*8,.9)}}
+  if(G.F){const F=G.F,FM=FAMS[F.id],fl=Math.sin(F.t*18)*.6+.6;dg(FM.h,F.x,F.y,20+beatPulse*6,.8);g.fillStyle=hsla(FM.h,100,88,1);
+    if(F.id==='shell'){g.strokeStyle=hsla(FM.h,100,85,.9);g.lineWidth=2;g.beginPath();g.arc(F.x,F.y,6,0,TAU);g.stroke()}
+    else{g.beginPath();g.ellipse(F.x,F.y,4,3,0,0,TAU);g.fill();g.fillStyle=hsla(FM.h,100,80,.7);g.beginPath();g.ellipse(F.x-4,F.y-2,5,2*fl+.5,-.6,0,TAU);g.ellipse(F.x+4,F.y-2,5,2*fl+.5,.6,0,TAU);g.fill()}}
   // player
   if(!G.dead){const blink=P.inv>0&&Math.floor(now*18)%2;const pr=P.r*(1+.16*beatPulse);
     dg(song.a,P.x,P.y,70+beatPulse*20,blink?.3:.85);dg(G.singer.h,P.x,P.y,30,.9);
     g.strokeStyle=hsla(song.a,100,80,.25+beatPulse*.6);g.lineWidth=2;g.beginPath();g.arc(P.x,P.y,pr+7+beatPulse*12,0,TAU);g.stroke();
-    if(S.settings.guide&&state==='play'){const beat=60/Seq.bpm,ph=clamp((A.now()-audioLat()-lastBeatT)/beat,0,1),rdy=P.dashCd<=0;
+    if(S.settings.guide&&state==='play'&&!G.diss.deafen){const beat=60/Seq.bpm,ph=clamp((A.now()-audioLat()-lastBeatT)/beat,0,1),rdy=P.dashCd<=0;
       g.strokeStyle=rdy?hsla(song.a,100,80,ph*ph*.6):hsla(240,20,75,ph*ph*.18);g.lineWidth=rdy?2:1.2;g.beginPath();g.arc(P.x,P.y,pr+9+(1-ph)*40,0,TAU);g.stroke()}
     if(G.motifs.grace&&G.graceT<=0){g.strokeStyle=hsla(170,100,80,.35+beatPulse*.3);g.lineWidth=1.5;g.beginPath();g.arc(P.x,P.y,pr+16,0,TAU);g.stroke()}
     g.globalCompositeOperation='source-over';g.fillStyle=blink?'rgba(255,255,255,.4)':'#fff';g.beginPath();g.arc(P.x,P.y,pr*.62,0,TAU);g.fill();
@@ -1418,6 +1496,8 @@ function render(dt){
       for(let i=0;i<b.pts.length-1;i++){const [x0,y0]=b.pts[i],[x1,y1]=b.pts[i+1];if(i===0)g.moveTo(x0,y0);const segs=5;for(let j=1;j<=segs;j++){const t=j/segs;const jx=j<segs?rnd(-10,10):0,jy=j<segs?rnd(-10,10):0;g.lineTo(lerp(x0,x1,t)+jx,lerp(y0,y1,t)+jy)}}g.stroke()}}
   g.globalCompositeOperation='source-over';
   if(G.dark>.01)renderDark(song);
+  if(G.tideMag>4){g.save();g.setTransform(DPR,0,0,DPR,0,0);g.globalCompositeOperation='lighter';const a=G.tideA,ca=Math.cos(a),sa=Math.sin(a),al=G.tideMag/78*.22;g.strokeStyle=hsla(195,100,80,al);g.lineWidth=1.5;
+    for(let i=0;i<34;i++){const bx=((i*137.3)%1)*0+((i*0.6180339)%1)*W,by=((i*0.4142)%1)*H,o=((now*140+i*53)%(Math.hypot(W,H)))-Math.hypot(W,H)/2;const x0=bx+ca*o,y0=by+sa*o;g.beginPath();g.moveTo(x0,y0);g.lineTo(x0+ca*40,y0+sa*40);g.stroke()}g.restore()}
   // texts
   g.textAlign='center';g.textBaseline='middle';
   for(const t of G.texts){const a=Math.min(1,t.life/t.max*2);g.font=`700 ${t.sz}px Unbounded,Outfit,sans-serif`;g.fillStyle=hsla(t.h,100,80,a);g.shadowColor=hsla(t.h,100,50,a);g.shadowBlur=10;g.fillText(t.t,t.x,t.y)}
@@ -1479,6 +1559,8 @@ function drawEnemy(e,now,song){
   }
   const hc=S.settings.contrast;g.fillStyle=flash?(e.type==='boss'?hsla(rim,60,22,1):hsla(rim,80,85,1)):'#07040e';g.fill();
   g.strokeStyle=hsla(rim,100,flash?90:hc?80:64,.95);g.lineWidth=(e.type==='boss'?3:1.8)*(hc?1.8:1);g.stroke();
+  if(G.song==='hallow'&&(e.type==='mote'||e.type==='bloat')){g.fillStyle=hsla(30,100,58,.95);const s2=r*.32;for(const sx of[-1,1]){g.beginPath();g.moveTo(e.x+sx*r*.42,e.y-r*.32);g.lineTo(e.x+sx*r*.42-s2*.6,e.y-r*.32+s2);g.lineTo(e.x+sx*r*.42+s2*.6,e.y-r*.32+s2);g.fill()}
+    g.beginPath();g.moveTo(e.x-r*.55,e.y+r*.2);for(let i=0;i<=6;i++)g.lineTo(e.x-r*.55+i*r*.183,e.y+r*.2+(i%2?r*.22:0));g.lineTo(e.x+r*.55,e.y+r*.42);g.lineTo(e.x-r*.55,e.y+r*.42);g.fill()}
   if(e.latched){g.strokeStyle=hsla(340,100,70,.6);g.lineWidth=1.5;g.beginPath();g.moveTo(e.x,e.y);g.lineTo(P.x,P.y);g.stroke()}
   // inner
   const dx=P.x-e.x,dy=P.y-e.y,d=Math.hypot(dx,dy)||1;
@@ -1534,10 +1616,10 @@ function hud(){if(!G)return;
   const off=251-251*G.cres/100;if(hudC.cr!==Math.round(off)){hudC.cr=Math.round(off);$('#cresring').style.strokeDashoffset=off}
   const rdy=G.cres>=100;if(hudC.rdy!==rdy){hudC.rdy=rdy;$('#cresbtn').classList.toggle('ready',rdy)}
   const dc=P.dashCd>0;if(hudC.dcd!==dc){hudC.dcd=dc;$('#dashbtn').classList.toggle('cd',dc)}
-  const vk=G.voices.map(v=>v.id+v.lvl).join()+'|'+Object.entries(G.harm).map(e=>e.join('')).join()+'|'+Object.keys(G.duets).join()+'|'+Object.keys(G.motifs).join();
+  const vk=G.voices.map(v=>v.id+v.lvl).join()+'|'+Object.entries(G.harm).map(e=>e.join('')).join()+'|'+Object.keys(G.duets).join()+'|'+Object.keys(G.motifs).join()+'|'+Object.keys(G.diss).join();
   if(hudC.vk!==vk){hudC.vk=vk;
     $('#vrow').innerHTML=G.voices.map(v=>{const V=VOICES[v.id];return`<div class="vi" style="--h:${V.h}">${V.icon}<b>${v.lvl}</b></div>`}).join('');
-    $('#hrow').innerHTML=Object.keys(G.motifs).map(id=>`<div class="vi h motif" style="--h:${MOTIFS[id].h}">${MOTIFS[id].icon}</div>`).join('')+Object.keys(G.duets).map(id=>`<div class="vi h duet" style="--h:${DUETS[id].h}">${DUETS[id].icon}</div>`).join('')+Object.entries(G.harm).map(([id,l])=>{const Hh=HARM[id];return`<div class="vi h" style="--h:${Hh.h}">${Hh.icon}</div>`}).join('')}
+    $('#hrow').innerHTML=Object.keys(G.diss).map(id=>`<div class="vi h diss" style="--h:350">${DISS[id].ic}</div>`).join('')+Object.keys(G.motifs).map(id=>`<div class="vi h motif" style="--h:${MOTIFS[id].h}">${MOTIFS[id].icon}</div>`).join('')+Object.keys(G.duets).map(id=>`<div class="vi h duet" style="--h:${DUETS[id].h}">${DUETS[id].icon}</div>`).join('')+Object.entries(G.harm).map(([id,l])=>{const Hh=HARM[id];return`<div class="vi h" style="--h:${Hh.h}">${Hh.icon}</div>`}).join('')}
 }
 function banner(t,sub,cls){const b=$('#banner');b.className='';b.querySelector('h2').textContent=t;b.querySelector('p').textContent=sub||'';void b.offsetWidth;b.className='go '+(cls||'')}
 function toast(icon,title,sub){const t=document.createElement('div');t.className='toast';t.innerHTML=`<div class="i">${icon}</div><div><b>${title}</b><small>${sub}</small></div>`;$('#toasts').appendChild(t);setTimeout(()=>t.remove(),3800)}
@@ -1567,7 +1649,7 @@ function buildBook(){const sec=(t,html)=>`<div class="sect">${t}</div>${html}`;
   const mo=Object.entries(MOTIFS).map(([id,M])=>{const f=cnt(!!S.seen.m[id]);return row(f?M.icon:'?',M.h,f?M.name:'Undiscovered Motif',f?M.d:'Hidden in a music box. Elite Hushlings and every Hush carry one.',!f)}).join('');
   const e=FOES.map(F=>{const f=cnt(!!S.seen.e[F.id]);return row(f?F.ic:'?',0,f?F.n:'Unheard',f?F.d:'You have not met this one yet.',!f,'foe')}).join('');
   $('#bookSub').textContent=`${found} of ${total} pages written`;
-  $('#bookBody').innerHTML=sec('Voices',v)+sec('Duets',d)+sec('Solos',so)+sec('Motifs',mo)+sec('Harmonies',h)+sec('The Hush',e);show('#book')}
+  $('#bookBody').innerHTML=sec('Voices',v)+sec('Duets',d)+sec('Solos',so)+sec('Motifs',mo)+sec('Dissonances',Object.entries(DISS).map(([id,D])=>{const f=cnt(!!S.seen.x[id]);return row(f?D.ic:'?',350,f?D.n:'Undiscovered Dissonance',f?D.d:'Sometimes a music box offers something darker.',!f)}).join(''))+sec('Familiars',Object.entries(FAMS).map(([id,F])=>{const f=cnt(!!famOwned(id));return row(F.ic,F.h,F.n,F.d,!f)}).join(''))+sec('Harmonies',h)+sec('The Hush',e);show('#book')}
 function ensureQuests(){const day=todayKey();if(S.q&&S.q.day===day)return;const r=mulberry32(day*31+7),idx=[];while(idx.length<3){const i=Math.floor(r()*QUESTS.length);if(!idx.includes(i))idx.push(i)}
   const own=SINGERS.filter(x=>S.singers[x.id]),sg=Object.keys(SONGS).filter(x=>S.songs[x]);
   S.q={day,list:idx.map(i=>{const Q=QUESTS[i];return{i,p:Q.param==='singer'?own[Math.floor(r()*own.length)].id:Q.param==='song'?sg[Math.floor(r()*sg.length)]:0,prog:0,done:0}})};save()}
@@ -1582,6 +1664,7 @@ function buildVerses(){ensureQuests();const ms=new Date();ms.setHours(24,0,0,0);
 function goTitle(){wake(false);if(G){G=null}state='menu';Seq.mode='menu';Seq.setBpm(84);A.muffle(false);$('#bossbar').classList.remove('on');$('#hud').classList.remove('on');buildBg();
   const dc=dailyCfg(),ds=SINGERS.find(s=>s.id===dc.singer);const stk=(S.lastDaily===dc.seed||S.lastDaily===prevDayKey(dc.seed))?S.dailyStreak:0;$('#dailyInfo').textContent=dc.mod.name+(stk?` · 🔥${stk}`:'');
   ensureQuests();$('#versesInfo').textContent=`${S.q.list.filter(q=>q.done).length} of 3 today`;$('#scoreInfo').textContent=`★ ${totalStars()} of 60`;
+  const ev=evActive(),ec=$('#evChip');if(ev){if(ev.song)S.songs[ev.song]=1;ec.style.display='inline-block';ec.textContent=`${ev.chip} ${ev.n} — ${ev.song?'tap to sing '+SONGS[ev.song].name:'snow on every song, +25% Echoes'}`}else ec.style.display='none';
   show('#title')}
 function buildSelect(){
   $('#singers').innerHTML=SINGERS.map(s=>{const own=S.singers[s.id];const V=VOICES[s.voice];
@@ -1589,7 +1672,7 @@ function buildSelect(){
   const sg=S.lastSong,mx=Math.min(8,S.dyn[sg]||0),sel=Math.min(S.dynSel[sg]||0,mx);
   $('#dyns').innerHTML=DYN.map((d,i)=>`<button class="dyn ${i===sel?'sel':''} ${i>mx?'locked':''}" data-dyn="${i}">${d.s}</button>`).join('');
   $('#dynDesc').innerHTML=sel?`<b><i>${DYN[sel].n}</i></b> — Echoes ×${(1+.3*sel).toFixed(1)}<br>`+DYN.slice(1,sel+1).map(d=>'· '+d.d).join('<br>'):`<b><i>piano</i></b> — the song as written.`+(mx<8?`<br><span style="color:var(--dim)">Restore ${SONGS[sg].name} at <i>${DYN[mx].s}</i> to unlock <i>${DYN[mx+1].n}</i>.</span>`:'');
-  $('#songs').innerHTML=Object.entries(SONGS).map(([id,s])=>{const own=S.songs[id];const b=S.songBest[id];
+  $('#songs').innerHTML=Object.entries(SONGS).filter(([id,s])=>!s.event||songOpen(id)).map(([id,s])=>{const own=songOpen(id);const b=S.songBest[id];
     return`<button class="card ${own?'':'locked'} ${S.lastSong===id&&own?'sel':''}" data-song="${id}" style="--h:${s.a}"><div class="orb" style="--h:${s.a};width:40px;height:40px;font-size:18px">${own?'♬':'🔒'}</div><h3>${s.name}</h3><div class="t">${s.mode}</div>
     <p>${own?`Difficulty ${'●'.repeat(Math.round(s.diff*2-1))}${'○'.repeat(Math.max(0,4-Math.round(s.diff*2-1)))}<br>Echoes ×${s.mult}${b?`<br>Best ${fmt(b.time)} · ${b.score}`:''}${S.dyn[id]?`<br>Restored to <i>${DYN[S.dyn[id]-1].s}</i>`:''}`:'Unlock: '+s.req}</p></button>`}).join('');
 }
@@ -1609,11 +1692,11 @@ $('#scoreBody').addEventListener('click',e=>{const c=e.target.closest('[data-sta
 $('#singers').addEventListener('click',e=>{const c=e.target.closest('[data-singer]');if(!c)return;A.init();const s=SINGERS.find(x=>x.id===c.dataset.singer);
   if(!S.singers[s.id]){if(S.echoes>=s.cost){S.echoes-=s.cost;S.singers[s.id]=1;S.lastSinger=s.id;save();A.sBuy();toast(VOICES[s.voice].icon,s.name+' joins the choir','');if(SINGERS.every(x=>S.singers[x.id]))ach('allsing');buildSelect();show('#select')}else{A.sNo();c.classList.add('shake');setTimeout(()=>c.classList.remove('shake'),400)}return}
   S.lastSinger=s.id;save();A.sClick();buildSelect()});
-$('#songs').addEventListener('click',e=>{const c=e.target.closest('[data-song]');if(!c)return;A.init();const id=c.dataset.song;if(!S.songs[id]){A.sNo();c.classList.add('shake');setTimeout(()=>c.classList.remove('shake'),400);return}
+$('#songs').addEventListener('click',e=>{const c=e.target.closest('[data-song]');if(!c)return;A.init();const id=c.dataset.song;if(!songOpen(id)){A.sNo();c.classList.add('shake');setTimeout(()=>c.classList.remove('shake'),400);return}
   S.lastSong=id;save();A.sClick();buildBg();buildSelect()});
 
 let lastOpt=null;
-function startRun(opt){A.init();Seq.start();wake(true);lastOpt=opt;newGame(opt);state='play';hideAll();$('#hud').classList.add('on');for(const k in hudC)delete hudC[k];
+function startRun(opt){A.init();Seq.start();wake(true);$('#beat').style.opacity='';lastOpt=opt;newGame(opt);state='play';hideAll();$('#hud').classList.add('on');for(const k in hudC)delete hudC[k];
   if(IS_IOS&&!S.iosHint){S.iosHint=1;save();setTimeout(()=>toast('🔔','Hear the song','No sound? Flip your ringer switch on — HUSH is meant to be heard.'),900)}
   if(opt.daily)banner('DAILY HUM',opt.mod.name+' — '+opt.mod.d);else if(opt.stage!=null)banner(STAGES[opt.stage].n.toUpperCase(),goalText(STAGES[opt.stage]));else banner(SONGS[opt.song].name.toUpperCase()+(opt.dyn?' · '+DYN[opt.dyn].s:''),opt.dyn?DYN[opt.dyn].n:'sing back the silence');
   if(!S.seenTip){showTip('Drag to move · your voices play on the beat · tap DASH right on the beat',6500);S.seenTip=1;save()}
@@ -1635,18 +1718,20 @@ function renderCards(){const mm=G.cardMode==='motif';$('#lvtag').textContent=mm?
     else if(c.k==='harm'){const Hh=HARM[c.id],cur=G.harm[c.id]||0;ic=Hh.icon;h=Hh.h;name=Hh.name;lvl=cur+1;kind='Harmony · Lv '+lvl;desc=Hh.d;isNew=!cur}
     else if(c.k==='duet'){const D=DUETS[c.id];ic=D.icon;h=D.h;name=D.name;lvl=0;kind='Duet · '+VOICES[D.a].icon+' + '+VOICES[D.b].icon;desc=D.d}
     else if(c.k==='motif'){const M=MOTIFS[c.id];ic=M.icon;h=M.h;name=M.name;lvl=0;kind='Motif';desc=M.d;isNew=!S.seen.m[c.id]}
+    else if(c.k==='diss'){const D=DISS[c.id];ic=D.ic;h=350;name=D.n;lvl=0;kind='Dissonance';desc=D.d;isNew=!S.seen.x[c.id]}
     else{ic='❀';h=130;name='Encore';kind='Gift';desc='Heal 40 and gain 15 Echoes.';lvl=0}
     const pips=lvl?`<div class="pips" style="--h:${h}">${[1,2,3,4,5].map(j=>`<i class="${j<=lvl?'on':''}"></i>`).join('')}</div>`:'';
-    return`<button class="lcard ${isNew?'new':''} ${c.k==='duet'||c.k==='motif'?'duet':''}" data-i="${i}" style="--h:${h};animation-delay:${i*.07}s"><div class="top"><div class="ic">${ic}</div><div><div class="k">${kind}</div><h3>${name}</h3></div></div><div class="txt"><div class="mob"><div class="k">${kind}</div><h3>${name}</h3></div><p>${desc}</p>${pips}</div></button>`}).join('');
+    return`<button class="lcard ${isNew?'new':''} ${c.k==='duet'||c.k==='motif'?'duet':c.k==='diss'?'diss':''}" data-i="${i}" style="--h:${h};animation-delay:${i*.07}s"><div class="top"><div class="ic">${ic}</div><div><div class="k">${kind}</div><h3>${name}</h3></div></div><div class="txt"><div class="mob"><div class="k">${kind}</div><h3>${name}</h3></div><p>${desc}</p>${pips}</div></button>`}).join('');
   $('#reroll').style.display=G.rerolls>0&&!mm?'':'none';$('#rerollN').textContent='('+G.rerolls+')'}
 function pickCard(i){const c=G.cards&&G.cards[i];if(!c||state!=='levelup')return;
   if(c.k==='voice'){const v=G.voices.find(v=>v.id===c.id);if(v)v.lvl++;else G.voices.push({id:c.id,lvl:1});addText(P.x,P.y-30,VOICES[c.id].name+(v?' '+v.lvl:' joins'),VOICES[c.id].h,15,1.4)}
   else if(c.k==='duet'){G.duets[c.id]=1;S.seen.d[c.id]=1;ach('duet');if(Object.keys(S.seen.d).length>=Object.keys(DUETS).length)ach('duets4');save();banner('DUET',DUETS[c.id].name);flash(.4,'#ffd76b');burst(P.x,P.y,48,40,320,3.5,.9,false)}
   else if(c.k==='harm'){G.harm[c.id]=(G.harm[c.id]||0)+1;if(c.id==='vigor')P.hp+=20*G.heal;addText(P.x,P.y-30,HARM[c.id].name,HARM[c.id].h,15,1.2)}
+  else if(c.k==='diss'){G.diss[c.id]=1;S.seen.x[c.id]=1;ach('diss');save();if(c.id==='swarm')G.mod.spawn*=2;if(c.id==='presto'){G.bpmBonus+=25;G.mod.ehp*=1.3}if(c.id==='deafen')$('#beat').style.opacity=0;banner(DISS[c.id].n.toUpperCase(),'a dissonance enters the song');flash(.35,'#ff3d6b')}
   else if(c.k==='motif'){G.motifs[c.id]=1;S.seen.m[c.id]=1;if(c.id==='encoreseal')G.revive++;ach('motif');if(Object.keys(G.motifs).length>=5)ach('motif5');if(Object.keys(MOTIFS).every(k=>S.seen.m[k]))ach('motifall');save();
     banner(MOTIFS[c.id].name.toUpperCase(),'a motif joins your song');flash(.35,'#ffd76b')}
   else{P.hp=Math.min(P.maxHp,P.hp+40*(G.heal||1));G.bonusEchoes+=15}
-  const wasM=G.cardMode==='motif';recalc();if(c.k==='motif'&&c.id==='keysig')P.hp+=20;P.hp=Math.min(P.hp,P.maxHp);A.sBuy();if(wasM)G.pendingMotif--;else G.pending--;
+  const wasM=G.cardMode==='motif';if(c.k==='diss'&&G.diss.brittle)P.hp=Math.min(P.hp,P.maxHp);recalc();if(c.k==='motif'&&c.id==='keysig')P.hp+=20;P.hp=Math.min(P.hp,P.maxHp);A.sBuy();if(wasM)G.pendingMotif--;else G.pending--;
   if(G.pendingMotif>0){G.cardMode='motif';G.cards=rollMotifs(3);renderCards()}
   else if(G.pending>0){G.cardMode='level';G.cards=rollCards(cardCount());renderCards()}
   else{state='play';A.muffle(false);hideAll();P.inv=Math.max(P.inv,.6);levelWave()}}
@@ -1658,7 +1743,7 @@ $('#reroll').addEventListener('click',()=>{if(G&&G.rerolls>0&&state==='levelup'&
 /* pause / win / over */
 function buildList(){const ch=(ic,h,t,sub)=>`<span class="ch" style="--h:${h}"><i>${ic}</i>${t}${sub?` <small>${sub}</small>`:''}</span>`;const sec=(t,a)=>a.length?`<div class="bh">${t}</div><div class="bc">${a.join('')}</div>`:'';
   return sec('VOICES',G.voices.map(v=>ch(VOICES[v.id].icon,VOICES[v.id].h,VOICES[v.id].name,'Lv '+v.lvl)))+sec('DUETS',Object.keys(G.duets).map(id=>ch(DUETS[id].icon,DUETS[id].h,DUETS[id].name)))
-   +sec('MOTIFS',Object.keys(G.motifs).map(id=>ch(MOTIFS[id].icon,MOTIFS[id].h,MOTIFS[id].name)))+sec('HARMONIES',Object.entries(G.harm).map(([id,l])=>ch(HARM[id].icon,HARM[id].h,HARM[id].name,'Lv '+l)))}
+   +sec('DISSONANCES',Object.keys(G.diss).map(id=>ch(DISS[id].ic,350,DISS[id].n)))+sec('MOTIFS',Object.keys(G.motifs).map(id=>ch(MOTIFS[id].icon,MOTIFS[id].h,MOTIFS[id].name)))+sec('HARMONIES',Object.entries(G.harm).map(([id,l])=>ch(HARM[id].icon,HARM[id].h,HARM[id].name,'Lv '+l)))}
 function pause(){if(state!=='play'||!G||G.dead)return;state='paused';A.muffle(true);const pb=$('#pauseBuild');pb.className='build';pb.innerHTML=buildList();$('#pauseInfo').textContent=`${SONGS[G.song].name}${G.dyn?' · '+DYN[G.dyn].s:''} · ${fmt(G.T)} · Lv ${G.level}`+(G.modName?' · '+G.modName:'');show('#pause')}
 function resume(){if(state!=='paused')return;state='play';wake(true);A.muffle(false);hideAll();A.init()}
 function openWin(){state='win';A.muffle(true);A.sBossDie(chordFreqs(3));flash(.7,'#fff');show('#win')}
@@ -1672,7 +1757,8 @@ function showOver(){
   if(G.stage){const si=G.stageIdx,stg=G.stage;if(G.stageDone){stars=1;for(const c of stg.st){const ok=starOk(c);stageNotes.push(`${ok?'★':'☆'} ${starText(c)}`);if(ok)stars++}}
     S.camp=S.camp||{};const prev=S.camp[si]||0;if(stars>prev){stageGain=(stars-prev)*(20+stg.a*15);S.camp[si]=stars;stageNotes.unshift(`<span class="nb">+${stars-prev} STAR${stars-prev>1?'S':''}</span>`)}
     const actDone=a=>STAGES.every((x,i)=>x.a!==a||(S.camp[i]||0)>=1);if(actDone(0))ach('act1');if(actDone(3)&&actDone(0)&&actDone(1)&&actDone(2))ach('act4');if(totalStars()>=60)ach('stars60')}
-  const earn=Math.floor(base*song.mult*(1+meta('echo')*.1)*(G.daily?1.5:1)*(1+.3*(G.dyn||0))*(G.stage?.6:1))+stageGain;
+  const evm=(evActive()||{}).id==='silent'?1.25:1;
+  const earn=Math.floor(base*song.mult*(1+meta('echo')*.1)*(G.daily?1.5:1)*(1+.3*(G.dyn||0))*(G.stage?.6:1)*(G.diss.greed?2:1)*(G.diss.requiem?1.5:1)*evm)+stageGain;
   S.echoes+=earn;S.lifetime+=earn;S.stats.runs++;S.stats.kills+=G.kills;S.stats.time+=G.T;
   const notes=[...stageNotes];if(streakNote)notes.push(streakNote);
   if(G.won&&!G.daily){const nx=Math.min(8,(G.dyn||0)+1);if(nx>(S.dyn[G.song]||0)){S.dyn[G.song]=nx;S.dynSel[G.song]=nx;notes.push(`<span class="nb">NEW DYNAMIC UNLOCKED</span>${SONGS[G.song].name} at <i>${DYN[nx].n}</i> — ${DYN[nx].d}`)}
@@ -1686,7 +1772,8 @@ function showOver(){
   if(G.daily){const prev=S.daily[G.dailyKey]||0;if(score>prev){S.daily[G.dailyKey]=score;notes.push('Daily best: '+score)}}
   ach('first');if(G.daily)ach('daily');
   const unlock=(id,cond)=>{if(!S.songs[id]&&cond){S.songs[id]=1;notes.push(`<span class="nb">NEW SONG UNLOCKED</span>${SONGS[id].name} — ${SONGS[id].mode}`)}};
-  unlock('dusk',S.best.time>=180);unlock('abyss',S.stats.bosses>=1);unlock('dream',(S.stats.restored||0)>=1);unlock('aurora',S.stats.bosses>=3);
+  unlock('dusk',S.best.time>=180);unlock('abyss',S.stats.bosses>=1);unlock('dream',(S.stats.restored||0)>=1);unlock('aurora',S.stats.bosses>=3);unlock('tide',totalStars()>=20);unlock('ember',(S.stats.restored||0)>=3);
+  if(G.song==='hallow'&&G.T>=20)ach('hallow1');if(G.won&&G.song==='hallow')ach('hallow');if(G.won&&G.song==='ember')ach('ember');if(G.won&&Object.keys(G.diss).length>=3)ach('diss3');
   for(const a of G.newAch)notes.push(`${a.i} ${a.n} <span class="echo">+${a.rw}</span>`);
   const nextSinger=SINGERS.find(s=>!S.singers[s.id]);if(nextSinger)notes.push(`<small style="color:var(--dim)">${nextSinger.name} awaits at ◈ ${nextSinger.cost} — you have ◈ ${S.echoes}</small>`);
   save();
@@ -1714,10 +1801,14 @@ let wl=null;async function wake(on){try{if(on&&navigator.wakeLock&&!wl){wl=await
 /* shop / achievements / settings */
 function buildShop(){const tr=Object.entries(TRAILS).map(([id,T])=>{const own=trailOwned(id),worn=S.trail===id;
     return`<div class="lrow ${own?'got':''}"><div class="i">${worn?'✦':own?'✧':T.feat?'🔒':'·'}</div><div class="m"><b>${T.n}</b><small>${T.d}</small></div><button class="buy ${worn?'max':own?'':T.feat?'no':S.echoes<T.cost?'no':''}" data-trail="${id}">${worn?'WORN':own?'WEAR':T.feat?'FEAT':'◈ '+T.cost}</button></div>`}).join('');
+  const fm=Object.entries(FAMS).map(([id,F])=>{const own=famOwned(id),on=S.fam===id;return`<div class="lrow ${own?'got':''}"><div class="i" style="color:hsl(${F.h},100%,74%)">${F.ic}</div><div class="m"><b>${F.n}</b><small>${F.d}</small></div><button class="buy ${on?'max':own?'':F.feat?'no':S.echoes<F.cost?'no':''}" data-fam="${id}">${on?'WITH YOU':own?'BRING':F.feat?'EVENT':'◈ '+F.cost}</button></div>`}).join('');
   $('#shopList').innerHTML='<div class="sect">Resonance</div>'+META.map(m=>{const l=meta(m.id);const mx=l>=m.max;const c=mx?0:m.cost(l);
   return`<div class="lrow ${l?'got':''}"><div class="i">${m.icon}</div><div class="m"><b>${m.name}</b><small>${m.d} · ${l}/${m.max}</small><div class="pips">${Array.from({length:m.max},(_,j)=>`<i class="${j<l?'on':''}"></i>`).join('')}</div></div>
-  <button class="buy ${mx?'max':S.echoes<c?'no':''}" data-buy="${m.id}">${mx?'MAX':'◈ '+c}</button></div>`}).join('')+'<div class="sect">Wardrobe · trails</div>'+tr;show('#shop')}
-$('#shopList').addEventListener('click',e=>{const tb=e.target.closest('[data-trail]');if(tb){A.init();const id=tb.dataset.trail,T=TRAILS[id];
+  <button class="buy ${mx?'max':S.echoes<c?'no':''}" data-buy="${m.id}">${mx?'MAX':'◈ '+c}</button></div>`}).join('')+'<div class="sect">Familiars</div>'+fm+'<div class="sect">Wardrobe · trails</div>'+tr;show('#shop')}
+$('#shopList').addEventListener('click',e=>{const fb=e.target.closest('[data-fam]');if(fb){A.init();const id=fb.dataset.fam,F=FAMS[id];
+    if(famOwned(id)){S.fam=S.fam===id?null:id;save();A.sClick();buildShop();return}
+    if(F.feat||S.echoes<F.cost){A.sNo();fb.classList.add('shake');setTimeout(()=>fb.classList.remove('shake'),400);return}S.echoes-=F.cost;S.fams[id]=1;S.fam=id;save();A.sBuy();buildShop();return}
+  const tb=e.target.closest('[data-trail]');if(tb){A.init();const id=tb.dataset.trail,T=TRAILS[id];
     if(trailOwned(id)){S.trail=id;save();A.sClick();buildShop();return}
     if(T.feat||S.echoes<T.cost){A.sNo();tb.classList.add('shake');setTimeout(()=>tb.classList.remove('shake'),400);return}
     S.echoes-=T.cost;S.trails[id]=1;S.trail=id;save();A.sBuy();if(Object.keys(TRAILS).filter(trailOwned).length>=5)ach('wardrobe');buildShop();return}
@@ -1726,11 +1817,12 @@ $('#shopList').addEventListener('click',e=>{const tb=e.target.closest('[data-tra
 function buildAchs(){const got=ACH.filter(a=>S.ach[a.id]).length;$('#achSub').textContent=`${got} of ${ACH.length} feats earned`;
   $('#achList').innerHTML=ACH.map(a=>`<div class="lrow ${S.ach[a.id]?'got':'not'}"><div class="i">${S.ach[a.id]?a.i:'?'}</div><div class="m"><b>${a.n}</b><small>${a.d}</small></div><span class="echo" style="font-weight:700;font-size:13px">◈ ${a.rw}</span></div>`).join('');
   $('#lifeStats').innerHTML=[['Songs',S.stats.runs],['Silenced',S.stats.kills],['Hours',(S.stats.time/3600).toFixed(1)],['Hushes',S.stats.bosses],['Best',fmt(S.best.time)],['Echoes',S.lifetime]].map(([k,v])=>`<div class="stat"><b>${v}</b><small>${k}</small></div>`).join('');show('#achs')}
-function buildSettings(){$('#sMusic').value=S.settings.music;$('#sSfx').value=S.settings.sfx;$('#sShake').classList.toggle('on',!!S.settings.shake);$('#sFx').classList.toggle('on',!!S.settings.fx);$('#sNums').classList.toggle('on',!!S.settings.nums);$('#sHap').classList.toggle('on',!!S.settings.haptic);$('#sGuide').classList.toggle('on',!!S.settings.guide);$('#sCon').classList.toggle('on',!!S.settings.contrast);$('#sLat').value=S.settings.lat||0;$('#latV').textContent=(S.settings.lat||0)+' ms';$('#sReset').textContent='Reset';$('#setHap').style.display=('vibrate' in navigator)?'':'none';show('#settings')}
+function buildSettings(){$('#sMusic').value=S.settings.music;$('#sSfx').value=S.settings.sfx;$('#sShake').classList.toggle('on',!!S.settings.shake);$('#sFx').classList.toggle('on',!!S.settings.fx);$('#sNums').classList.toggle('on',!!S.settings.nums);$('#sHap').classList.toggle('on',!!S.settings.haptic);$('#sGuide').classList.toggle('on',!!S.settings.guide);$('#sCon').classList.toggle('on',!!S.settings.contrast);$('#sLefty').classList.toggle('on',!!S.settings.lefty);$('#sBig').classList.toggle('on',!!S.settings.bigbtn);$('#sSaver').classList.toggle('on',!!S.settings.saver);$('#sLat').value=S.settings.lat||0;$('#latV').textContent=(S.settings.lat||0)+' ms';$('#sReset').textContent='Reset';$('#setHap').style.display=('vibrate' in navigator)?'':'none';show('#settings')}
 $('#sLat').addEventListener('input',e=>{S.settings.lat=+e.target.value;$('#latV').textContent=S.settings.lat+' ms';save()});
 $('#sMusic').addEventListener('input',e=>{S.settings.music=+e.target.value;A.setVol();save()});
 $('#sSfx').addEventListener('input',e=>{S.settings.sfx=+e.target.value;A.setVol();save();A.sClick()});
-for(const [id,k] of [['#sShake','shake'],['#sFx','fx'],['#sNums','nums'],['#sHap','haptic'],['#sGuide','guide'],['#sCon','contrast']])$(id).addEventListener('click',()=>{S.settings[k]=S.settings[k]?0:1;save();buildSettings();A.sClick()});
+for(const [id,k] of [['#sShake','shake'],['#sFx','fx'],['#sNums','nums'],['#sHap','haptic'],['#sGuide','guide'],['#sCon','contrast'],['#sLefty','lefty'],['#sBig','bigbtn'],['#sSaver','saver']])$(id).addEventListener('click',()=>{S.settings[k]=S.settings[k]?0:1;save();applyPrefs();buildSettings();A.sClick()});
+function applyPrefs(){document.body.classList.toggle('lefty',!!S.settings.lefty);document.body.classList.toggle('bigbtn',!!S.settings.bigbtn);resize()}
 $('#sReset').addEventListener('click',e=>{const b=e.currentTarget;if(b.textContent!=='Tap again to erase'){b.textContent='Tap again to erase';return}const st=S.settings;S=defSave();S.settings=st;save();b.textContent='Erased';A.sNo()});
 
 /* actions */
@@ -1739,10 +1831,11 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
   switch(act){
     case'select':openSelect(null);break;
     case'score':buildScore();break;
+    case'event':{const ev=evActive();if(ev&&ev.song){S.lastSong=ev.song;save();buildBg()}openSelect(null);break}
     case'selback':if(selStage!=null)buildScore();else goTitle();break;
     case'next':if(G&&G.stage&&STAGES[G.stageIdx+1]&&stageOpen(G.stageIdx+1)){const ni=G.stageIdx+1;startRun({singer:S.singers[lastOpt.singer]?lastOpt.singer:'lumi',song:ACTS[STAGES[ni].a].song,stage:ni})}break;
     case'title':goTitle();break;
-    case'start':if(!S.singers[S.lastSinger])S.lastSinger='lumi';if(selStage!=null){startRun({singer:S.lastSinger,song:ACTS[STAGES[selStage].a].song,stage:selStage});break}if(!S.songs[S.lastSong])S.lastSong='dawn';startRun({singer:S.lastSinger,song:S.lastSong,dyn:Math.min(S.dynSel[S.lastSong]||0,S.dyn[S.lastSong]||0)});break;
+    case'start':if(!S.singers[S.lastSinger])S.lastSinger='lumi';if(selStage!=null){startRun({singer:S.lastSinger,song:ACTS[STAGES[selStage].a].song,stage:selStage});break}if(!songOpen(S.lastSong))S.lastSong='dawn';startRun({singer:S.lastSinger,song:S.lastSong,dyn:Math.min(S.dynSel[S.lastSong]||0,S.dyn[S.lastSong]||0)});break;
     case'daily':startRun(dailyCfg());break;
     case'shop':prevScreen=cur;buildShop();break;
     case'achs':buildAchs();break;
@@ -1782,7 +1875,7 @@ addEventListener('blur',()=>{for(const k in keys)keys[k]=false});
 document.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ---------------- main loop ---------------- */
-let last=performance.now();
+let last=performance.now(),frameN=0;
 function frame(ts){
   let dt=Math.min(.05,(ts-last)/1000);last=ts;if(dt<0)dt=0;
   Seq.tick();
@@ -1796,10 +1889,10 @@ function frame(ts){
   flashA=Math.max(0,flashA-dt*2.2);$('#flash').style.opacity=flashA*.6;
   menuT+=dt;
   if(G&&state==='play')update(dt*timeScale);
-  render(dt);
+  frameN=(frameN||0)+1;if(!S.settings.saver||frameN%2===0)render(dt);
   if(G&&state!=='over')hud();
   requestAnimationFrame(frame)}
-resize();goTitle();Seq.start();requestAnimationFrame(frame);
+applyPrefs();goTitle();Seq.start();requestAnimationFrame(frame);
 const VER='3.0';
 if(S.stats.runs>0&&S.ver!==VER)setTimeout(()=>toast('✦','HUSH '+VER+' — Symphony','The Score campaign · Singer Solos · Call & Response · Phantoms, Leeches, Crystals · song themes'),1200);
 S.ver=VER;save();
