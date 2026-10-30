@@ -1,5 +1,33 @@
 # Changelog
 
+## 7.0 — "Nocturne"
+The Hush fights back. A first run on fresh data reached level 120 and 20 minutes of Endless without moving or using Crescendo. That can't happen anymore: standing still is now the most dangerous thing you can do.
+
+**Rest Marks**
+- From 1:30, the Hush aims at where you stand. A red ring fills over one bar and lands on the downbeat for a share of your **max health**, so no build can simply out-tank it.
+- They come every 4 bars, then every 2 after 4:00, then every bar in pairs after 7:00 (one aimed at where you are, one at where you're heading). Endless and boss fights add more.
+- **Riposte**: dash through a mark right on the beat to answer with a shockwave, Crescendo charge and a flash.
+- A one-time banner on the first mark of each run teaches the rule: keep moving.
+
+**New threats**
+- **Cantor** (from 5:00): a distant sniper that keeps 380–460 away, paints a red sight line, then fires one fast note on the downbeat. Step off the line.
+- **Marks of Silence** (Endless): every two minutes a permanent curse joins the song. The eight curses are *Echoing Rests, Leaden, Hunger, Choir of Hush, Glass Bones, Eclipse, Quickening* and *Barrage*. They show in the HUD and the pause screen.
+- **Endless bites**: every hit deals at least 5% of max health, rising by 0.8% each minute of the encore.
+
+**New picks**
+- Motif **Anticipation**: Rest Marks warn you half a bar earlier, and dodging one heals.
+- Motif **Sidestep**: dodging a mark gives a burst of speed and Crescendo.
+- Dissonance **Tempest**: twice the Rest Marks for +50% experience and Echoes.
+
+**Progression**
+- Experience needed climbs faster past level 70.
+- New feats: *Riposte*, *Dancer* (50 dodges in a song), *Standing Ovation* (10 minutes of Endless), *Marked* (survive four curses).
+- New Concert Hall record: **Longest Encore**.
+- Songbook entries for Cantors and Rest Marks, plus a How to Play section.
+
+**Testing**
+- Every balance pass now includes a player who stands still and a "fortress" player who only Rest Marks can hurt. The fortress player falls about 45 seconds after the marks begin. Moving autopilots restore the song but fall 4–7 minutes into Endless.
+
 ## 6.0 — "Encore"
 More life, more juice, more surprises — and a full code scrub.
 
