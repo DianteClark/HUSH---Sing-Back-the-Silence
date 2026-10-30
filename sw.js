@@ -12,7 +12,7 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   if (req.mode === 'navigate') {
     // network first so new versions arrive; fall back to the cached game offline
-    e.respondWith(fetch(req).then(r => { const cp = r.clone(); caches.open(VERSION).then(c => c.put('./index.html', cp)); return r; })
+    e.respondWith(fetch(req).then(r => { if (r.ok && !r.redirected && r.type === 'basic') { const cp = r.clone(); caches.open(VERSION).then(c => c.put('./index.html', cp)); } return r; })
       .catch(() => caches.match('./index.html')));
     return;
   }

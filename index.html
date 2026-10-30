@@ -137,8 +137,8 @@ box-shadow:0 10px 40px rgba(0,0,0,.5),inset 0 0 40px hsla(var(--h),90%,50%,.08);
 #bossbar span{font-family:Unbounded,system-ui,sans-serif;font-size:11px;letter-spacing:.4em;color:#ff7aa8}
 #bossbar div{height:8px;border-radius:5px;background:rgba(0,0,0,.6);border:1px solid rgba(255,120,170,.4);overflow:hidden;margin-top:4px}
 #bossbar i{display:block;height:100%;background:linear-gradient(90deg,#7a2cff,#ff3d8b);box-shadow:0 0 12px #ff3d8b;transition:width .2s}
-#pausebtn{position:fixed;top:calc(12px + var(--st));right:calc(10px + var(--sr));width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);pointer-events:auto;font-weight:800;font-size:13px;letter-spacing:1px}
-#cresbtn{position:fixed;right:calc(16px + var(--sr));bottom:calc(18px + var(--sb));width:76px;height:76px;border-radius:50%;pointer-events:auto;background:rgba(10,6,24,.65);border:1px solid rgba(255,255,255,.12);display:grid;place-items:center;transition:transform .15s}
+#pausebtn{touch-action:none;position:fixed;top:calc(12px + var(--st));right:calc(10px + var(--sr));width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);pointer-events:auto;font-weight:800;font-size:13px;letter-spacing:1px}
+#cresbtn{touch-action:none;position:fixed;right:calc(16px + var(--sr));bottom:calc(18px + var(--sb));width:76px;height:76px;border-radius:50%;pointer-events:auto;background:rgba(10,6,24,.65);border:1px solid rgba(255,255,255,.12);display:grid;place-items:center;transition:transform .15s}
 #cresbtn svg{position:absolute;inset:-4px;width:84px;height:84px;transform:rotate(-90deg)}
 #cresbtn circle{fill:none;stroke-width:4}
 #cresbtn .bg{stroke:rgba(255,255,255,.1)}
@@ -190,7 +190,7 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
 .build .ch{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:12px;background:var(--panel);border:1px solid hsla(var(--h),100%,65%,.35);font-size:12px}
 .build .ch i{font-style:normal;color:hsl(var(--h),100%,74%);font-size:14px}
 .build .ch small{color:var(--dim)}
-.btn:has(.sub){flex-direction:column;gap:2px}
+.btn:has(.sub),.btn.bsub{flex-direction:column;gap:2px}
 .dyns{display:flex;gap:6px;flex-wrap:wrap}
 .dyn{min-width:46px;padding:10px 8px;border-radius:12px;background:var(--panel);border:1px solid rgba(255,255,255,.12);font-family:Unbounded,system-ui,sans-serif;font-weight:700;font-size:13px;font-style:italic}
 .dyn.sel{border-color:hsl(var(--a),100%,65%);box-shadow:0 0 16px hsla(var(--a),100%,60%,.4);color:hsl(var(--a),100%,76%)}
@@ -494,12 +494,13 @@ const fmt=s=>{s=Math.floor(s);return Math.floor(s/60)+':'+String(s%60).padStart(
 
 /* ---------------- save ---------------- */
 const SAVE_KEY='hush_save_v1';
-const defSave=()=>({echoes:0,lifetime:0,meta:{},singers:{lumi:1},songs:{dawn:1},ach:{},best:{time:0,kills:0},songBest:{},daily:{},
+const defSave=()=>({fams:{},fam:null,echoes:0,lifetime:0,meta:{},singers:{lumi:1},songs:{dawn:1},ach:{},best:{time:0,kills:0},songBest:{},daily:{},
   stats:{runs:0,kills:0,time:0,bosses:0,restored:0,quests:0},settings:{music:.8,sfx:.8,shake:1,fx:1,nums:1,haptic:1,guide:1,lat:0,contrast:0,lefty:0,bigbtn:0,saver:0},lastSinger:'lumi',lastSong:'dawn',seenTip:0,seen:{e:{},d:{},m:{},x:{}},dailyStreak:0,lastDaily:0,dyn:{},dynSel:{},q:null,camp:{},gift:{day:0,n:0},hist:[],rec:{},weekly:{},frag:{},studio:{tempo:0,spawn:1,hp:1,lv:1,band:0,immortal:0},trails:{star:1},trail:'star',mast:{}});
 let S;
 try{const raw=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');const d=defSave();S=Object.assign(d,raw);
-  for(const k of ['settings','stats','best','meta','singers','songs','ach','songBest','daily','dyn','dynSel','trails','mast','camp','rec','weekly','frag','studio','gift'])S[k]=Object.assign(d[k]||{},defSave()[k],raw[k]||{});}
+  for(const k of ['settings','stats','best','meta','singers','songs','ach','songBest','daily','dyn','dynSel','trails','mast','camp','rec','weekly','frag','studio','gift','fams'])S[k]=Object.assign(d[k]||{},defSave()[k],raw[k]||{});}
 catch(e){S=defSave()}
+if(!S.lastSinger||typeof S.lastSinger!=='string')S.lastSinger='lumi';
 S.seen=Object.assign({e:{},d:{},m:{}},S.seen||{});S.seen.e=S.seen.e||{};S.seen.d=S.seen.d||{};S.seen.m=S.seen.m||{};S.seen.x=S.seen.x||{};S.fams=S.fams||{};
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S))}catch(e){}}
 const meta=id=>S.meta[id]||0;
@@ -527,8 +528,8 @@ const VOICES={
   gliss:{name:'Glissando',icon:'∿',h:215,d:['A beam of sound sweeps around you, once every bar.','+25% length.','A second beam joins, opposite the first.','+35% damage.','A third beam — and the sweep speeds up by half.']},
   legato:{name:'Legato',icon:'⌒',h:175,d:['Your path leaves a ribbon of sound that burns any Hushling crossing it.','+40% longer ribbon.','+40% damage.','A wider ribbon that slows what it touches.','+50% damage, and the ribbon lingers longer still.']},
   crash:{name:'Crash',icon:'✲',h:330,d:['Every two bars, a cymbal crash stuns every Hushling nearby.','+20% radius and damage.','Crashes on every bar.','Stuns last much longer.','A colossal crash. +60% damage.']},
-  harp:{name:'Harp',icon:'≡',h:58,d:['A fan of piercing harp strings flies the way you face, on every eighth note.','+1 string.','Strings pierce one more foe.','+2 strings.','Strings fly behind you too.']},
-  organ:{name:'Organ',icon:'▥',h:12,d:['Every bar, a pillar of sound erupts beneath the Hush.','+1 pillar.','Also erupts mid-bar.','+1 pillar, +40% damage.','Cathedral-sized pillars.']},
+  harp:{name:'Harp',icon:'≡',h:58,d:['A fan of piercing harp strings flies the way you face, on the off-beats.','+1 string.','Plays twice as often, and strings pierce one more foe.','+1 string, +15% damage.','Strings fly behind you too.']},
+  organ:{name:'Organ',icon:'▥',h:12,d:['Every bar, a pillar of sound erupts beneath the Hush.','+1 pillar.','Also erupts mid-bar.','+1 pillar, +30% damage.','Cathedral-sized pillars.']},
   echo:{name:'Echo',icon:'✺',h:95,d:['Leave notes behind that burst half a bar later.','+radius.','Leaves notes twice as often.','+40% damage.','+radius, +20% damage.']},
 };
 const HARM={
@@ -616,7 +617,7 @@ function stageHud(){const [k,n]=G.stage.g,v=goalVal();if(k==='survive')return'SU
 function stageClear(){G.stageDone=true;P.inv=99;const song=SONGS[G.song];banner('MOVEMENT COMPLETE',G.stage.n);A.sBossDie(chordFreqs(3));flash(.6,'#fff');zoomP=.1;timeScale=.3;buzz([40,30,120]);
   for(const e of G.enemies)if(!e.dead&&e.type!=='boss'){e.dead=true;burst(e.x,e.y,song.a,4,160,2.5,.5,false)}G.ebul.length=0;G.darkTarget=0;
   for(let i=0;i<4;i++)G.rings.push({x:P.x,y:P.y,r:10,R:260+i*120,life:.7+i*.15,max:.7+i*.15,h:i%2?song.a:song.b,w:7});
-  setTimeout(()=>{if(G&&G.stageDone&&state!=='over'){state='over';G.dead=true;hideAll();showOver()}},2300)}
+  {const g0=G;setTimeout(()=>{if(G===g0&&G.stageDone&&state!=='over'){state='over';G.dead=true;hideAll();showOver()}},2300)}}
 const TIERS=[25,60,120,200,320],TIER_N=['piano','mezzo','forte','fortissimo','tutti'];
 const tierOf=c=>{let t=0;for(const x of TIERS)if(c>=x)t++;return t};
 const QUESTS=[
@@ -839,7 +840,7 @@ const MODS=[
   {id:'lucky',name:'Overtones',d:'+25% critical chance.',ap:G=>{G.mod.crit=.25}},
   {id:'quick',name:'Prodigy',d:'Begin with two voices.',ap:G=>{G.bonusVoice=1}},
   {id:'giants',name:'Giants',d:'Fewer Hushlings — larger and far tougher.',ap:G=>{G.mod.spawn*=.6;G.mod.ehp*=2;G.giant=1.4}},
-  {id:'nightfall',name:'Nightfall',d:'The whole song is sung in the dark.',ap:G=>{G.darkTarget=G.dark=.85}},
+  {id:'nightfall',name:'Nightfall',d:'The whole song is sung in the dark.',ap:G=>{G.darkTarget=G.dark=G.darkBase=.85}},
   {id:'rich',name:'Golden Age',d:'A Golden Note every 40 seconds.',ap:G=>{G.goldEvery=40;G.nextGold=20}},
   {id:'maestro',name:'Maestro',d:'Begin with three voices.',ap:G=>{G.bonusVoice=2}},
 ];
@@ -958,6 +959,7 @@ const Seq={bpm:84,step:0,next:0,running:false,events:[],mode:'menu',
     if(this.events.length>96)this.events.splice(0,this.events.length-32)}};
 setInterval(()=>Seq.tick(),25);
 
+function fixSave(){if(!SONGS[S.lastSong])S.lastSong='dawn';if(!SINGERS.some(x=>x.id===S.lastSinger))S.lastSinger='lumi';if(S.fam&&!FAMS[S.fam])S.fam=null;if(S.trail&&!TRAILS[S.trail])S.trail='star'}
 function curSong(){return SONGS[G?G.song:S.lastSong]||SONGS.dawn}
 function musicStep(step,t){
   if(!A.ctx)return;
@@ -985,7 +987,7 @@ function musicStep(step,t){
   else if(s===12&&cyc===31){for(let i=0;i<4;i++)A.snare(t+i*six,.25+i*.15)}
   if(cyc===0&&s===0&&bar>0&&G.T>40)A.crash(t,.38);
   if(bar%8===7&&s>=12&&!brk)A.tom(t,N(deg,0)*(1+(s-12)*.22),.3);
-  const hp2=owns('harp');if(hp2&&s%2===0)A.harp(t,N(deg+[0,2,4,7,9,11,14,11][(s>>1)%8],2),.035);
+  const hp2=owns('harp');if(hp2&&(hp2.lvl>=5?s%2===0:hp2.lvl>=3?s%2===0&&s%4!==1:s%4===2))A.harp(t,N(deg+[0,2,4,7,9,11,14,11][(s>>1)%8],2),.035);
   const og=owns('organ');if(og&&(s===0||(og.lvl>=3&&s===8)))A.organ(t,[N(deg,1),N(deg+2,1),N(deg+4,1)],beat*1.6,.03);
   const ch=owns('chain');if(ch&&(s===4||s===12||(ch.lvl>=4&&s===14)))A.snare(t,s===14?.45:.85);
   const dr=owns('drone');
@@ -1053,18 +1055,19 @@ function newGame(opt){
     endless:false,won:false,bonusEchoes:0,arpAng:0,orbA:0,newAch:[],arpIdx:0,noteK:0,chimeK:0,dead:false,deadT:0,bonusVoice:0,dmgTaken:0,glA:0,beams:null,orbs:null,tl:[],tlK:0,tlT:0,nextGold:(70+R()*60)/(1+meta('golden')*.25),gold:null,veils:0,duets:{},perfects:0,perfStreak:0,maxPerf:0,motifs:{},chests:[],pendingMotif:0,cardMode:'level',graceT:0,fermataT:0,chestsOpened:0,elitesK:0,condK:0,golds:0,mothK:0,rib:[],ribT:0,stunMax:0,step:0,call:null,callsWon:0,nextCall:140,zones:[],nextZone:300,nextCrystal:90,crystalK:0,phantomK:0,leechOff:0,solo:null,diss:{},pillars:[],rays:[],nextMoment:110,accelT:0,rainT:0,champsK:0,fires:[],tideMag:0,F:null,mockT:0,dark:0,darkTarget:0,stormT:0,bossSpawned:0,normalBoss:0,events:{270:'circle',420:'storm'}};
   if(opt.mod)opt.mod.ap(G);
   if(opt.mods){for(const m of opt.mods)m.ap(G);G.weekly=opt.weekly;G.modName=opt.mods.map(m=>m.name).join(' · ')}
-  if(opt.recital){G.recital=true;G.recIdx=0;G.events={};G.nextBoss=6;G.nextCall=1e9;G.mod.spawn*=.6;G.t0=240;G.pending+=9}
-  if(opt.studio){const c=opt.studio;G.studio=c;G.bpmBonus+=c.tempo;G.mod.spawn*=c.spawn;G.mod.ehp*=c.hp;G.pending+=c.lv-1;G.immortal=!!c.immortal}
+  if(opt.recital){G.recital=true;G.recIdx=0;G.events={};G.nextBoss=6;G.nextCall=1e9;G.mod.spawn*=.6;G.t0=240;G.startLv=9}
+  if(opt.studio){const c=opt.studio;G.studio=c;G.bpmBonus+=c.tempo;G.mod.spawn*=c.spawn;G.mod.ehp*=c.hp;G.startLv=c.lv-1;G.immortal=!!c.immortal}
   const dl=G.dyn=opt.daily?0:(opt.dyn||0);G.eliteMul=1;G.bspd=1;G.bossHp=1;G.heal=1;G.espd=1;G.storms=0;G.tier=0;
   if(opt.stage!=null){const st=STAGES[opt.stage],r=st.r;G.stage=st;G.stageIdx=opt.stage;G.t0=r.t0||0;G.only=r.only||null;G.mod.spawn*=r.spawn||1;G.mod.xp*=2.2;G.eliteMul=r.elite||1;G.events={};
-    G.nextBoss=r.boss?r.boss[1]:1e9;if(r.boss)G.normalBoss=r.boss[0]%3;G.goldEvery=r.gold||0;G.nextGold=r.gold?8:1e9;if(r.dark)G.darkTarget=G.dark=r.dark;G.zonesOn=!!r.zones;if(r.zones)G.nextZone=6;
-    G.crystalsOn=!!r.crystals;if(r.crystals)G.nextCrystal=3;G.callsOn=!!r.calls;G.nextCall=r.calls?8:1e9;if(r.bpm)G.bpmBonus+=r.bpm;G.pending+=(r.lv||(1+Math.round((r.t0||0)/40)))-1;if(r.motif)G.pendingMotif++}
+    G.nextBoss=r.boss?r.boss[1]:1e9;if(r.boss)G.normalBoss=r.boss[0]%3;G.goldEvery=r.gold||0;G.nextGold=r.gold?8:1e9;if(r.dark)G.darkTarget=G.dark=G.darkBase=r.dark;G.zonesOn=!!r.zones;if(r.zones)G.nextZone=6;
+    G.crystalsOn=!!r.crystals;if(r.crystals)G.nextCrystal=3;G.callsOn=!!r.calls;G.nextCall=r.calls?8:1e9;if(r.bpm)G.bpmBonus+=r.bpm;G.startLv=(r.lv||(1+Math.round((r.t0||0)/40)))-1;if(r.motif)G.pendingMotif++}
   if(dl>=1)G.mod.ehp*=1.25;if(dl>=2)G.eliteMul=2;if(dl>=3)G.bspd=1.2;if(dl>=4)G.bossHp=1.5;if(dl>=5)G.heal=.5;if(dl>=6)G.espd=1.15;if(dl>=7)G.mod.spawn*=1.5;if(dl>=8){G.storms=1;G.nextStorm=180}
   if(G.bonusVoice){const ids=Object.keys(VOICES).filter(v=>v!==singer.voice);for(let i=0;i<G.bonusVoice&&ids.length;i++)G.voices.push({id:ids.splice(Math.floor(R()*ids.length),1)[0],lvl:1})}
   if(G.studio&&G.studio.band){const ids=Object.keys(VOICES).filter(v=>v!==singer.voice);while(G.voices.length<6&&ids.length)G.voices.push({id:ids.splice(Math.floor(R()*ids.length),1)[0],lvl:3});G.voices[0].lvl=3}
   P={x:0,y:0,vx:0,vy:0,r:11,hp:100,maxHp:100,inv:0,face:0,trail:0,dash:0,dashCd:0,dvx:0,dvy:0,dashFx:0};
   if(S.fam&&FAMS[S.fam]&&famOwned(S.fam)){G.F={id:S.fam,x:0,y:0,t:0,cd:0,goal:null};ach('fam')}
   if(meta('prelude')){const ks=Object.keys(MOTIFS).filter(k=>k!=='encoreseal');const k=ks[Math.floor(R()*ks.length)];G.motifs[k]=1;S.seen.m[k]=1}
+  if(G.startLv)grantLevels(G.startLv);
   recalc();P.hp=P.maxHp;cam.x=0;cam.y=0;A.pend=0;A.chime=0;
   Seq.mode='run';
   buildBg();
@@ -1104,9 +1107,9 @@ function nearestN(x,y,n,maxD,excl){const out=[];const md=maxD*maxD;
   return out.map(o=>o[1])}
 
 /* ---------------- enemies ---------------- */
-function enemyScale(){const ET=G.T+(G.t0||0);return(1+ET/60*.3+(G.endless?Math.pow(Math.max(0,G.T-(G.wonAt||600))/60,1.6)*.7:0))*SONGS[G.song].diff*G.mod.ehp}
+function enemyScale(){const ET=G.T+(G.t0||0);return(1+ET/60*.3+(G.endless?Math.pow(Math.max(0,G.T-(G.wonAt||600))/60,1.75)*.85:0))*SONGS[G.song].diff*G.mod.ehp}
 function makeEnemy(type,x,y,elite){const d=EN[type],sc=enemyScale();
-  const e={type,x,y,vx:0,vy:0,kbx:0,kby:0,r:d.r*(elite?1.45:1),hp:d.hp*sc*(elite?5:1),spd:d.spd*(1+Math.min(.35,(G.T+(G.t0||0))/600*.25))*(elite?.9:1),dmg:d.dmg*(elite?1.5:1)*(1+Math.min(1,(G.T+(G.t0||0))/600*.5))*(G.endless?1+Math.max(0,G.T-(G.wonAt||600))/120*.5:1),
+  const e={type,x,y,vx:0,vy:0,kbx:0,kby:0,r:d.r*(elite?1.45:1),hp:d.hp*sc*(elite?5:1),spd:d.spd*(1+Math.min(.35,(G.T+(G.t0||0))/600*.25))*(elite?.9:1),dmg:d.dmg*(elite?1.5:1)*(1+Math.min(1,(G.T+(G.t0||0))/600*.5))*(G.endless?1+Math.max(0,G.T-(G.wonAt||600))/120*.7:1),
     xp:d.xp,elite:!!elite,t:(S.seen.e[type]=1,R()*10),flash:0,orbCd:0,slow:0,dead:false,charge:0,dash:0,ang:R()*TAU,shield:type==='veil',stun:0,haste:0,ph:R()*TAU,solid:true};
   if(G.giant&&type!=='boss'&&type!=='crystal'&&type!=='gold')e.r*=G.giant;
   e.maxHp=e.hp;G.enemies.push(e);return e}
@@ -1121,6 +1124,7 @@ function spawnRandom(){const T=G.T+(G.t0||0);
     G.spawnAcc-=2;return}
   if(type==='moth'){for(let i=0;i<6;i++){const e=makeEnemy('moth',x+rr(-30,30),y+rr(-30,30),false);e.ph=i*1.05}G.spawnAcc-=3;return}
   const ne=makeEnemy(type,x,y,elite);if(elite&&T>120&&R()<.6)giveAffix(ne,1)}
+function grantLevels(n){if(n<=0)return;G.pending+=n;G.level+=n;G.need=xpNeed(G.level)}
 function giveAffix(e,n){const keys=Object.keys(AFFIX).filter(k=>!e.aff||!e.aff.includes(k));e.aff=e.aff||[];for(let i=0;i<n&&keys.length;i++){const k=keys.splice(Math.floor(R()*keys.length),1)[0];e.aff.push(k);
     if(k==='swift')e.spd*=1.6;if(k==='bulwark'){e.r*=1.35;e.hp*=2;e.maxHp*=2}if(k==='veiled')e.shield=true}}
 function spawnChampion(){const types=['lurch','wisp','bloat','veil','cond'].filter(t=>G.T+(G.t0||0)>60||t==='lurch');const [x,y]=spawnPos(-160);const e=makeEnemy(types[Math.floor(R()*types.length)],x,y,true);
@@ -1173,9 +1177,9 @@ function kill(e){e.dead=true;G.kills++;G.combo++;G.comboT=2.8;if(G.combo>G.maxCo
   if(S.settings.fx&&Math.random()<.16)G.parts.push({x:e.x,y:e.y,vx:rnd(-30,30),vy:rnd(-90,-40),life:.9,max:.9,s:4,h:song.a,dark:false,note:1});
   if(e.type==='boss')bossDie(e);
   if(G.stage&&!G.stageDone&&goalVal()>=goalNeed())stageClear()}
-function bossDie(e){if(G.stage)G.stageBossDown=true;if(e.form===3)return finalDie(e);G.boss=null;G.bossKills++;S.stats.bosses++;$('#bossbar').classList.remove('on');ach('boss');if(G.bossKills>=3)ach('boss3');
+function bossDie(e){if(G.stage)G.stageBossDown=true;if(e.form===3)return finalDie(e);G.boss=null;G.bossKills++;if(!G.studio)S.stats.bosses++;$('#bossbar').classList.remove('on');ach('boss');if(G.bossKills>=3)ach('boss3');
   const song=SONGS[G.song];
-  for(let i=0;i<5;i++)setTimeout(()=>{if(G)burst(e.x+rnd(-50,50),e.y+rnd(-50,50),i%2?song.a:song.b,40,380,4,1.1,false)},i*90);
+  for(let i=0;i<5;i++){const g0=G;setTimeout(()=>{if(G===g0)burst(e.x+rnd(-50,50),e.y+rnd(-50,50),i%2?song.a:song.b,40,380,4,1.1,false)},i*90)}
   burst(e.x,e.y,0,60,300,5,1.2,true);
   addRays(e.x,e.y,song.a,1.2);
   for(let i=0;i<4;i++)G.rings.push({x:e.x,y:e.y,r:20,R:300+i*120,life:.6+i*.15,max:.6+i*.15,h:i%2?song.a:song.b,w:6});
@@ -1185,20 +1189,20 @@ function bossDie(e){if(G.stage)G.stageBossDown=true;if(e.form===3)return finalDi
   G.key+=2;if(G.key>7)G.key-=12;
   A.sBossDie(chordFreqs(3));
   if(G.recital)G.nextBoss=G.T+5;
-  setTimeout(()=>{if(!G||G.dead||G.stageDone)return;banner('MODULATION','the song rises a step');G.pending++},900);
+  {const g0=G;setTimeout(()=>{if(G!==g0||G.dead||G.stageDone)return;banner('MODULATION','the song rises a step');G.pending++},900)}
   recalc()}
-function finalDie(e){addRays(e.x,e.y,SONGS[G.song].a,2);G.boss=null;G.bossKills++;S.stats.bosses++;$('#bossbar').classList.remove('on');const song=SONGS[G.song];
+function finalDie(e){addRays(e.x,e.y,SONGS[G.song].a,2);G.boss=null;G.bossKills++;if(!G.studio)S.stats.bosses++;$('#bossbar').classList.remove('on');const song=SONGS[G.song];
   G.darkTarget=0;G.dark=0;G.ebul.length=0;timeScale=.12;shake(30);flash(1,'#fff');zoomP=.16;buzz([80,60,200]);A.sBossDie(chordFreqs(3));A.sCres(chordFreqs(3));
-  for(let i=0;i<8;i++)setTimeout(()=>{if(G)burst(e.x+rnd(-80,80),e.y+rnd(-80,80),i%2?song.a:song.b,50,420,4.5,1.3,false)},i*110);
+  for(let i=0;i<8;i++){const g0=G;setTimeout(()=>{if(G===g0)burst(e.x+rnd(-80,80),e.y+rnd(-80,80),i%2?song.a:song.b,50,420,4.5,1.3,false)},i*110)}
   for(let i=0;i<6;i++)G.rings.push({x:e.x,y:e.y,r:20,R:300+i*160,life:.8+i*.18,max:.8+i*.18,h:i%2?song.a:song.b,w:8});
   for(const o of G.enemies)if(!o.dead&&o.type!=='boss'){o.dead=true;burst(o.x,o.y,song.a,4,140,2.5,.5,false)}
   for(let i=0;i<10;i++)dropGem(e.x+rnd(-60,60),e.y+rnd(-60,60),20);dropChest(e.x,e.y);G.bonusEchoes+=120;
-  if(G.stage){}else if(G.recital){G.stageDone=true;P.inv=99;G.recTime=G.T;ach('recital');if(G.T<480)ach('recital8');banner('RECITAL COMPLETE',fmt(G.T));setTimeout(()=>{if(G&&state!=='over'){state='over';G.dead=true;hideAll();showOver()}},2600)}else if(!G.won){G.won=true;S.stats.restored=(S.stats.restored||0)+1;ach('t10');if(G.song==='dream')ach('dream');G.wonAt=G.T;
-    setTimeout(()=>{if(G&&!G.dead&&state==='play')openWin()},2600)}
+  if(G.stage){}else if(G.recital){G.stageDone=true;P.inv=99;G.recTime=G.T;ach('recital');if(G.T<480)ach('recital8');banner('RECITAL COMPLETE',fmt(G.T));{const g0=G;setTimeout(()=>{if(G===g0&&state!=='over'){state='over';G.dead=true;hideAll();showOver()}},2600)}}else if(!G.won){G.won=true;if(!G.studio)S.stats.restored=(S.stats.restored||0)+1;ach('t10');if(G.song==='dream')ach('dream');G.wonAt=G.T;
+    {const g0=G;setTimeout(()=>{if(G===g0&&!G.dead)G.winPending=true},2600)}}
   else banner('SILENCE BROKEN','again');recalc()}
 function dropGem(x,y,v){if(G.gems.length>360){let best=G.gems[0],bd=1e18;for(const gm of G.gems){const d=(gm.x-x)**2+(gm.y-y)**2;if(d<bd){bd=d;best=gm}}best.v+=v;return}
   const a=R()*TAU,s=rr(30,110);G.gems.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,v,m:false,t:R()*TAU})}
-function hurt(dmg,sx,sy){if(P.inv>0||G.dead)return;if(G.diss.greed)dmg*=1.25;
+function hurt(dmg,sx,sy){if(P.inv>0||G.dead)return;if(G.immortal){P.hp=P.maxHp;P.inv=.4;flash(.15,'#ff2d6b');return}if(G.diss.greed)dmg*=1.25;
   if(G.motifs.grace&&G.graceT<=0){G.graceT=20;P.inv=.7;flash(.25,'#9ff0e0');A.bell(A.now(),1760,.08,'s');addText(P.x,P.y-30,'grace',170,13,.8);G.rings.push({x:P.x,y:P.y,r:P.r,R:70,life:.4,max:.4,h:170,w:5});return}P.hp-=dmg;P.inv=.75;G.lastHit=G.T;G.dmgTaken+=dmg;shake(9);buzz(45);flash(.25,'#ff2d6b');A.sHurt();
   if(G.combo>10)addText(P.x,P.y-30,'chord broken',340,13,.9);G.combo=Math.floor(G.combo/2);
   burst(P.x,P.y,340,14,220,3,.5,false);
@@ -1283,9 +1287,9 @@ function onStep(step){
       for(let i=0;i<3;i++)G.rings.push({x:P.x,y:P.y,r:P.r,R:Rr*(1-i*.15),life:.55+i*.08,max:.55+i*.08,h:i===1?50:V.h,w:8-i*2});flash(.12,'#fff');shake(4);zoomP=Math.max(zoomP,.025);
       if(fo){const tl=vl('thump')||1,tR=(80+16*tl)*P.area*1.3,td=(12+6*tl)*2*P.dmg;for(let i=0;i<3;i++)G.rings.push({x:P.x,y:P.y,r:P.r,R:tR*(1+i*.35),life:.4+i*.12,max:.4+i*.12,h:VOICES.thump.h,w:7});inRadius(P.x,P.y,tR*1.7,(e,dx,dy)=>hit(e,td,dx,dy,300))}
       break}
-    case'harp':{if(s%2)break;const n=2+(l>=2)+(l>=4?2:0),dmg=(4+2.2*l)*P.dmg*(l>=4?1.2:1),a0=P.face,dirs=l>=5?[0,Math.PI]:[0];
+    case'harp':{if(l>=3?s%2:s%4!==2)break;const n=2+(l>=2)+(l>=4),dmg=(4+2*l)*P.dmg*(l>=4?1.15:1),a0=P.face,dirs=l>=5?[0,Math.PI]:[0];
       for(const d0 of dirs)for(let i=0;i<n;i++){const a=a0+d0+(i-(n-1)/2)*.13;G.shots.push({x:P.x,y:P.y,px:P.x,py:P.y,vx:Math.cos(a)*600,vy:Math.sin(a)*600,r:3,dmg,pierce:1+(l>=3),life:.75,h:V.h,k:'needle',hits:[]})}break}
-    case'organ':{if(!(s===0||(l>=3&&s===8)))break;const n=1+(l>=2)+(l>=4),dmg=(34+15*l)*(l>=4?1.4:1)*P.dmg,Rr=70*P.area*(l>=5?1.45:1);const tg=nearestN(P.x,P.y,12,420);const used=[];
+    case'organ':{if(!(s===0||(l>=3&&s===8)))break;const n=1+(l>=2)+(l>=4),dmg=(26+11*l)*(l>=4?1.3:1)*P.dmg,Rr=66*P.area*(l>=5?1.4:1);const tg=nearestN(P.x,P.y,12,420);const used=[];
       for(const e of tg){if(used.length>=n)break;if(used.some(u=>(u.x-e.x)**2+(u.y-e.y)**2<(Rr*1.4)**2))continue;used.push({x:e.x,y:e.y})}
       for(const u of used)G.pillars.push({x:u.x,y:u.y,t:0,det:.28,R:Rr,dmg,h:V.h,done:0});break}
     case'echo':{const Rr=(62+10*l)*(l>=2?1.15:1)*(l>=5?1.25:1)*P.area;const dmg=(22+10*l)*(l>=4?1.4:1)*(l>=5?1.2:1)*P.dmg;
@@ -1401,11 +1405,12 @@ function update(dt){
   if(G.stage&&!G.stageDone&&goalVal()>=goalNeed())stageClear();
   for(const t in G.events){if(G.events[t]&&G.T>=+t){const ev=G.events[t];G.events[t]=0;if(ev==='circle')encircle();else startStorm()}}
   if(G.storms&&G.T>=G.nextStorm&&!G.boss&&!G.stormT){G.nextStorm=G.T+180;startStorm()}
-  if(G.stormT>0){G.stormT-=dt;if(G.stormT<=0){G.stormT=0;if(!(G.boss&&G.boss.form===3&&G.boss.phase>=2))G.darkTarget=0;ach('storm');banner('THE STORM PASSES','')}}
+  if(G.stormT>0){G.stormT-=dt;if(G.stormT<=0){G.stormT=0;if(!(G.boss&&G.boss.form===3&&G.boss.phase>=2))G.darkTarget=G.darkBase||0;ach('storm');banner('THE STORM PASSES','')}}
   G.dark=lerp(G.dark,G.darkTarget,1-Math.exp(-dt*1.6));
   if(G.T>=900)ach('t15');
   if(G.stage&&G.stageDone)P.inv=99;
   if(G.immortal)P.hp=P.maxHp;
+  if(G.winPending&&state==='play'&&!G.pending&&!G.pendingMotif){G.winPending=false;openWin();return}
   if(G.T>=180)ach('t3');if(G.song==='abyss'&&G.T>=300)ach('abyss');
   if(G.T-G.lastHit>=90)ach('untouch');
   // combo
@@ -1652,7 +1657,7 @@ function render(dt){
     g.fillText(e.champ?e.champ:e.aff.map(a=>AFFIX[a].n).join(' · '),e.x,y0);if(e.champ){g.fillStyle='rgba(0,0,0,.6)';g.fillRect(e.x-26,y0+5,52,4);g.fillStyle='#ffb347';g.fillRect(e.x-26,y0+5,52*clamp(e.hp/e.maxHp,0,1),4);g.font='600 8px Outfit,system-ui,sans-serif';g.fillStyle='rgba(255,230,170,.7)';g.fillText(e.aff.map(a=>AFFIX[a].n).join(' · '),e.x,y0+16)}}
   // texts
   g.textAlign='center';g.textBaseline='middle';
-  for(const t of G.texts){const a=Math.min(1,t.life/t.max*2);g.font=`700 ${t.sz}px Unbounded,Outfit,sans-serif`;g.fillStyle=hsla(t.h,100,80,a);g.shadowColor=hsla(t.h,100,50,a);g.shadowBlur=10;g.fillText(t.t,t.x,t.y)}
+  for(const t of G.texts){const a=Math.min(1,t.life/t.max*2);g.font=`700 ${t.sz}px Unbounded,Outfit,sans-serif`;g.fillStyle=hsla(t.h,100,80,a);g.fillStyle=hsla(t.h,100,20,a*.8);g.fillText(t.t,t.x+1,t.y+1.5);g.fillStyle=hsla(t.h,100,80,a);g.fillText(t.t,t.x,t.y)}
   g.shadowBlur=0;
   Z=Z0;
   // screen space
@@ -1877,7 +1882,8 @@ function buildSelect(){
 function mastHtml(id){const l=mLvl(id),x=(S.mast||{})[id]||0,lo=MT[l-1]||0,hi=MT[l]||lo;const k=hi>lo?(x-lo)/(hi-lo):1;return`<div class="mast">★ Mastery ${l}${l>1?` · +${((l-1)*1.5).toFixed(1)}% dmg`:''}</div><div class="mbar"><i style="width:${Math.round(k*100)}%"></i></div>`}
 $('#dyns').addEventListener('click',e=>{const c=e.target.closest('[data-dyn]');if(!c)return;A.init();const i=+c.dataset.dyn,sg=S.lastSong;if(i>Math.min(8,S.dyn[sg]||0)){A.sNo();c.classList.add('shake');setTimeout(()=>c.classList.remove('shake'),400);return}S.dynSel[sg]=i;save();A.sClick();buildSelect()});
 let selStage=null;
-function openSelect(stage){selStage=stage==null?null:stage;if(selStage!=null){S.lastSong=ACTS[STAGES[selStage].a].song;buildBg()}buildSelect();
+function leaveRun(){wake(false);G=null;state='menu';Seq.mode='menu';Seq.setBpm(84);A.muffle(false);$('#bossbar').classList.remove('on');$('#hud').classList.remove('on');buildBg()}
+function openSelect(stage){if(G&&state==='over')leaveRun();selStage=stage==null?null:stage;if(selStage!=null){S.lastSong=ACTS[STAGES[selStage].a].song;buildBg()}buildSelect();
   const si=$('#stageInfo');if(selStage!=null){const st=STAGES[selStage];si.style.display='block';$('#songSect').style.display='none';$('#selTitle').textContent='Movement '+(selStage+1);
     si.innerHTML=`<div class="tag" style="margin:0 0 4px;text-align:left">${ACTS[st.a].n} · ${SONGS[ACTS[st.a].song].name}</div><b>${st.n}</b><p>◆ ${goalText(st)}<br>★ ${starText(st.st[0])}<br>★ ${starText(st.st[1])}</p>`}
   else{si.style.display='none';$('#songSect').style.display='';$('#selTitle').textContent='Prepare the Song'}show('#select');state='menu'}
@@ -1959,25 +1965,25 @@ function showOver(){
     const actDone=a=>STAGES.every((x,i)=>x.a!==a||(S.camp[i]||0)>=1);if(actDone(0))ach('act1');if(actDone(3)&&actDone(0)&&actDone(1)&&actDone(2))ach('act4');if(totalStars()>=60)ach('stars60')}
   const evm=(evActive()||{}).id==='silent'?1.25:1;
   const earn=Math.floor(base*song.mult*(1+meta('echo')*.1)*(G.daily?1.5:1)*(1+.3*(G.dyn||0))*(G.stage?.6:1)*(G.diss.greed?2:1)*(G.diss.requiem?1.5:1)*evm*(G.weekly?2:1)*(G.recital?1.4:1)*(G.studio?(G.immortal?0:.5):1))+stageGain;
-  S.echoes+=earn;S.lifetime+=earn;S.stats.runs++;S.stats.kills+=G.kills;S.stats.time+=G.T;
+  S.echoes+=earn;S.lifetime+=earn;if(!G.studio){S.stats.runs++;S.stats.kills+=G.kills;S.stats.time+=G.T}
   const notes=[...stageNotes];if(streakNote)notes.push(streakNote);
-  if(G.won&&!G.daily){const nx=Math.min(8,(G.dyn||0)+1);if(nx>(S.dyn[G.song]||0)){S.dyn[G.song]=nx;S.dynSel[G.song]=nx;notes.push(`<span class="nb">NEW DYNAMIC UNLOCKED</span>${SONGS[G.song].name} at <i>${DYN[nx].n}</i> — ${DYN[nx].d}`)}
+  if(G.won&&!G.daily&&!G.studio){const nx=Math.min(8,(G.dyn||0)+1);if(nx>(S.dyn[G.song]||0)){S.dyn[G.song]=nx;S.dynSel[G.song]=nx;notes.push(`<span class="nb">NEW DYNAMIC UNLOCKED</span>${SONGS[G.song].name} at <i>${DYN[nx].n}</i> — ${DYN[nx].d}`)}
     if(G.dyn>=3)ach('dyn4');if(G.dyn>=8)ach('dyn8')}
   if(!G.studio){const sid=G.singer.id,l0=mLvl(sid);S.mast[sid]=(S.mast[sid]||0)+Math.floor(G.T/2+G.kills/20+G.bossKills*30+(G.won?150:0));const l1=mLvl(sid);
     if(l1>l0)notes.push(`<span class="nb">★ MASTERY ${l1}</span>${G.singer.name} sings stronger (+${((l1-1)*1.5).toFixed(1)}% damage)`);if(l1>=5)ach('master5');if(l1>=10)ach('master10')}
   if(!G.studio)updateQuests(notes);
   const sb=S.songBest[G.song]||{time:0,score:0};const score=G.score+Math.floor(G.T)*5+G.bossKills*1000;
-  if(score>sb.score||G.T>sb.time){if(score>sb.score)notes.push('<span class="nb">✦ NEW BEST SCORE ✦</span>');S.songBest[G.song]={time:Math.max(sb.time,G.T),score:Math.max(sb.score,score)}}
-  S.best.time=Math.max(S.best.time,G.T);S.best.kills=Math.max(S.best.kills,G.kills);
+  if(!G.studio&&(score>sb.score||G.T>sb.time)){if(score>sb.score)notes.push('<span class="nb">✦ NEW BEST SCORE ✦</span>');S.songBest[G.song]={time:Math.max(sb.time,G.T),score:Math.max(sb.score,score)}}
+  if(!G.studio){S.best.time=Math.max(S.best.time,G.T);S.best.kills=Math.max(S.best.kills,G.kills)}
   if(G.daily){const prev=S.daily[G.dailyKey]||0;if(score>prev){S.daily[G.dailyKey]=score;notes.push('Daily best: '+score)}}
   ach('first');if(G.daily)ach('daily');
-  const unlock=(id,cond)=>{if(!S.songs[id]&&cond){S.songs[id]=1;notes.push(`<span class="nb">NEW SONG UNLOCKED</span>${SONGS[id].name} — ${SONGS[id].mode}`)}};
+  const unlock=(id,cond)=>{if(!G.studio&&!S.songs[id]&&cond){S.songs[id]=1;notes.push(`<span class="nb">NEW SONG UNLOCKED</span>${SONGS[id].name} — ${SONGS[id].mode}`)}};
   unlock('dusk',S.best.time>=180);unlock('abyss',S.stats.bosses>=1);unlock('dream',(S.stats.restored||0)>=1);unlock('aurora',S.stats.bosses>=3);unlock('tide',totalStars()>=20);unlock('ember',(S.stats.restored||0)>=3);
   if(G.song==='hallow'&&G.T>=20)ach('hallow1');if(G.won&&G.song==='hallow')ach('hallow');if(G.won&&G.song==='ember')ach('ember');if(G.won&&Object.keys(G.diss).length>=3)ach('diss3');
   for(const a of G.newAch)notes.push(`${a.i} ${a.n} <span class="echo">+${a.rw}</span>`);
   if(G.weekly){ach('weekly');const pv=S.weekly[G.weekly]||0;if(score>pv){S.weekly[G.weekly]=score;notes.push(`<span class="nb">☉ WEEKLY BEST</span>${score}`)}}
   if(G.recital&&G.recTime){const pb=S.rec.recital||1e9;if(G.recTime<pb){S.rec.recital=G.recTime;notes.push(`<span class="nb">♛ FASTEST RECITAL</span>${fmt(G.recTime)}`)}}
-  {const rc=S.rec;rc.combo=Math.max(rc.combo||0,G.maxCombo);rc.perf=Math.max(rc.perf||0,G.maxPerf);rc.kills=Math.max(rc.kills||0,G.kills);rc.long=Math.max(rc.long||0,G.T);if(G.won&&G.wonAt)rc.restore=Math.min(rc.restore||1e9,G.wonAt);rc.level=Math.max(rc.level||0,G.level)}
+  if(!G.studio){const rc=S.rec;rc.combo=Math.max(rc.combo||0,G.maxCombo);rc.perf=Math.max(rc.perf||0,G.maxPerf);rc.kills=Math.max(rc.kills||0,G.kills);rc.long=Math.max(rc.long||0,G.T);if(G.won&&G.wonAt)rc.restore=Math.min(rc.restore||1e9,G.wonAt);rc.level=Math.max(rc.level||0,G.level)}
   {const L='▁▂▃▄▅▆▇█',tl=G.tl.concat([G.kills-G.tlK]),n=Math.min(14,tl.length),sg=[];for(let i=0;i<n;i++){const a=Math.floor(i*tl.length/n),b=Math.max(a+1,Math.floor((i+1)*tl.length/n));let v=0;for(let j=a;j<b;j++)v+=tl[j];sg.push(v/(b-a))}const mx=Math.max(1,...sg);
     const mode=G.recital?'Recital':G.weekly?'Weekly':G.studio?'Studio':G.daily?'Daily Hum':G.stage?'Score · '+G.stage.n:'Song';
     S.hist=S.hist||[];S.hist.unshift({d:Date.now(),m:mode,s:G.song,g:G.singer.id,T:Math.floor(G.T),k:G.kills,sc:score,ok:!!(G.won||G.stageDone),w:sg.map(v=>L[Math.min(7,Math.floor(v/mx*7.99))]).join(''),dy:G.dyn||0});if(S.hist.length>25)S.hist.length=25}
@@ -2038,7 +2044,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
   const cur=[...$$('.screen.on')].map(s=>s.id)[0];
   switch(act){
     case'select':openSelect(null);break;
-    case'score':buildScore();break;
+    case'score':if(G&&state==='over')leaveRun();buildScore();break;
     case'gift':{const tk=todayKey();if(S.gift.day===tk)break;const n=+(b.dataset.n||1);S.gift={day:tk,n};const rw=GIFTS[n-1];S.echoes+=rw;S.lifetime+=rw;if(n===7)ach('gift7');save();A.sBuy();toast('🎁','Day '+n+' gift','+'+rw+' Echoes'+(n<7?' · come back tomorrow for more':' · the week is complete!'));b.style.display='none';$('#echoTitle').textContent=S.echoes;break}
     case'modes':buildModes();break;
     case'hall':buildHall();break;
@@ -2066,9 +2072,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
     case'bow':state='over';G.dead=true;showOver();break;
     case'again':if(lastOpt&&lastOpt.weekly){startRun(weeklyCfg());break}if(lastOpt&&(lastOpt.recital||lastOpt.studio)){startRun(Object.assign({},lastOpt));break}if(lastOpt&&lastOpt.stage!=null){startRun(Object.assign({},lastOpt));break}if(lastOpt)startRun(lastOpt.daily?dailyCfg():{singer:S.singers[lastOpt.singer]?lastOpt.singer:'lumi',song:lastOpt.song,dyn:lastOpt.dyn||0});break;
   }});
-$('#pausebtn').addEventListener('click',e=>{e.stopPropagation();A.init();pause()});
-$('#cresbtn').addEventListener('click',e=>{e.stopPropagation();A.init();crescendo()});
-$('#cresbtn').addEventListener('pointerdown',e=>e.stopPropagation());
+$('#pausebtn').addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();A.init();pause()});
+$('#cresbtn').addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();A.init();crescendo()});
 $('#dashbtn').addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();A.init();dash()});
 
 /* input */
@@ -2085,12 +2090,12 @@ cvs.addEventListener('pointermove',e=>{if(!joy.on||e.pointerId!==joy.id)return;l
   joy.dx=dx/M;joy.dy=dy/M;const ll=Math.hypot(joy.dx,joy.dy);if(ll<.12){joy.dx=0;joy.dy=0}});
 const endJoy=e=>{if(e.pointerId===joy.id){joy.on=false;joy.dx=joy.dy=0;joy.id=null}};
 cvs.addEventListener('pointerup',endJoy);cvs.addEventListener('pointercancel',endJoy);
-document.addEventListener('visibilitychange',()=>{if(document.hidden){pause();for(const k in keys)keys[k]=false}else if(A.ctx&&A.ctx.state!=='running')A.ctx.resume().catch(()=>{})});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){pause();for(const k in keys)keys[k]=false;joy.on=false;if(A.ctx)A.ctx.suspend().catch(()=>{})}else if(A.ctx&&A.ctx.state!=='running')A.ctx.resume().then(()=>{Seq.next=A.now()+.06;Seq.events.length=0}).catch(()=>{})});
 addEventListener('blur',()=>{for(const k in keys)keys[k]=false});
 document.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ---------------- main loop ---------------- */
-let last=performance.now(),frameN=0;
+let last=performance.now(),frameN=0;const flashEl=$('#flash');
 function frame(ts){
   let dt=Math.min(.05,(ts-last)/1000);last=ts;if(dt<0)dt=0;
   Seq.tick();
@@ -2101,13 +2106,13 @@ function frame(ts){
     else if(ev.step%4===0)beatPulse=1;}
   beatPulse=Math.max(0,beatPulse-dt*4.5);
   shakeA=Math.max(0,shakeA-dt*shakeA*7-dt*2);zoomP=Math.max(0,zoomP-dt*zoomP*4-dt*.01);
-  flashA=Math.max(0,flashA-dt*2.2);$('#flash').style.opacity=flashA*.6;
+  flashA=Math.max(0,flashA-dt*2.2);{const fo=Math.round(flashA*60)/100;if(fo!==frame.fo){frame.fo=fo;flashEl.style.opacity=fo}}
   menuT+=dt;
   if(G&&state==='play')update(dt*timeScale);
   frameN=(frameN||0)+1;if(!S.settings.saver||frameN%2===0)render(dt);
   if(G&&state!=='over')hud();
   requestAnimationFrame(frame)}
-applyPrefs();goTitle();Seq.start();requestAnimationFrame(frame);
+document.querySelectorAll('.btn .sub').forEach(e=>e.parentNode.classList.add('bsub'));fixSave();applyPrefs();goTitle();Seq.start();requestAnimationFrame(frame);
 const VER='6.0';
 if(S.stats.runs>0&&S.ver!==VER)setTimeout(()=>toast('✦','HUSH '+VER+' — Encore','Champions · Accelerando & Note Rain · Harp & Organ · Iris & Odette · daily gifts · a living, breathing world'),1200);
 S.ver=VER;save();

@@ -1,5 +1,43 @@
 # Changelog
 
+## 6.0 — "Encore"
+More life, more juice, more surprises — and a full code scrub.
+
+**A living song**
+- **Champions** — named elites like *Vesper the Tuneless* or *Grimtone of the Broken Key*, each with three powers: *Swift, Bulwark, Veiled, Splitting, Vampiric, Haunting, Volatile, Blinking*. Name tag and health bar; every one carries a music box. Ordinary elites can carry a power too.
+- **Moments** — every couple of minutes something happens: an **Accelerando** (the whole song surges +30 BPM with +50% experience, then a Ritardando), a **Note Rain** of falling light, or a **Champion Duel**.
+- **Music that breathes** — drum fills every 8 bars, a breakdown every 32 where the drums drop out and crash back in.
+- **Ambient life** — bats over Hallow, embers in Ember and Abyss, bubbles in the Tide, petals on Dusk and Aurora, fireflies at Dawn and in Dream.
+
+**New voices**
+- **Harp ≡** — fans of piercing strings the way you face, on the off-beats.
+- **Organ ▥** — pillars of sound that erupt beneath clusters of Hushlings.
+- New Duets: **Cascade** (Harp + Arpeggio) and **Cathedral** (Organ + Crash). Ten Duets in all.
+- New Singers: **Iris, the Harp** (Solo: *Cloudburst*) and **Odette, the Organ** (Solo: *Toccata*).
+
+**Juice**
+- Tiny notes fly from silenced Hushlings, the screen edges pulse with the beat (stronger as harmony climbs), PERFECT dashes freeze time for a heartbeat, light rays burst on level-ups, boss and Champion kills, and your trail doubles at high harmony.
+
+**Daily gifts**
+- A seven-day gift calendar on the title screen; keep the streak for a big seventh-day gift.
+
+**Code scrub** (independent audit; every finding fixed and re-verified)
+- Fixed a crash that lost Echoes when buying a Familiar after a progress reset.
+- Fixed the *Song Restored* screen being skipped if a level-up or music box was open when The Great Silence fell.
+- End-of-run timers can no longer leak into your next song.
+- Studio runs no longer count toward unlocks, records or stats; Immortal really is immortal.
+- Recital, Studio and Score movements now truly start at their higher level (no more "LEVEL −7"), so level-scaled abilities scale properly.
+- Leaving a results screen for The Score no longer keeps the old song's HUD alive.
+- Crescendo and Pause now respond while another finger is steering (iPhone).
+- The music now stops when the app goes to the background, and resumes cleanly.
+- Nightfall's darkness returns after a Silence Storm.
+- Corrupted saved song/singer choices are repaired on load; the offline cache can no longer store an error page.
+- Smoother frames: floating text no longer uses expensive blur, fewer per-frame DOM writes.
+
+**Balance**
+- Endless ramps harder to account for the extra power in 6.0.
+- Five new feats.
+
 ## 5.1 — Balance
 Tuned from a real first playthrough, which became unkillable by 9:00, stopped leveling at 47 and nearly maxed Resonance in one run.
 
