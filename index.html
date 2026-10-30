@@ -4,6 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>HUSH — Sing Back the Silence</title>
+<meta name="description" content="A rhythm survival game of light &amp; sound. The world forgot its song. Sing it back.">
+<meta name="theme-color" content="#0d0b22">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HUSH">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;700;900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -12,7 +22,7 @@
 --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);--sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;background:#05040c;color:var(--ink);font-family:Outfit,system-ui,sans-serif;user-select:none;-webkit-user-select:none}
-canvas{position:fixed;inset:0;display:block;touch-action:none}
+#c{position:fixed;inset:0;display:block;touch-action:none}
 button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
 .screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
 padding:calc(18px + var(--st)) calc(16px + var(--sr)) calc(18px + var(--sb)) calc(16px + var(--sl));opacity:0;pointer-events:none;transition:opacity .45s ease;z-index:10}
@@ -92,7 +102,7 @@ box-shadow:0 10px 40px rgba(0,0,0,.5),inset 0 0 40px hsla(var(--h),90%,50%,.08);
 #hpbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff4f8b,#ff9a6b);box-shadow:0 0 10px #ff4f8b;transition:width .15s}
 #hptxt{font-size:11px;color:var(--dim);margin-top:3px;display:block;font-weight:600}
 #timer{font-family:Unbounded,system-ui,sans-serif;font-weight:700;font-size:clamp(18px,5vw,26px);text-shadow:0 0 14px hsla(var(--a),100%,60%,.6);text-align:center}
-#timer small{display:block;white-space:nowrap;font-size:10px;font-family:Outfit;letter-spacing:.2em;color:var(--dim);font-weight:400}
+#timer small{display:block;white-space:nowrap;font-size:9px;font-family:Outfit,system-ui,sans-serif;letter-spacing:.14em;color:var(--dim);font-weight:400}
 #rinfo{text-align:right;font-size:12px;font-weight:600;margin-right:50px;white-space:nowrap}
 #rinfo span{display:block}#rinfo .lv{font-family:Unbounded,system-ui,sans-serif;font-size:15px;color:hsl(var(--a),100%,72%)}
 #beat{position:fixed;left:50%;transform:translateX(-50%);top:calc(64px + var(--st));display:flex;gap:6px;align-items:center}
@@ -202,7 +212,7 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
     <div class="row"><button class="btn" data-act="shop">◈ Resonance</button><button class="btn" data-act="achs">✧ Feats</button></div>
     <div class="row"><button class="btn" data-act="how">? How to Play</button><button class="btn" data-act="settings">⚙ Settings</button></div>
   </div>
-  <div class="ver">HUSH · made with every note</div>
+  <div class="ver">HUSH · v1.1 · made with every note</div>
 </div>
 
 <!-- SELECT -->
@@ -256,6 +266,9 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
   <div class="tag" id="overTag">the silence returns</div>
   <div class="big" id="overTitle">Silence Falls</div>
   <div class="stats" id="ostats"></div>
+  <div class="tag" style="margin:0 0 6px">the shape of your song</div>
+  <canvas id="shape" style="width:min(480px,100%);height:74px;display:block"></canvas>
+  <div class="vrow" id="setlist" style="justify-content:center;max-width:none;margin:10px 0 18px"></div>
   <div class="tag" style="margin:0">echoes gathered</div>
   <div class="earn"><span class="echo">◈</span> <span id="earnN">0</span></div>
   <div class="notes" id="onotes"></div>
@@ -301,6 +314,7 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
     <p><b>Collect light</b> dropped by fallen Hushlings to level up and choose new voices or harmonies. Tempo literally speeds up the song — and every weapon with it.</p>
     <p><b>Crescendo</b> — fill the ring and tap it (or Space) to unleash a wave that silences everything on screen.</p>
     <p><b>Read the rhythm of the Hush.</b> Lurchers gather on beat 4 and lunge on the downbeat. Wisps glow before they spit. The Hush itself arrives every three minutes — defeat it and the song modulates up a key.</p>
+    <p><b>Veils</b> wear a shield of silence that only drops on beats 2 and 4 — strike in the gaps (Snare Arc loves them). <b>Golden Notes</b> sometimes flee across the field — catch one for a free harmony and a shower of Echoes.</p>
     <p><b>Survive ten minutes</b> to restore the song. Spend <span class="echo">◈ Echoes</span> on permanent Resonance, unlock new Singers, and earn harder Songs with richer rewards. A new <b>Daily Hum</b> with a unique twist arrives every day.</p>
     <div class="stick"><button class="btn primary" style="width:100%" data-act="select">I'm ready</button></div>
   </div>
@@ -317,6 +331,7 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
     <div class="set"><span>Screen shake</span><button class="tog" id="sShake"></button></div>
     <div class="set"><span>Full visual effects</span><button class="tog" id="sFx"></button></div>
     <div class="set"><span>Critical hit numbers</span><button class="tog" id="sNums"></button></div>
+    <div class="set"><span>Vibration <small style="color:var(--dim)">(where supported)</small></span><button class="tog" id="sHap"></button></div>
     <div class="set"><span>Reset all progress</span><button class="btn" id="sReset" style="padding:10px 14px;font-size:13px">Reset</button></div>
   </div>
 </div>
@@ -339,7 +354,7 @@ const fmt=s=>{s=Math.floor(s);return Math.floor(s/60)+':'+String(s%60).padStart(
 /* ---------------- save ---------------- */
 const SAVE_KEY='hush_save_v1';
 const defSave=()=>({echoes:0,lifetime:0,meta:{},singers:{lumi:1},songs:{dawn:1},ach:{},best:{time:0,kills:0},songBest:{},daily:{},
-  stats:{runs:0,kills:0,time:0,bosses:0},settings:{music:.8,sfx:.8,shake:1,fx:1,nums:1},lastSinger:'lumi',lastSong:'dawn',seenTip:0});
+  stats:{runs:0,kills:0,time:0,bosses:0},settings:{music:.8,sfx:.8,shake:1,fx:1,nums:1,haptic:1},lastSinger:'lumi',lastSong:'dawn',seenTip:0});
 let S;
 try{const raw=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');const d=defSave();S=Object.assign(d,raw);
   for(const k of ['settings','stats','best','meta','singers','songs','ach','songBest','daily'])S[k]=Object.assign(d[k]||{},defSave()[k],raw[k]||{});}
@@ -361,6 +376,7 @@ const VOICES={
   orbit:{name:'Chorus',icon:'♫',h:300,d:['Singing notes circle you, striking foes and blocking dark notes.','+1 note.','+1 note, wider circle.','+1 note, +30% damage.','+2 notes, they spin faster.']},
   chain:{name:'Snare Arc',icon:'ϟ',h:255,d:['Lightning cracks through foes on beats 2 and 4.','+1 chain jump.','+25% damage.','Adds a ghost-note strike before each bar ends.','+2 jumps, +20% damage.']},
   drone:{name:'Drone',icon:'◌',h:160,d:['A humming aura wears down and slows nearby foes.','+20% radius.','+40% damage.','+radius, stronger slow.','+50% damage, vast aura.']},
+  gliss:{name:'Glissando',icon:'∿',h:215,d:['A beam of sound sweeps around you, once every bar.','+25% length.','A second beam joins, opposite the first.','+35% damage.','A third beam — and the sweep speeds up by half.']},
   echo:{name:'Echo',icon:'✺',h:95,d:['Leave notes behind that burst half a bar later.','+radius.','Leaves notes twice as often.','+40% damage.','+radius, +20% damage.']},
 };
 const HARM={
@@ -380,6 +396,7 @@ const SINGERS=[
   {id:'oro',name:'Oro',title:'the Chorus',voice:'orbit',h:300,d:'Magnetic. +30% reach. Begins with Chorus.',cost:450,mods:{mag:.3}},
   {id:'sable',name:'Sable',title:'the Storm',voice:'chain',h:255,d:'Swift. +10% speed, −15 HP. Begins with Snare Arc.',cost:650,mods:{spd:.1,hp:-15}},
   {id:'mire',name:'Mire',title:'the Deep',voice:'drone',h:160,d:'Vast. +20% area. Begins with Drone.',cost:850,mods:{area:.2}},
+  {id:'kael',name:'Kael',title:'the Wave',voice:'gliss',h:215,d:'Fluid. +8% speed, +10% area. Begins with Glissando.',cost:1400,mods:{spd:.08,area:.1}},
   {id:'wren',name:'Wren',title:'the Memory',voice:'echo',h:95,d:'Lucky. +10% XP, +5% crit. Begins with Echo.',cost:1100,mods:{xp:.1,crit:.05}},
 ];
 const META=[
@@ -412,6 +429,8 @@ const ACH=[
   {id:'daily',i:'☼',n:'Daily Devotion',d:'Complete a Daily Hum',rw:30},
   {id:'abyss',i:'☾',n:'Into the Deep',d:'Survive 5 minutes in Abyss',rw:120},
   {id:'allsing',i:'❦',n:'Ensemble',d:'Unlock every Singer',rw:150},
+  {id:'gold',i:'✪',n:'Golden Ear',d:'Catch a Golden Note',rw:40},
+  {id:'veil',i:'⬡',n:'Through the Veil',d:'Silence 25 Veils in one song',rw:50},
 ];
 const MODS=[
   {id:'double',name:'Double Time',d:'+30 BPM. Everything plays faster.',ap:G=>G.bpmBonus+=30},
@@ -427,6 +446,8 @@ const EN={
   lurch:{r:13,hp:30,spd:42,dmg:12,xp:2},
   wisp:{r:11,hp:22,spd:72,dmg:8,xp:2},
   bloat:{r:24,hp:110,spd:30,dmg:16,xp:5},
+  veil:{r:14,hp:55,spd:58,dmg:12,xp:4},
+  gold:{r:12,hp:40,spd:135,dmg:0,xp:12},
   boss:{r:62,hp:2600,spd:50,dmg:25,xp:0},
 };
 const sd=(song,n)=>song.scale[((n%7)+7)%7]+12*Math.floor(n/7);
@@ -485,6 +506,10 @@ const A={ctx:null,pend:0,chime:0,
     this.env(g,t,.003,v,dec);this.route(g,bus,rev,dly)},
   arp(t,f,v){if(!this.ctx)return;const o=this.osc('square',f,t,.2),lp=this.filt('lowpass',2400,2),g=this.gain();lp.frequency.setValueAtTime(3400,t);lp.frequency.exponentialRampToValueAtTime(700,t+.15);
     o.connect(lp);lp.connect(g);this.env(g,t,.002,v,.15);this.route(g,'m',.2,.45)},
+  gliss(t,f1,f2,dur,v){if(!this.ctx)return;const o=this.osc('sine',f1,t,dur+.4);o.frequency.exponentialRampToValueAtTime(f2,t+dur*.8);
+    const o2=this.osc('triangle',f1/2,t,dur+.4);o2.frequency.exponentialRampToValueAtTime(f2/2,t+dur*.8);const g2=this.gain();g2.gain.value=.35;o2.connect(g2);
+    const lfo=this.osc('sine',5.5,t,dur+.4),lg=this.gain();lg.gain.value=f1*.012;lfo.connect(lg);lg.connect(o.frequency);
+    const g=this.gain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.09);g.gain.setValueAtTime(v,t+dur*.7);g.gain.linearRampToValueAtTime(0,t+dur+.25);o.connect(g);g2.connect(g);this.route(g,'m',.5,.25)},
   bell(t,f,v,bus='m'){if(!this.ctx)return;const g=this.gain();const o=this.osc('sine',f,t,1);const o2=this.osc('sine',f*2.76,t,.4);const g2=this.gain();g2.gain.value=.4;
     o2.connect(g2);g2.connect(g);o.connect(g);this.env(g,t,.002,v,.7);this.route(g,bus,.5,.2)},
   /* sfx (now) */
@@ -541,6 +566,7 @@ function musicStep(step,t){
   else if(s===0||s===10)A.bass(t,N(deg,-1),s===0?beat*2:beat,.28,false);
   const pu=owns('pulse');if(pu&&(pu.lvl>=5?s%2===0:s%4===0))A.pluck(t,N(deg+[0,4,2,4][(s>>1)%4],3),.045,.16,.15,.12);
   const ar=owns('arp');if(ar&&(ar.lvl>=4?s%2===1:s%4===2)){G.arpIdx++;A.arp(t,N(deg+[0,2,4,7,9,7,4,2][G.arpIdx%8],2),.045)}
+  const gs=owns('gliss');if(gs){if(s===0)A.gliss(t,N(deg,2),N(deg+7,2),beat*2,.028);if(s===8)A.gliss(t,N(deg+7,2),N(deg+2,2),beat*2,.022)}
   const ec=owns('echo');if(ec&&G.mines.some(m=>m.det===step))A.bell(t,N(deg+4+(step%3)*2,3),.06);
   if(G.boss){if(s%4===2)A.tom(t,N(deg,0),.35);if(s===15)A.tom(t,N(deg,0)*1.5,.25)}
   if(A.pend>0){if(A.pend>5)A.pend=5;const n=A.pend>2?2:1;for(let i=0;i<n;i++){A.pend--;G.noteK++;const off=[0,2,4,7,4,9,7,11][G.noteK%8]+7*Math.min(2,Math.floor(G.combo/40));A.pluck(t+i*six*.5,N(deg+off,2),.085,.45,.35,.22)}}
@@ -587,7 +613,7 @@ function newGame(opt){
     enemies:[],shots:[],ebul:[],gems:[],parts:[],rings:[],bolts:[],texts:[],mines:[],ripples:[],
     voices:[{id:singer.voice,lvl:1}],harm:{},level:1,xp:0,need:xpNeed(1),pending:0,kills:0,combo:0,comboT:0,maxCombo:0,score:0,
     cres:0,cresUses:0,spawnAcc:0,nextBoss:180,boss:null,bossKills:0,events:{270:0,450:0,555:0},lastHit:0,rerolls:meta('reroll'),revive:meta('revive'),
-    endless:false,won:false,bonusEchoes:0,arpAng:0,orbA:0,newAch:[],arpIdx:0,noteK:0,chimeK:0,dead:false,deadT:0,bonusVoice:0,dmgTaken:0};
+    endless:false,won:false,bonusEchoes:0,arpAng:0,orbA:0,newAch:[],arpIdx:0,noteK:0,chimeK:0,dead:false,deadT:0,bonusVoice:0,dmgTaken:0,glA:0,beams:null,orbs:null,tl:[],tlK:0,tlT:0,nextGold:70+R()*60,gold:null,veils:0};
   if(opt.mod)opt.mod.ap(G);
   if(G.bonusVoice){const ids=Object.keys(VOICES).filter(v=>v!==singer.voice);G.voices.push({id:ids[Math.floor(R()*ids.length)],lvl:1})}
   P={x:0,y:0,vx:0,vy:0,r:11,hp:100,maxHp:100,inv:0,face:0,trail:0};
@@ -629,11 +655,11 @@ function nearestN(x,y,n,maxD,excl){const out=[];const md=maxD*maxD;
 function enemyScale(){return(1+G.T/60*.3+(G.endless?Math.pow((G.T-600)/60,1.3)*.35:0))*SONGS[G.song].diff*G.mod.ehp}
 function makeEnemy(type,x,y,elite){const d=EN[type],sc=enemyScale();
   const e={type,x,y,vx:0,vy:0,kbx:0,kby:0,r:d.r*(elite?1.45:1),hp:d.hp*sc*(elite?5:1),spd:d.spd*(1+Math.min(.35,G.T/600*.25))*(elite?.9:1),dmg:d.dmg*(elite?1.5:1)*(1+Math.min(1,G.T/600*.5)),
-    xp:d.xp,elite:!!elite,t:R()*10,flash:0,orbCd:0,slow:0,dead:false,charge:0,dash:0,ang:R()*TAU};
+    xp:d.xp,elite:!!elite,t:R()*10,flash:0,orbCd:0,slow:0,dead:false,charge:0,dash:0,ang:R()*TAU,shield:type==='veil'};
   e.maxHp=e.hp;G.enemies.push(e);return e}
 function spawnPos(extra=0){const a=R()*TAU;const d=Math.hypot(W,H)/2/Z+50+extra;return[P.x+Math.cos(a)*d,P.y+Math.sin(a)*d]}
 function spawnRandom(){const T=G.T;
-  const w=[['mote',10],['shard',T>25?2.2:0],['lurch',T>60?4:0],['wisp',T>100?3:0],['bloat',T>140?2:0]];
+  const w=[['mote',10],['shard',T>25?2.2:0],['lurch',T>60?4:0],['wisp',T>100?3:0],['bloat',T>140?2:0],['veil',T>200?2.4:0]];
   let tot=0;for(const x of w)tot+=x[1];let r=R()*tot,type='mote';for(const x of w){r-=x[1];if(r<=0){type=x[0];break}}
   const elite=R()<.012+Math.min(.04,T/600*.03);
   const [x,y]=spawnPos();
@@ -647,7 +673,7 @@ function spawnBoss(){const [x,y]=spawnPos(80);const e=makeEnemy('boss',x,y,false
 function encircle(){const n=40;for(let i=0;i<n;i++){const a=i/n*TAU;makeEnemy(G.T>400?'lurch':'mote',P.x+Math.cos(a)*470,P.y+Math.sin(a)*470,false)}banner('THE QUIET CLOSES IN','break the circle')}
 
 /* ---------------- combat ---------------- */
-function hit(e,dmg,kx=0,ky=0,kb=0){if(e.dead)return;const crit=R()<P.crit;if(crit)dmg*=2;e.hp-=dmg;e.flash=.07;
+function hit(e,dmg,kx=0,ky=0,kb=0){if(e.dead)return;if(e.shield){dmg*=.15;kb*=.3;if(Math.random()<.25)burst(e.x,e.y,195,2,140,2,.2,false)}const crit=R()<P.crit;if(crit)dmg*=2;e.hp-=dmg;e.flash=.07;
   if(kb&&e.type!=='boss'){const l=Math.hypot(kx,ky)||1;const f=kb*(e.type==='bloat'?.35:1)*(e.elite?.5:1);e.kbx+=kx/l*f;e.kby+=ky/l*f}
   if(crit&&S.settings.nums&&G.texts.length<40)G.texts.push({x:e.x+rnd(-6,6),y:e.y-e.r,t:'✧'+Math.round(dmg),life:.7,max:.7,h:55,sz:13});
   if(e.hp<=0)kill(e)}
@@ -665,6 +691,9 @@ function kill(e){e.dead=true;G.kills++;G.combo++;G.comboT=2.8;if(G.combo>G.maxCo
   if(G.combo>=50)ach('c50');if(G.combo>=250)ach('c250');
   if(G.kills>=100)ach('k100');if(G.kills>=1000)ach('k1000');
   if(e.type==='bloat'){for(let i=0;i<3;i++){const m=makeEnemy('mote',e.x+rnd(-15,15),e.y+rnd(-15,15),false);m.kbx=rnd(-200,200);m.kby=rnd(-200,200)}}
+  if(e.type==='veil'){G.veils++;if(G.veils>=25)ach('veil')}
+  if(e.type==='gold'){G.gold=null;G.bonusEchoes+=25;G.pending++;ach('gold');buzz(30);banner('GOLDEN NOTE','a gift from the old song');A.sBuy();burst(e.x,e.y,48,40,300,3.5,1,false);
+    for(let i=0;i<3;i++)G.rings.push({x:e.x,y:e.y,r:8,R:90+i*60,life:.5+i*.12,max:.5+i*.12,h:48,w:4})}
   if(e.type==='boss')bossDie(e)}
 function bossDie(e){G.boss=null;G.bossKills++;S.stats.bosses++;$('#bossbar').classList.remove('on');ach('boss');if(G.bossKills>=3)ach('boss3');
   const song=SONGS[G.song];
@@ -672,14 +701,14 @@ function bossDie(e){G.boss=null;G.bossKills++;S.stats.bosses++;$('#bossbar').cla
   burst(e.x,e.y,0,60,300,5,1.2,true);
   for(let i=0;i<4;i++)G.rings.push({x:e.x,y:e.y,r:20,R:300+i*120,life:.6+i*.15,max:.6+i*.15,h:i%2?song.a:song.b,w:6});
   for(let i=0;i<5;i++)dropGem(e.x+rnd(-40,40),e.y+rnd(-40,40),20);
-  G.ebul.length=0;timeScale=.18;shake(22);flash(.6,'#fff');G.bonusEchoes+=40;
+  G.ebul.length=0;timeScale=.18;shake(22);buzz([60,40,140]);flash(.6,'#fff');G.bonusEchoes+=40;
   G.key+=2;if(G.key>7)G.key-=12;
   A.sBossDie(chordFreqs(3));
   setTimeout(()=>{if(!G||G.dead)return;banner('MODULATION','the song rises a step');G.pending++},900);
   recalc()}
 function dropGem(x,y,v){if(G.gems.length>420){G.gems[Math.floor(R()*G.gems.length)].v+=v;return}
   const a=R()*TAU,s=rr(30,110);G.gems.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,v,m:false,t:R()*TAU})}
-function hurt(dmg,sx,sy){if(P.inv>0||G.dead)return;P.hp-=dmg;P.inv=.75;G.lastHit=G.T;G.dmgTaken+=dmg;shake(9);flash(.25,'#ff2d6b');A.sHurt();
+function hurt(dmg,sx,sy){if(P.inv>0||G.dead)return;P.hp-=dmg;P.inv=.75;G.lastHit=G.T;G.dmgTaken+=dmg;shake(9);buzz(45);flash(.25,'#ff2d6b');A.sHurt();
   if(G.combo>10)addText(P.x,P.y-30,'chord broken',340,13,.9);G.combo=Math.floor(G.combo/2);
   burst(P.x,P.y,340,14,220,3,.5,false);
   const dx=P.x-sx,dy=P.y-sy,l=Math.hypot(dx,dy)||1;P.vx+=dx/l*260;P.vy+=dy/l*260;
@@ -687,6 +716,8 @@ function hurt(dmg,sx,sy){if(P.inv>0||G.dead)return;P.hp-=dmg;P.inv=.75;G.lastHit
 function burst(x,y,h,n,spd,sz,life,dark){if(!S.settings.fx)n=Math.ceil(n*.4);const cap=S.settings.fx?1100:350;
   for(let i=0;i<n&&G.parts.length<cap;i++){const a=Math.random()*TAU,s=spd*(.25+Math.random()*.9);G.parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:life*rnd(.6,1.2),max:life,s:sz*rnd(.6,1.4),h,dark})}}
 function addText(x,y,t,h,sz,life){const n=G.texts.filter(o=>o.sz>=14&&o.max-o.life<.6).length;G.texts.push({x,y:y-n*22,t,h,sz,life,max:life})}
+function buzz(p){if(S.settings.haptic&&navigator.vibrate)try{navigator.vibrate(p)}catch(e){}}
+function segD(px,py,ax,ay,bx,by){const vx=bx-ax,vy=by-ay,l2=vx*vx+vy*vy||1;const t=clamp(((px-ax)*vx+(py-ay)*vy)/l2,0,1);return Math.hypot(px-ax-vx*t,py-ay-vy*t)}
 function shake(v){if(S.settings.shake)shakeA=Math.min(30,shakeA+v)}
 function flash(a,col){flashA=Math.max(flashA,a);flashCol=col;const f=$('#flash');f.style.background=col}
 
@@ -713,6 +744,8 @@ function onStep(step){
       if(pts.length>1){G.bolts.push({pts,life:.22,max:.22,h:V.h});shake(1.5)}break}
     case'drone':{const Rr=(55+12*l)*(l>=2?1.2:1)*(l>=4?1.15:1)*(l>=5?1.25:1)*P.area;const dmg=(1.4+1*l)*(l>=3?1.4:1)*(l>=5?1.5:1)*P.dmg;
       inRadius(P.x,P.y,Rr,e=>{e.slow=.25;e.slowAmt=l>=4?.55:.38;if(s%2===0)hit(e,dmg*2,0,0,0)});break}
+    case'gliss':{if(!G.beams)break;const dmg=(5+3*l)*(l>=4?1.35:1)*P.dmg;
+      for(const [a,L] of G.beams){const ex=P.x+Math.cos(a)*L,ey=P.y+Math.sin(a)*L;inRadius((P.x+ex)/2,(P.y+ey)/2,L/2+10,(e)=>{if(segD(e.x,e.y,P.x,P.y,ex,ey)<e.r+8)hit(e,dmg,e.x-P.x,e.y-P.y,50)})}break}
     case'echo':{const Rr=(62+10*l)*(l>=2?1.15:1)*(l>=5?1.25:1)*P.area;const dmg=(22+10*l)*(l>=4?1.4:1)*(l>=5?1.2:1)*P.dmg;
       if(l>=3?s%4===0:s%8===0)G.mines.push({x:P.x,y:P.y,det:step+8,R:Rr,dmg,born:G.T,h:V.h});break}
     }}
@@ -721,6 +754,7 @@ function onStep(step){
   // enemy rhythm
   const bar=Math.floor(step/16);
   for(const e of G.enemies){if(e.dead)continue;
+    if(e.type==='veil')e.shield=!((s>=4&&s<8)||s>=12);
     if(e.type==='lurch'){if(s===12)e.charge=1;else if(s===0&&e.charge){e.charge=0;const dx=P.x-e.x,dy=P.y-e.y,d=Math.hypot(dx,dy)||1;if(d<520){e.vx=dx/d*430;e.vy=dy/d*430;e.dash=.42}}}
     else if(e.type==='wisp'){if(s===6)e.charge=1;if(s===8&&e.charge){e.charge=0;const dx=P.x-e.x,dy=P.y-e.y,d=Math.hypot(dx,dy)||1;if(d<560){const sp=175;G.ebul.push({x:e.x,y:e.y,vx:dx/d*sp,vy:dy/d*sp,r:6,life:4.5,dmg:9*SONGS[G.song].diff});if(e.elite)for(const o of[-.3,.3]){const a=Math.atan2(dy,dx)+o;G.ebul.push({x:e.x,y:e.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:6,life:4.5,dmg:9})}}}}
     else if(e.type==='boss'){const ph2=e.hp<e.maxHp*.5;
@@ -734,7 +768,7 @@ function onStep(step){
 /* ---------------- crescendo ---------------- */
 function crescendo(free){if(!G||G.dead)return;if(!free){if(G.cres<100||state!=='play')return;G.cres=0;G.cresUses++;if(G.cresUses>=5)ach('cres5')}
   const song=SONGS[G.song];const vw=W/Z/2+80,vh=H/Z/2+80;
-  A.sCres(chordFreqs(3));flash(.8,'#fff');shake(16);timeScale=.35;
+  A.sCres(chordFreqs(3));flash(.8,'#fff');shake(16);buzz([30,30,90]);timeScale=.35;
   for(let i=0;i<5;i++)G.rings.push({x:P.x,y:P.y,r:10,R:Math.max(vw,vh)*(.5+i*.25),life:.7+i*.12,max:.7+i*.12,h:i%2?song.a:song.b,w:10-i});
   const dmg=(70+G.level*9)*P.dmg;
   for(const e of G.enemies){if(e.dead)continue;if(Math.abs(e.x-P.x)<vw&&Math.abs(e.y-P.y)<vh){hit(e,e.type==='boss'?Math.min(dmg*3,e.maxHp*.12):dmg,e.x-P.x,e.y-P.y,500)}}
@@ -776,6 +810,10 @@ function update(dt){
       inRadius(ox,oy,9,(e,dx,dy)=>{if(e.orbCd<=G.T){e.orbCd=G.T+.32;hit(e,dmg,dx,dy,120);burst(ox,oy,VOICES.orbit.h,3,100,2,.25,false)}});
       for(let j=G.ebul.length-1;j>=0;j--){const b=G.ebul[j];if((b.x-ox)**2+(b.y-oy)**2<(b.r+9)**2){G.ebul.splice(j,1);burst(b.x,b.y,VOICES.orbit.h,4,90,2,.3,false)}}}}
   else G.orbs=null;
+  const gl=vl('gliss');
+  if(gl){const n=1+(gl>=3)+(gl>=5);G.glA+=TAU/(240/Seq.bpm)*(gl>=5?1.5:1)*dt;const L=(120+18*gl)*(gl>=2?1.25:1)*P.area;G.beams=[];for(let i=0;i<n;i++)G.beams.push([G.glA+i/n*TAU,L])}else G.beams=null;
+  if(G.T>=G.nextGold&&!G.gold&&!G.boss){const [x,y]=spawnPos(-140);const e=makeEnemy('gold',x,y,false);e.life=14;e.dmg=0;G.gold=e;G.nextGold=G.T+85+R()*75;showTip('✪ A Golden Note appears — catch it!',3200);A.bell(A.now(),2093,.08,'s')}
+  G.tlT+=dt;if(G.tlT>=5){G.tlT-=5;G.tl.push(G.kills-G.tlK);G.tlK=G.kills}
   // enemies
   const farD=Math.hypot(W,H)/Z*.9+200;
   for(const e of G.enemies){if(e.dead)continue;e.t+=dt;e.flash-=dt;
@@ -783,14 +821,18 @@ function update(dt){
     const slow=e.slow>0?1-e.slowAmt:1;e.slow-=dt;
     switch(e.type){
       case'shard':tvx=e.vx;tvy=e.vy;sm=0;if(d>farD+300){e.dead=true;continue}break;
+      case'gold':{e.life-=dt;if(e.life<=0){e.dead=true;G.gold=null;addText(e.x,e.y,'it slipped away…',48,13,1.2);continue}
+        const tx=-dy/d,ty=dx/d,w=Math.sin(e.t*1.7)*.8;tvx=(-dx/d+tx*w)*e.spd;tvy=(-dy/d+ty*w)*e.spd;sm=3;
+        if(Math.random()<.5)G.parts.push({x:e.x,y:e.y,vx:rnd(-20,20),vy:rnd(-20,20),life:.6,max:.6,s:2.4,h:48,dark:false});break}
       case'wisp':{let dir=d>270?1:d<190?-1:0;const tx=-dy/d,ty=dx/d;tvx=(dx/d*dir+tx*.7)*e.spd;tvy=(dy/d*dir+ty*.7)*e.spd;break}
       case'lurch':case'boss':if(e.dash>0){e.dash-=dt;sm=0;e.vx*=Math.pow(.2,dt);e.vy*=Math.pow(.2,dt);tvx=e.vx;tvy=e.vy}else{tvx=dx/d*e.spd;tvy=dy/d*e.spd}break;
       default:tvx=dx/d*e.spd;tvy=dy/d*e.spd}
     if(sm){const kk=1-Math.exp(-dt*sm);e.vx=lerp(e.vx,tvx,kk);e.vy=lerp(e.vy,tvy,kk)}
     e.x+=(e.vx*slow+e.kbx)*dt;e.y+=(e.vy*slow+e.kby)*dt;const kd=Math.pow(.004,dt);e.kbx*=kd;e.kby*=kd;
     if(e.type!=='shard'&&e.type!=='boss'){near(e.x,e.y,e.r,o=>{if(o===e||o.type==='boss')return;const ox=e.x-o.x,oy=e.y-o.y,rs=e.r+o.r,dd=ox*ox+oy*oy;if(dd<rs*rs&&dd>.01){const dl=Math.sqrt(dd),push=(rs-dl)*.35;e.x+=ox/dl*push;e.y+=oy/dl*push}})}
-    if(d<e.r+P.r)hurt(e.dmg,e.x,e.y);
-    if(d>farD&&e.type!=='boss'&&e.type!=='shard'){const [nx,ny]=spawnPos();e.x=nx;e.y=ny}
+    if(d<e.r+P.r&&e.dmg>0)hurt(e.dmg,e.x,e.y);
+    if(e.type==='gold'&&d>farD+200){e.dead=true;G.gold=null;continue}
+    if(d>farD&&e.type!=='boss'&&e.type!=='shard'&&e.type!=='gold'){const [nx,ny]=spawnPos();e.x=nx;e.y=ny}
   }
   if(G.boss&&!G.boss.dead){$('#bossfill').style.width=(G.boss.hp/G.boss.maxHp*100)+'%'}
   // shots
@@ -887,6 +929,11 @@ function render(dt){
     dg(b.h,b.x,b.y,b.r*4,.9);g.fillStyle='#fff';g.beginPath();g.arc(b.x,b.y,b.r*.55,0,TAU);g.fill()}
   // orbit notes
   if(G.orbs){const h=VOICES.orbit.h;for(const [ox,oy,a] of G.orbs){dg(h,ox,oy,22+beatPulse*6,.8);drawNote(ox,oy,7,h,1)}}
+  if(G.beams&&!G.dead){const h=VOICES.gliss.h;g.lineCap='round';for(const [a,L] of G.beams){const ex=P.x+Math.cos(a)*L,ey=P.y+Math.sin(a)*L;
+    for(let k=1;k<=5;k++){const ta=a-k*.07*(Seq.bpm/96);g.strokeStyle=hsla(h,100,72,.16-k*.025);g.lineWidth=6;g.beginPath();g.moveTo(P.x+Math.cos(ta)*24,P.y+Math.sin(ta)*24);g.lineTo(P.x+Math.cos(ta)*L,P.y+Math.sin(ta)*L);g.stroke()}
+    const gr=g.createLinearGradient(P.x,P.y,ex,ey);gr.addColorStop(0,hsla(h,100,70,0));gr.addColorStop(.35,hsla(h,100,70,.45));gr.addColorStop(1,hsla(h,100,82,.95));
+    g.strokeStyle=gr;g.lineWidth=11+beatPulse*5;g.beginPath();g.moveTo(P.x,P.y);g.lineTo(ex,ey);g.stroke();
+    g.strokeStyle=hsla(h,100,94,.95);g.lineWidth=2.5;g.beginPath();g.moveTo(P.x+Math.cos(a)*22,P.y+Math.sin(a)*22);g.lineTo(ex,ey);g.stroke();dg(h,ex,ey,24+beatPulse*8,.9)}}
   // player
   if(!G.dead){const blink=P.inv>0&&Math.floor(now*18)%2;const pr=P.r*(1+.16*beatPulse);
     dg(song.a,P.x,P.y,70+beatPulse*20,blink?.3:.85);dg(G.singer.h,P.x,P.y,30,.9);
@@ -915,6 +962,9 @@ function render(dt){
   if(joy.on&&state==='play'){g.strokeStyle='rgba(255,255,255,.18)';g.lineWidth=2;g.beginPath();g.arc(joy.ox,joy.oy,50,0,TAU);g.stroke();
     g.globalCompositeOperation='lighter';dg(song.a,joy.ox+joy.dx*50,joy.oy+joy.dy*50,28,.6);g.globalCompositeOperation='source-over';
     g.fillStyle='rgba(255,255,255,.35)';g.beginPath();g.arc(joy.ox+joy.dx*50,joy.oy+joy.dy*50,14,0,TAU);g.fill()}
+  if(G.gold&&!G.gold.dead){const e=G.gold,sx=(e.x-cam.x)*Z+W/2,sy=(e.y-cam.y)*Z+H/2,m=34;
+    if(sx<0||sx>W||sy<0||sy>H){const ax=clamp(sx,m,W-m),ay=clamp(sy,m+50,H-m-40),a=Math.atan2(sy-H/2,sx-W/2);g.globalCompositeOperation='lighter';dg(48,ax,ay,26+beatPulse*8,.8);g.globalCompositeOperation='source-over';
+      g.fillStyle='#ffe28a';g.beginPath();g.moveTo(ax+Math.cos(a)*14,ay+Math.sin(a)*14);g.lineTo(ax+Math.cos(a+2.4)*9,ay+Math.sin(a+2.4)*9);g.lineTo(ax+Math.cos(a-2.4)*9,ay+Math.sin(a-2.4)*9);g.fill()}}
   // low hp vignette
   if(P.hp<P.maxHp*.3&&!G.dead){const a=(.3-P.hp/P.maxHp)*1.6*(.6+.4*Math.sin(now*6));g.fillStyle=`rgba(255,20,80,${a*.25})`;g.fillRect(0,0,W,H)}
   post()}
@@ -922,6 +972,10 @@ function post(){g.drawImage(vigCan,0,0,W,H)}
 function drawNote(x,y,s,h,a){g.fillStyle=hsla(h,100,90,a);g.save();g.translate(x,y);g.rotate(-.35);g.beginPath();g.ellipse(0,0,s*.75,s*.52,0,0,TAU);g.fill();g.restore();
   g.strokeStyle=hsla(h,100,90,a);g.lineWidth=1.6;g.beginPath();g.moveTo(x+s*.62,y-s*.15);g.lineTo(x+s*.62,y-s*2);g.quadraticCurveTo(x+s*1.4,y-s*1.6,x+s*1.2,y-s*.9);g.stroke()}
 function drawEnemy(e,now,song){
+  if(e.type==='gold'){const r=e.r*(1+.12*beatPulse);g.globalCompositeOperation='lighter';dg(48,e.x,e.y,r*4.5,.85,60);g.globalCompositeOperation='source-over';
+    g.beginPath();for(let i=0;i<10;i++){const a=e.t*2+i/10*TAU,rad=i%2?r*.5:r*1.25;i?g.lineTo(e.x+Math.cos(a)*rad,e.y+Math.sin(a)*rad):g.moveTo(e.x+Math.cos(a)*rad,e.y+Math.sin(a)*rad)}g.closePath();
+    g.fillStyle=e.flash>0?'#fff':'#ffd24a';g.fill();g.strokeStyle='#fff6d0';g.lineWidth=1.6;g.stroke();
+    if(e.life<4&&Math.floor(now*8)%2){g.strokeStyle='rgba(255,230,140,.6)';g.beginPath();g.arc(e.x,e.y,r*2,0,TAU);g.stroke()}return}
   const br=1+.07*beatPulse+(e.charge?.12*Math.sin(now*30):0);const r=e.r*br;const rim=e.elite?50:song.hush;
   const flash=e.flash>0;
   // dark halo
@@ -932,6 +986,7 @@ function drawEnemy(e,now,song){
     case'mote':g.arc(e.x,e.y,r,0,TAU);break;
     case'shard':{const a=e.ang;g.moveTo(e.x+Math.cos(a)*r*2,e.y+Math.sin(a)*r*2);g.lineTo(e.x+Math.cos(a+2.3)*r,e.y+Math.sin(a+2.3)*r);g.lineTo(e.x+Math.cos(a+Math.PI)*r*.6,e.y+Math.sin(a+Math.PI)*r*.6);g.lineTo(e.x+Math.cos(a-2.3)*r,e.y+Math.sin(a-2.3)*r);g.closePath();break}
     case'lurch':{const n=6,rot=e.t*1.5;for(let i=0;i<n*2;i++){const a=rot+i/(n*2)*TAU,rad=i%2?r*.62:r*1.15;i?g.lineTo(e.x+Math.cos(a)*rad,e.y+Math.sin(a)*rad):g.moveTo(e.x+Math.cos(a)*rad,e.y+Math.sin(a)*rad)}g.closePath();break}
+    case'veil':{const rot=e.t*.5;for(let i=0;i<6;i++){const a=rot+i/6*TAU;i?g.lineTo(e.x+Math.cos(a)*r,e.y+Math.sin(a)*r):g.moveTo(e.x+Math.cos(a)*r,e.y+Math.sin(a)*r)}g.closePath();break}
     case'wisp':{const rot=e.t*.8;for(let i=0;i<4;i++){const a=rot+i/4*TAU,rad=i%2?r*.8:r*1.25;i?g.lineTo(e.x+Math.cos(a)*rad,e.y+Math.sin(a)*rad):g.moveTo(e.x+Math.cos(a)*rad,e.y+Math.sin(a)*rad)}g.closePath();break}
     case'bloat':case'boss':{const n=e.type==='boss'?28:14;for(let i=0;i<=n;i++){const a=i/n*TAU,rad=r*(1+Math.sin(a*3+e.t*2)*.07+Math.sin(a*5-e.t*3)*.05);i?g.lineTo(e.x+Math.cos(a)*rad,e.y+Math.sin(a)*rad):g.moveTo(e.x+Math.cos(a)*rad,e.y+Math.sin(a)*rad)}g.closePath();break}
   }
@@ -949,6 +1004,9 @@ function drawEnemy(e,now,song){
   }else{
     const ex=e.x+dx/d*r*.35,ey=e.y+dy/d*r*.35;
     g.fillStyle=hsla(rim,100,75,.9);g.beginPath();g.arc(ex,ey,Math.max(1.4,r*.17),0,TAU);g.fill();
+    if(e.type==='veil'){const rr2=r*1.5,rot=-e.t*.4;g.beginPath();for(let i=0;i<6;i++){const a=rot+i/6*TAU;i?g.lineTo(e.x+Math.cos(a)*rr2,e.y+Math.sin(a)*rr2):g.moveTo(e.x+Math.cos(a)*rr2,e.y+Math.sin(a)*rr2)}g.closePath();
+      if(e.shield){g.globalCompositeOperation='lighter';dg(195,e.x,e.y,r*2.6,.3,60);g.globalCompositeOperation='source-over';g.fillStyle=hsla(195,100,70,.1);g.fill();g.strokeStyle=hsla(195,100,86,.9);g.lineWidth=2.4;g.stroke()}
+      else{g.setLineDash([3,6]);g.strokeStyle=hsla(195,100,80,.3);g.lineWidth=1.2;g.stroke();g.setLineDash([])}}
     if(e.type==='bloat'){g.strokeStyle=hsla(rim,100,60,.3);g.lineWidth=1;g.beginPath();g.arc(e.x,e.y,r*.6,0,TAU);g.stroke()}
   }
   if(e.elite){g.fillStyle=hsla(50,100,70,.9);for(let i=0;i<3;i++){const a=-Math.PI/2+(i-1)*.45;g.beginPath();g.arc(e.x+Math.cos(a)*r*1.3,e.y+Math.sin(a)*r*1.3,2,0,TAU);g.fill()}}
@@ -987,14 +1045,14 @@ function hud(){if(!G)return;
 }
 function banner(t,sub,cls){const b=$('#banner');b.className='';b.querySelector('h2').textContent=t;b.querySelector('p').textContent=sub||'';void b.offsetWidth;b.className='go '+(cls||'')}
 function toast(icon,title,sub){const t=document.createElement('div');t.className='toast';t.innerHTML=`<div class="i">${icon}</div><div><b>${title}</b><small>${sub}</small></div>`;$('#toasts').appendChild(t);setTimeout(()=>t.remove(),3800)}
-function ach(id){if(S.ach[id])return;const a=ACH.find(a=>a.id===id);if(!a)return;S.ach[id]=Date.now();S.echoes+=a.rw;S.lifetime+=a.rw;save();toast(a.i,'Feat: '+a.n,a.d+' · +'+a.rw+' ◈');if(G)G.newAch.push(a);A.sBuy()}
+function ach(id){if(S.ach[id])return;const a=ACH.find(a=>a.id===id);if(!a)return;S.ach[id]=Date.now();S.echoes+=a.rw;S.lifetime+=a.rw;save();if(state!=='over')toast(a.i,'Feat: '+a.n,a.d+' · +'+a.rw+' ◈');if(G)G.newAch.push(a);A.sBuy()}
 
 /* ---------------- screens ---------------- */
 function show(id){$$('.screen').forEach(s=>s.classList.toggle('on','#'+s.id===id));
   const inRun=G&&['play','levelup','paused','win'].includes(state);$('#hud').classList.toggle('on',!!(G&&state!=='over'));
   $$('.echoN').forEach(e=>e.textContent=S.echoes);$('#echoTitle').textContent=S.echoes}
 function hideAll(){$$('.screen').forEach(s=>s.classList.remove('on'))}
-function goTitle(){if(G){G=null}state='menu';Seq.mode='menu';Seq.setBpm(84);A.muffle(false);$('#bossbar').classList.remove('on');$('#hud').classList.remove('on');buildBg();
+function goTitle(){wake(false);if(G){G=null}state='menu';Seq.mode='menu';Seq.setBpm(84);A.muffle(false);$('#bossbar').classList.remove('on');$('#hud').classList.remove('on');buildBg();
   const dc=dailyCfg(),ds=SINGERS.find(s=>s.id===dc.singer);$('#dailyInfo').textContent=`${ds.name} · ${SONGS[dc.song].name} · ${dc.mod.name}`+(S.daily[dc.seed]?` · best ${S.daily[dc.seed]}`:'');
   show('#title')}
 function buildSelect(){
@@ -1012,7 +1070,7 @@ $('#songs').addEventListener('click',e=>{const c=e.target.closest('[data-song]')
   S.lastSong=id;save();A.sClick();buildBg();buildSelect()});
 
 let lastOpt=null;
-function startRun(opt){A.init();Seq.start();lastOpt=opt;newGame(opt);state='play';hideAll();$('#hud').classList.add('on');for(const k in hudC)delete hudC[k];
+function startRun(opt){A.init();Seq.start();wake(true);lastOpt=opt;newGame(opt);state='play';hideAll();$('#hud').classList.add('on');for(const k in hudC)delete hudC[k];
   if(opt.daily)banner('DAILY HUM',opt.mod.name+' — '+opt.mod.d);else banner(SONGS[opt.song].name.toUpperCase(),'sing back the silence');
   if(!S.seenTip){showTip('Drag anywhere to move · your voices play on the beat',6000);S.seenTip=1;save()}
   else if(Math.random()<.5)showTip(['Lurchers lunge on the downbeat — sidestep on 1','Getting hit breaks your harmony combo','Tempo makes every voice play faster','Chorus notes block dark notes','Crescendo when the ring glows — Space or tap ✺'][Math.floor(Math.random()*5)],4000)}
@@ -1045,7 +1103,7 @@ $('#reroll').addEventListener('click',()=>{if(G&&G.rerolls>0&&state==='levelup')
 
 /* pause / win / over */
 function pause(){if(state!=='play'||!G||G.dead)return;state='paused';A.muffle(true);$('#pauseInfo').textContent=`${SONGS[G.song].name} · ${fmt(G.T)} · Lv ${G.level}`+(G.modName?' · '+G.modName:'');show('#pause')}
-function resume(){if(state!=='paused')return;state='play';A.muffle(false);hideAll();A.init()}
+function resume(){if(state!=='paused')return;state='play';wake(true);A.muffle(false);hideAll();A.init()}
 function openWin(){state='win';A.muffle(true);A.sBossDie(chordFreqs(3));flash(.7,'#fff');show('#win')}
 function showOver(){
   const song=SONGS[G.song];const won=G.won;
@@ -1067,9 +1125,18 @@ function showOver(){
   const st=[['Time',fmt(G.T)],['Silenced',G.kills],['Level',G.level],['Best Harmony','×'+G.maxCombo],['Hushes',G.bossKills],['Score',score]];
   $('#ostats').innerHTML=st.map(([k,v])=>`<div class="stat"><b>${v}</b><small>${k}</small></div>`).join('');
   $('#onotes').innerHTML=notes.map(n=>`<div>${n}</div>`).join('');
-  show('#over');$('#hud').classList.remove('on');$('#bossbar').classList.remove('on');
+  $('#setlist').innerHTML=G.voices.map(v=>{const V=VOICES[v.id];return`<div class="vi" style="--h:${V.h}" title="${V.name}">${V.icon}<b>${v.lvl}</b></div>`}).join('');
+  show('#over');drawShape();wake(false);$('#hud').classList.remove('on');$('#bossbar').classList.remove('on');
   const t0=performance.now();const el=$('#earnN');(function cnt(){const k=Math.min(1,(performance.now()-t0)/1400);el.textContent=Math.floor(earn*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(cnt);else A.sBuy()})();
   setTimeout(()=>A.muffle(false),400)}
+
+function drawShape(){const c=$('#shape');if(!c||!G)return;const tl=G.tl.concat([G.kills-G.tlK]);const w=c.clientWidth||320,h=c.clientHeight||74,dpr=Math.min(2,devicePixelRatio||1);
+  c.width=w*dpr;c.height=h*dpr;const x=c.getContext('2d');x.scale(dpr,dpr);const song=SONGS[G.song];const n=Math.max(tl.length,24),bw=w/n,mx=Math.max(4,...tl);let i=0;
+  (function step(){const k=Math.min(tl.length,i+2);for(;i<k;i++){const v=tl[i],bh=Math.max(1.5,v/mx*(h/2-4)),cx=i*bw+bw/2,hue=lerp(song.a,song.b,i/Math.max(1,tl.length-1));
+    const gr=x.createLinearGradient(0,h/2-bh,0,h/2+bh);gr.addColorStop(0,hsla(hue,100,75,.95));gr.addColorStop(.5,hsla(hue,100,60,.9));gr.addColorStop(1,hsla(hue,100,75,.95));
+    x.fillStyle=gr;x.shadowColor=hsla(hue,100,60,.8);x.shadowBlur=8;const bwid=Math.max(1.5,bw*.6);x.beginPath();x.roundRect?x.roundRect(cx-bwid/2,h/2-bh,bwid,bh*2,bwid/2):x.rect(cx-bwid/2,h/2-bh,bwid,bh*2);x.fill()}
+    if(i<tl.length)requestAnimationFrame(step)})()}
+let wl=null;async function wake(on){try{if(on&&navigator.wakeLock&&!wl){wl=await navigator.wakeLock.request('screen');wl.addEventListener('release',()=>{wl=null})}else if(!on&&wl){const w=wl;wl=null;await w.release()}}catch(e){}}
 
 /* shop / achievements / settings */
 function buildShop(){$('#shopList').innerHTML=META.map(m=>{const l=meta(m.id);const mx=l>=m.max;const c=mx?0:m.cost(l);
@@ -1080,10 +1147,10 @@ $('#shopList').addEventListener('click',e=>{const b=e.target.closest('[data-buy]
 function buildAchs(){const got=ACH.filter(a=>S.ach[a.id]).length;$('#achSub').textContent=`${got} of ${ACH.length} feats earned`;
   $('#achList').innerHTML=ACH.map(a=>`<div class="lrow ${S.ach[a.id]?'got':'not'}"><div class="i">${S.ach[a.id]?a.i:'?'}</div><div class="m"><b>${a.n}</b><small>${a.d}</small></div><span class="echo" style="font-weight:700;font-size:13px">◈ ${a.rw}</span></div>`).join('');
   $('#lifeStats').innerHTML=[['Songs',S.stats.runs],['Silenced',S.stats.kills],['Hours',(S.stats.time/3600).toFixed(1)],['Hushes',S.stats.bosses],['Best',fmt(S.best.time)],['Echoes',S.lifetime]].map(([k,v])=>`<div class="stat"><b>${v}</b><small>${k}</small></div>`).join('');show('#achs')}
-function buildSettings(){$('#sMusic').value=S.settings.music;$('#sSfx').value=S.settings.sfx;$('#sShake').classList.toggle('on',!!S.settings.shake);$('#sFx').classList.toggle('on',!!S.settings.fx);$('#sNums').classList.toggle('on',!!S.settings.nums);$('#sReset').textContent='Reset';show('#settings')}
+function buildSettings(){$('#sMusic').value=S.settings.music;$('#sSfx').value=S.settings.sfx;$('#sShake').classList.toggle('on',!!S.settings.shake);$('#sFx').classList.toggle('on',!!S.settings.fx);$('#sNums').classList.toggle('on',!!S.settings.nums);$('#sHap').classList.toggle('on',!!S.settings.haptic);$('#sReset').textContent='Reset';show('#settings')}
 $('#sMusic').addEventListener('input',e=>{S.settings.music=+e.target.value;A.setVol();save()});
 $('#sSfx').addEventListener('input',e=>{S.settings.sfx=+e.target.value;A.setVol();save();A.sClick()});
-for(const [id,k] of [['#sShake','shake'],['#sFx','fx'],['#sNums','nums']])$(id).addEventListener('click',()=>{S.settings[k]=S.settings[k]?0:1;save();buildSettings();A.sClick()});
+for(const [id,k] of [['#sShake','shake'],['#sFx','fx'],['#sNums','nums'],['#sHap','haptic']])$(id).addEventListener('click',()=>{S.settings[k]=S.settings[k]?0:1;save();buildSettings();A.sClick()});
 $('#sReset').addEventListener('click',e=>{const b=e.currentTarget;if(b.textContent!=='Tap again to erase'){b.textContent='Tap again to erase';return}const st=S.settings;S=defSave();S.settings=st;save();b.textContent='Erased';A.sNo()});
 
 /* actions */
@@ -1146,6 +1213,10 @@ function frame(ts){
   if(G&&state!=='over')hud();
   requestAnimationFrame(frame)}
 resize();goTitle();Seq.start();requestAnimationFrame(frame);
+const VER='1.1';
+if(S.stats.runs>0&&S.ver!==VER)setTimeout(()=>toast('✦','HUSH '+VER+' — new verse','Glissando · Kael · Veils · Golden Notes · your song\'s shape'),1200);
+S.ver=VER;save();
+try{if('serviceWorker' in navigator&&location.protocol==='https:'&&window.top===window)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 </script>
 </body>
 </html>
