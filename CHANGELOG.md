@@ -1,5 +1,32 @@
 # Changelog
 
+## 3.0 — "Symphony"
+
+**The Score — a 20-movement campaign**
+- Four acts — *Overture* (Dawn), *Adagio* (Dusk), *Scherzo* (Aurora), *Finale* (Dream) — of short, handcrafted movements, each with its own goal and rules: survive the dark with only moths for company, shatter a crystal garden, answer the Hush's calls, outlast leeches, reach *tutti*, and finally face The Great Silence.
+- Every movement has three stars (clear it, plus two challenges like *take no damage* or *land 20 PERFECTs*). 60 stars in all; acts open at 8, 18 and 30 stars. New stars pay Echoes.
+- Complete it for the **Staff Lines** trail and three new feats.
+
+**Singer Solos**
+- Every Singer's Crescendo now ends in a signature **Solo**: Radiance (heal), Earthshaker (stun), Starfall, Hallelujah, Thunderstorm, Singularity (a black hole that detonates), Tidal Sweep, Ribbon Dance, Grand Crash, Remembrance. Listed on each Singer's card and in the Songbook.
+
+**Call & Response**
+- A new rhythm event: the song plays a phrase on golden beats — dash on exactly those beats in the next bar to answer and earn a music box.
+
+**New Hushlings & hazards**
+- **Phantoms** only exist on the beat — between beats they can't be hit (and can't hurt you).
+- **Leeches** latch onto your light and drain it until you dash them off.
+- **Resonant Crystals** ring out when shattered, blasting everything nearby — chain them.
+- **Silence Zones** open on the field late in a song; inside one, your voices fall silent.
+
+**Music**
+- Every Song now has its own composed **theme**, sung by a lead voice between the action (and on the title screen).
+
+**Also**
+- High-contrast Hushlings option for readability.
+- Title screen reorganized around The Score; Daily Hum and Verses side by side.
+- Six more feats (50 total). Robustness fixes.
+
 ## 2.0 — "Fortissimo"
 The biggest update yet: an ending, a reason to come back every day, and a long road to mastery.
 

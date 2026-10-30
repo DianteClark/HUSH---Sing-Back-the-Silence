@@ -19,14 +19,15 @@ You are a small light in a world gone quiet. Dark **Hushlings** drift in to swal
 
 ## What's inside
 
+- **The Score** — a 20-movement campaign in four acts, with 60 stars to earn
 - **10 voices** (weapons that are also instruments), 5 levels each, up to 6 at once — your build *is* your band
 - **6 Duets** — partner voices at their peak merge into something new
 - **16 Motifs** — rule-bending gifts found in music boxes
 - **Perfect-beat dashing** with a visual metronome ring, and harmony tiers from *piano* to *tutti*
-- **10 Singers**, each with their own voice and a 10-level Mastery
-- **5 Songs** — Dawn, Dusk, Aurora, Abyss, Dream — each its own musical mode, palette and difficulty, and **9 Dynamics** per song from *p* to *∅ silenzio*
+- **10 Singers**, each with their own voice, a signature Crescendo **Solo** and a 10-level Mastery
+- **5 Songs** — Dawn, Dusk, Aurora, Abyss, Dream — each its own musical mode, palette, difficulty and composed theme, and **9 Dynamics** per song from *p* to *∅ silenzio*
 - Hushlings that move to the rhythm, four forms of the Hush, and a final boss — **The Great Silence** — that puts out the lights
-- Silence Storms, Golden Notes, **Daily Hum** + **Daily Verses**, streaks, Resonance meta-progression, a **Songbook** collection, a **Wardrobe** of trails, 41 feats, Endless mode, and one-tap run sharing
+- **Call & Response** rhythm events, Phantoms that only exist on the beat, Leeches, Resonant Crystals, Silence Zones, Silence Storms, Golden Notes, **Daily Hum** + **Daily Verses**, streaks, Resonance meta-progression, a **Songbook** collection, a **Wardrobe** of trails, 50 feats, Endless mode, and one-tap run sharing
 
 All audio is synthesized in real time with the Web Audio API; all art is drawn procedurally on canvas. One HTML file.
 

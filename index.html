@@ -199,6 +199,15 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
 .qbar{height:5px;border-radius:3px;background:rgba(255,255,255,.1);margin-top:6px;overflow:hidden}.qbar i{display:block;height:100%;background:linear-gradient(90deg,hsl(var(--b),100%,60%),hsl(var(--a),100%,65%))}
 .mast{font-size:11px;color:#ffd76b;margin-top:6px;letter-spacing:.05em}.mbar{height:3px;border-radius:2px;background:rgba(255,255,255,.1);margin-top:3px;overflow:hidden}.mbar i{display:block;height:100%;background:#ffd76b}
 #beat i.call{box-shadow:0 0 0 2px #ffd76b,0 0 10px #ffd76b}#beat i.hit{background:#ffd76b!important}
+.ostars{font-size:46px;letter-spacing:10px;color:#ffd76b;text-shadow:0 0 24px rgba(255,215,107,.7);margin:6px 0 2px;text-align:center}.ostars i{font-style:normal;color:rgba(255,255,255,.18);text-shadow:none}
+.stg{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:var(--panel);border:1px solid rgba(255,255,255,.08);margin-bottom:8px;text-align:left;width:100%}
+.stg .no{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:Unbounded,system-ui,sans-serif;font-weight:700;font-size:14px;background:hsla(var(--h),90%,55%,.18);border:1px solid hsla(var(--h),100%,70%,.5);color:hsl(var(--h),100%,78%);flex-shrink:0}
+.stg .m{flex:1;min-width:0}.stg b{font-size:14.5px}.stg small{display:block;color:var(--dim);font-size:12.5px;margin-top:2px}
+.stg .st{color:#ffd76b;font-size:15px;letter-spacing:2px;white-space:nowrap}.stg .st i{font-style:normal;color:rgba(255,255,255,.2)}
+.stg.lock{opacity:.4}.stg.boss .no{border-radius:12px}
+.acth{display:flex;justify-content:space-between;align-items:baseline;margin:22px 4px 10px}.acth .sect{margin:0}.acth span{font-size:12px;color:var(--dim)}
+#stageInfo{display:none;padding:14px;border-radius:16px;background:linear-gradient(135deg,hsla(var(--a),90%,40%,.25),rgba(14,10,30,.8));border:1px solid hsla(var(--a),100%,65%,.45);margin-bottom:6px}
+#stageInfo b{font-family:Unbounded,system-ui,sans-serif;font-size:16px}#stageInfo p{font-size:13px;color:#d9d2f5;margin-top:6px;line-height:1.5}
 .shake{animation:shk .35s}@keyframes shk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 #flash{position:fixed;inset:0;pointer-events:none;z-index:4;background:#fff;opacity:0}
 #rot{display:none}
@@ -236,29 +245,32 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
   <div class="tag2">The world forgot its song. Sing it back.</div>
   <div class="menu">
     <button class="btn primary" data-act="select">▶&nbsp; Play</button>
-    <button class="btn" data-act="daily">☼ Daily Hum <span class="sub" id="dailyInfo"></span></button>
-    <button class="btn" data-act="verses">☰ Daily Verses <span class="sub" id="versesInfo"></span></button>
+    <button class="btn" data-act="score" style="border-color:hsla(var(--a),100%,70%,.45)">♫ The Score <span class="sub" id="scoreInfo"></span></button>
+    <div class="row"><button class="btn" data-act="daily">☼ Daily Hum <span class="sub" id="dailyInfo"></span></button><button class="btn" data-act="verses">☰ Verses <span class="sub" id="versesInfo"></span></button></div>
     <div class="row"><button class="btn" data-act="shop">◈ Resonance</button><button class="btn" data-act="book">❦ Songbook</button></div>
     <div class="row"><button class="btn" data-act="achs">✧ Feats</button><button class="btn" data-act="how">? Guide</button></div>
   </div>
   <button class="back" data-act="settings" aria-label="Settings" style="font-size:19px">⚙</button>
-  <div class="ver">HUSH · v2.0 · made with every note</div>
+  <div class="ver">HUSH · v3.0 · made with every note</div>
 </div>
 
 <!-- SELECT -->
 <div class="screen scroll dim" id="select">
-  <button class="back" data-act="title">←</button>
+  <button class="back" data-act="selback">←</button>
   <div class="chip"><span class="echo">◈</span><span class="echoN">0</span></div>
   <div class="panel">
-    <div class="ptitle">Prepare the Song</div>
+    <div class="ptitle" id="selTitle">Prepare the Song</div>
+    <div id="stageInfo"></div>
     <div class="psub">Your singer is your first voice. Every voice you gain joins the band.</div>
     <div class="sect">Singer</div>
     <div class="grid" id="singers"></div>
+    <div id="songSect">
     <div class="sect">Song</div>
     <div class="grid" id="songs"></div>
     <div class="sect">Dynamics</div>
     <div class="dyns" id="dyns"></div>
     <p class="dynd" id="dynDesc"></p>
+    </div>
     <div class="stick"><button class="btn primary" style="width:100%" data-act="start">Begin the Song</button></div>
   </div>
 </div>
@@ -299,6 +311,7 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
   <div style="height:5vh"></div>
   <div class="tag" id="overTag">the silence returns</div>
   <div class="big" id="overTitle">Silence Falls</div>
+  <div class="ostars" id="ostars" style="display:none"></div>
   <div class="stats" id="ostats"></div>
   <div class="tag" style="margin:0 0 6px">the shape of your song</div>
   <canvas id="shape" style="width:min(480px,100%);height:74px;display:block"></canvas>
@@ -307,7 +320,9 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
   <div class="earn"><span class="echo">◈</span> <span id="earnN">0</span></div>
   <div class="notes" id="onotes"></div>
   <div class="menu">
-    <button class="btn primary" data-act="again">↻ Sing Again</button>
+    <button class="btn primary" data-act="next" id="btnNext" style="display:none">Next Movement →</button>
+    <button class="btn primary" data-act="again" id="btnAgain">↻ Sing Again</button>
+    <button class="btn" data-act="score" id="btnScore" style="display:none">♫ The Score</button>
     <button class="btn" data-act="share">⧉ Share your song</button>
     <div class="row"><button class="btn" data-act="shop">◈ Resonance</button><button class="btn" data-act="title">Menu</button></div>
   </div>
@@ -354,6 +369,18 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
     <p><b>Restore the song.</b> At 9:00 <b>The Great Silence</b> arrives. It puts out the lights. Silence it and the song is restored — then keep singing in Endless, or take a bow.</p>
     <p><b>Come back louder.</b> Each restored song unlocks a harder <b>Dynamic</b> for it, from <i>p</i> up to <i>∅ silenzio</i>, with richer Echoes. Spend Echoes on Resonance, Singers and trails. Three <b>Daily Verses</b> and a <b>Daily Hum</b> wait every morning.</p>
     <div class="stick"><button class="btn primary" style="width:100%" data-act="select">I'm ready</button></div>
+  </div>
+</div>
+
+<!-- THE SCORE -->
+<div class="screen scroll dim" id="score">
+  <button class="back" data-act="title">←</button>
+  <div class="chip">★ <span id="starN">0</span> / 60</div>
+  <div class="panel">
+    <div class="ptitle">The Score</div>
+    <div class="psub">Twenty movements. Sixty stars. One song to bring back.</div>
+    <div id="scoreBody"></div>
+    <div style="height:30px"></div>
   </div>
 </div>
 
@@ -415,10 +442,10 @@ const fmt=s=>{s=Math.floor(s);return Math.floor(s/60)+':'+String(s%60).padStart(
 /* ---------------- save ---------------- */
 const SAVE_KEY='hush_save_v1';
 const defSave=()=>({echoes:0,lifetime:0,meta:{},singers:{lumi:1},songs:{dawn:1},ach:{},best:{time:0,kills:0},songBest:{},daily:{},
-  stats:{runs:0,kills:0,time:0,bosses:0,restored:0,quests:0},settings:{music:.8,sfx:.8,shake:1,fx:1,nums:1,haptic:1,guide:1,lat:0,contrast:0},lastSinger:'lumi',lastSong:'dawn',seenTip:0,seen:{e:{},d:{},m:{}},dailyStreak:0,lastDaily:0,dyn:{},dynSel:{},q:null,trails:{star:1},trail:'star',mast:{}});
+  stats:{runs:0,kills:0,time:0,bosses:0,restored:0,quests:0},settings:{music:.8,sfx:.8,shake:1,fx:1,nums:1,haptic:1,guide:1,lat:0,contrast:0},lastSinger:'lumi',lastSong:'dawn',seenTip:0,seen:{e:{},d:{},m:{}},dailyStreak:0,lastDaily:0,dyn:{},dynSel:{},q:null,camp:{},trails:{star:1},trail:'star',mast:{}});
 let S;
 try{const raw=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');const d=defSave();S=Object.assign(d,raw);
-  for(const k of ['settings','stats','best','meta','singers','songs','ach','songBest','daily','dyn','dynSel','trails','mast'])S[k]=Object.assign(d[k]||{},defSave()[k],raw[k]||{});}
+  for(const k of ['settings','stats','best','meta','singers','songs','ach','songBest','daily','dyn','dynSel','trails','mast','camp'])S[k]=Object.assign(d[k]||{},defSave()[k],raw[k]||{});}
 catch(e){S=defSave()}
 S.seen=Object.assign({e:{},d:{},m:{}},S.seen||{});S.seen.e=S.seen.e||{};S.seen.d=S.seen.d||{};S.seen.m=S.seen.m||{};
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S))}catch(e){}}
@@ -493,6 +520,43 @@ const DYN=[
   {s:'tutti',n:'tutti',d:'50% more Hushlings.'},
   {s:'∅',n:'silenzio',d:'Silence Storms strike every three minutes.'},
 ];
+const ACTS=[{n:'I · Overture',song:'dawn',need:0},{n:'II · Adagio',song:'dusk',need:8},{n:'III · Scherzo',song:'aurora',need:18},{n:'IV · Finale',song:'dream',need:30}];
+const STAGES=[
+  {a:0,n:'First Light',g:['survive',60],st:[['hp',70],['nohit']],r:{only:{mote:1}}},
+  {a:0,n:'On the Beat',g:['perfects',10],st:[['time',90],['pstreak',5]],r:{only:{mote:3,shard:1}}},
+  {a:0,n:'Gathering',g:['kills',150],st:[['time',120],['combo',60]],r:{spawn:1.6,only:{mote:4,shard:1,lurch:1}}},
+  {a:0,n:'Gold Rush',g:['gold',2],st:[['hp',60],['time',100]],r:{gold:18,t0:40}},
+  {a:0,n:'The Hush',g:['boss',0],st:[['hp',50],['nohit']],r:{boss:[0,25],lv:5,t0:60}},
+  {a:1,n:'Veiled',g:['veils',25],st:[['combo',50],['time',180]],r:{only:{veil:2,mote:4},t0:120}},
+  {a:1,n:'Moth Light',g:['survive',120],st:[['hp',60],['nohit']],r:{dark:.9,only:{moth:3,mote:1},t0:150}},
+  {a:1,n:'Music Boxes',g:['boxes',3],st:[['time',200],['hp',50]],r:{elite:6,t0:120}},
+  {a:1,n:'Zones of Silence',g:['survive',150],st:[['hp',60],['perfects',15]],r:{zones:1,t0:140}},
+  {a:1,n:'The Stillness',g:['boss',1],st:[['hp',50],['nohit']],r:{boss:[1,25],lv:7,t0:240}},
+  {a:2,n:'Allegro',g:['survive',120],st:[['hp',50],['combo',150]],r:{bpm:40,t0:180}},
+  {a:2,n:'Conductors',g:['conds',8],st:[['time',200],['hp',50]],r:{only:{cond:2,mote:3,lurch:2},t0:300}},
+  {a:2,n:'Call & Response',g:['calls',3],st:[['hp',60],['perfects',20]],r:{calls:1,t0:150}},
+  {a:2,n:'Crystal Garden',g:['crystals',12],st:[['time',150],['combo',100]],r:{crystals:1,t0:200}},
+  {a:2,n:'The Last Rest',g:['boss',2],st:[['hp',50],['nohit']],r:{boss:[2,25],lv:9,t0:300}},
+  {a:3,n:'Phantoms',g:['phantoms',40],st:[['hp',50],['combo',120]],r:{only:{phantom:3,mote:2},t0:330}},
+  {a:3,n:'Leeches',g:['survive',150],st:[['hp',50],['perfects',20]],r:{only:{leech:2,mote:3,wisp:1},t0:380}},
+  {a:3,n:'The Storm',g:['survive',120],st:[['hp',50],['nohit']],r:{dark:1,only:{moth:4,phantom:1,mote:2},t0:400}},
+  {a:3,n:'Tutti',g:['combo',320],st:[['time',240],['hp',50]],r:{spawn:1.5,t0:350}},
+  {a:3,n:'The Great Silence',g:['boss',3],st:[['hp',40],['nohit']],r:{boss:[3,20],lv:12,motif:1,t0:420}},
+];
+const totalStars=()=>STAGES.reduce((a,_,i)=>a+((S.camp||{})[i]||0),0);
+const stageOpen=i=>i===0||(((S.camp||{})[i-1]||0)>=1&&totalStars()>=ACTS[STAGES[i].a].need);
+const titleCase=t=>t.toLowerCase().replace(/(^|\s)\w/g,c=>c.toUpperCase());
+function goalText(st){const [k,n]=st.g;switch(k){case'survive':return`Survive ${fmt(n)}`;case'perfects':return`Land ${n} PERFECT dashes`;case'kills':return`Silence ${n} Hushlings`;case'gold':return`Catch ${n} Golden Notes`;case'boss':return`Silence ${titleCase(BOSS[n].n)}`;case'veils':return`Silence ${n} Veils`;case'boxes':return`Open ${n} music boxes`;case'conds':return`Silence ${n} Conductors`;case'calls':return`Answer ${n} Calls`;case'crystals':return`Shatter ${n} Crystals`;case'phantoms':return`Silence ${n} Phantoms`;case'combo':return`Reach a ×${n} harmony`}return''}
+function starText(c){const [k,v]=c;return{hp:`Finish above ${v}% health`,nohit:'Take no damage',time:`Finish within ${fmt(v)}`,combo:`Reach a ×${v} harmony`,perfects:`Land ${v} PERFECT dashes`,pstreak:`Land ${v} PERFECTs in a row`}[k]}
+function starOk(c){const [k,v]=c;switch(k){case'hp':return P.hp/P.maxHp*100>=v;case'nohit':return G.dmgTaken<=0;case'time':return G.T<=v;case'combo':return G.maxCombo>=v;case'perfects':return G.perfects>=v;case'pstreak':return G.maxPerf>=v}return false}
+function goalVal(){const [k,n]=G.stage.g;return{survive:G.T,perfects:G.perfects,kills:G.kills,gold:G.golds,boss:G.stageBossDown?1:0,veils:G.veils,boxes:G.chestsOpened,conds:G.condK,calls:G.callsWon,crystals:G.crystalK,phantoms:G.phantomK,combo:G.maxCombo}[k]||0}
+function goalNeed(){const [k,n]=G.stage.g;return k==='boss'?1:n}
+function stageHud(){const [k,n]=G.stage.g,v=goalVal();if(k==='survive')return'SURVIVE '+fmt(Math.max(0,n-G.T));if(k==='boss')return G.boss?'SILENCE IT':titleCase(BOSS[n].n).toUpperCase()+' COMES';
+  const lab={perfects:'PERFECTS',kills:'SILENCED',gold:'GOLDEN NOTES',veils:'VEILS',boxes:'MUSIC BOXES',conds:'CONDUCTORS',calls:'CALLS',crystals:'CRYSTALS',phantoms:'PHANTOMS',combo:'BEST HARMONY'}[k];return`${lab} ${Math.min(v,n)} / ${n}`}
+function stageClear(){G.stageDone=true;P.inv=99;const song=SONGS[G.song];banner('MOVEMENT COMPLETE',G.stage.n);A.sBossDie(chordFreqs(3));flash(.6,'#fff');zoomP=.1;timeScale=.3;buzz([40,30,120]);
+  for(const e of G.enemies)if(!e.dead&&e.type!=='boss'){e.dead=true;burst(e.x,e.y,song.a,4,160,2.5,.5,false)}G.ebul.length=0;G.darkTarget=0;
+  for(let i=0;i<4;i++)G.rings.push({x:P.x,y:P.y,r:10,R:260+i*120,life:.7+i*.15,max:.7+i*.15,h:i%2?song.a:song.b,w:7});
+  setTimeout(()=>{if(G&&G.stageDone&&state!=='over'){state='over';G.dead=true;hideAll();showOver()}},2300)}
 const TIERS=[25,60,120,200,320],TIER_N=['piano','mezzo','forte','fortissimo','tutti'];
 const tierOf=c=>{let t=0;for(const x of TIERS)if(c>=x)t++;return t};
 const QUESTS=[
@@ -528,6 +592,7 @@ const TRAILS={
   aurora:{n:'Aurora',d:'Northern light. Earned by restoring the song.',feat:'t10'},
   gilded:{n:'Gilded',d:'Pure gold. Earned by restoring a song at forte.',feat:'dyn4'},
   hollow:{n:'Hollow',d:'The silence itself, tamed. Earned at silenzio.',feat:'dyn8'},
+  staff:{n:'Staff Lines',d:'Five lines of music trail behind you. Earned by completing The Score.',feat:'act4'},
 };
 const MT=[0,150,400,800,1400,2200,3200,4500,6000,8000];
 function mLvl(id){const x=(S.mast||{})[id]||0;let l=0;for(const t of MT)if(x>=t)l++;return l}
@@ -617,6 +682,9 @@ const ACH=[
   {id:'master10',i:'✯',n:'Maestro',d:'Reach Mastery 10 with a Singer',rw:250},
   {id:'wardrobe',i:'❋',n:'Dressed in Light',d:'Own 5 trails',rw:60},
   {id:'tutti',i:'♬',n:'Tutti',d:'Reach the tutti harmony (×320)',rw:120},
+  {id:'act1',i:'𝄞',n:'Overture',d:'Complete Act I of The Score',rw:80},
+  {id:'act4',i:'𝄐',n:'The Score',d:'Complete every movement of The Score',rw:400},
+  {id:'stars60',i:'★',n:'Sixty Stars',d:'Earn every star in The Score',rw:600},
   {id:'call',i:'☏',n:'Answered',d:'Answer a Call & Response',rw:50},
   {id:'call5',i:'☎',n:'Antiphon',d:'Answer 5 Calls in one song',rw:120},
   {id:'solos',i:'♪',n:'Soloist',d:"Perform every Singer's Solo",rw:150},
@@ -836,6 +904,9 @@ function newGame(opt){
     endless:false,won:false,bonusEchoes:0,arpAng:0,orbA:0,newAch:[],arpIdx:0,noteK:0,chimeK:0,dead:false,deadT:0,bonusVoice:0,dmgTaken:0,glA:0,beams:null,orbs:null,tl:[],tlK:0,tlT:0,nextGold:(70+R()*60)/(1+meta('golden')*.25),gold:null,veils:0,duets:{},perfects:0,perfStreak:0,maxPerf:0,motifs:{},chests:[],pendingMotif:0,cardMode:'level',graceT:0,fermataT:0,chestsOpened:0,elitesK:0,condK:0,golds:0,mothK:0,rib:[],ribT:0,stunMax:0,step:0,call:null,callsWon:0,nextCall:140,zones:[],nextZone:300,nextCrystal:90,crystalK:0,phantomK:0,leechOff:0,solo:null,dark:0,darkTarget:0,stormT:0,bossSpawned:0,normalBoss:0,events:{270:'circle',420:'storm'}};
   if(opt.mod)opt.mod.ap(G);
   const dl=G.dyn=opt.daily?0:(opt.dyn||0);G.eliteMul=1;G.bspd=1;G.bossHp=1;G.heal=1;G.espd=1;G.storms=0;G.tier=0;
+  if(opt.stage!=null){const st=STAGES[opt.stage],r=st.r;G.stage=st;G.stageIdx=opt.stage;G.t0=r.t0||0;G.only=r.only||null;G.mod.spawn*=r.spawn||1;G.mod.xp*=2.2;G.eliteMul=r.elite||1;G.events={};
+    G.nextBoss=r.boss?r.boss[1]:1e9;if(r.boss)G.normalBoss=r.boss[0]%3;G.goldEvery=r.gold||0;G.nextGold=r.gold?8:1e9;if(r.dark)G.darkTarget=G.dark=r.dark;G.zonesOn=!!r.zones;if(r.zones)G.nextZone=6;
+    G.crystalsOn=!!r.crystals;if(r.crystals)G.nextCrystal=3;G.callsOn=!!r.calls;G.nextCall=r.calls?8:1e9;if(r.bpm)G.bpmBonus+=r.bpm;G.pending+=(r.lv||(1+Math.round((r.t0||0)/40)))-1;if(r.motif)G.pendingMotif++}
   if(dl>=1)G.mod.ehp*=1.25;if(dl>=2)G.eliteMul=2;if(dl>=3)G.bspd=1.2;if(dl>=4)G.bossHp=1.5;if(dl>=5)G.heal=.5;if(dl>=6)G.espd=1.15;if(dl>=7)G.mod.spawn*=1.5;if(dl>=8){G.storms=1;G.nextStorm=180}
   if(G.bonusVoice){const ids=Object.keys(VOICES).filter(v=>v!==singer.voice);G.voices.push({id:ids[Math.floor(R()*ids.length)],lvl:1})}
   P={x:0,y:0,vx:0,vy:0,r:11,hp:100,maxHp:100,inv:0,face:0,trail:0,dash:0,dashCd:0,dvx:0,dvy:0,dashFx:0};
@@ -877,14 +948,14 @@ function nearestN(x,y,n,maxD,excl){const out=[];const md=maxD*maxD;
   return out.map(o=>o[1])}
 
 /* ---------------- enemies ---------------- */
-function enemyScale(){return(1+G.T/60*.3+(G.endless?Math.pow((G.T-600)/60,1.3)*.35:0))*SONGS[G.song].diff*G.mod.ehp}
+function enemyScale(){const ET=G.T+(G.t0||0);return(1+ET/60*.3+(G.endless?Math.pow((G.T-600)/60,1.3)*.35:0))*SONGS[G.song].diff*G.mod.ehp}
 function makeEnemy(type,x,y,elite){const d=EN[type],sc=enemyScale();
-  const e={type,x,y,vx:0,vy:0,kbx:0,kby:0,r:d.r*(elite?1.45:1),hp:d.hp*sc*(elite?5:1),spd:d.spd*(1+Math.min(.35,G.T/600*.25))*(elite?.9:1),dmg:d.dmg*(elite?1.5:1)*(1+Math.min(1,G.T/600*.5)),
+  const e={type,x,y,vx:0,vy:0,kbx:0,kby:0,r:d.r*(elite?1.45:1),hp:d.hp*sc*(elite?5:1),spd:d.spd*(1+Math.min(.35,(G.T+(G.t0||0))/600*.25))*(elite?.9:1),dmg:d.dmg*(elite?1.5:1)*(1+Math.min(1,(G.T+(G.t0||0))/600*.5)),
     xp:d.xp,elite:!!elite,t:(S.seen.e[type]=1,R()*10),flash:0,orbCd:0,slow:0,dead:false,charge:0,dash:0,ang:R()*TAU,shield:type==='veil',stun:0,haste:0,ph:R()*TAU,solid:true};
   e.maxHp=e.hp;G.enemies.push(e);return e}
 function spawnPos(extra=0){const a=R()*TAU;const d=Math.hypot(W,H)/2/Z+50+extra;return[P.x+Math.cos(a)*d,P.y+Math.sin(a)*d]}
-function spawnRandom(){const T=G.T;
-  const w=[['mote',10],['shard',T>25?2.2:0],['lurch',T>60?4:0],['wisp',T>100?3:0],['bloat',T>140?2:0],['veil',T>200?2.4:0],['moth',T>150?1.6:0],['cond',T>260?1:0],['phantom',T>320?1.8:0],['leech',T>380?1:0]];
+function spawnRandom(){const T=G.T+(G.t0||0);
+  const w=G.only?Object.entries(G.only):[['mote',10],['shard',T>25?2.2:0],['lurch',T>60?4:0],['wisp',T>100?3:0],['bloat',T>140?2:0],['veil',T>200?2.4:0],['moth',T>150?1.6:0],['cond',T>260?1:0],['phantom',T>320?1.8:0],['leech',T>380?1:0]];
   let tot=0;for(const x of w)tot+=x[1];let r=R()*tot,type='mote';for(const x of w){r-=x[1];if(r<=0){type=x[0];break}}
   const elite=R()<(.012+Math.min(.04,T/600*.03))*(G.eliteMul||1);
   const [x,y]=spawnPos();
@@ -933,8 +1004,9 @@ function kill(e){e.dead=true;G.kills++;G.combo++;G.comboT=2.8;if(G.combo>G.maxCo
   if(e.type==='cond'){G.condK++;if(G.condK>=10)ach('cond')}if(e.type==='moth')G.mothK++;
   if(e.type==='gold'){G.golds++;G.gold=null;G.bonusEchoes+=25;G.pending++;ach('gold');buzz(30);banner('GOLDEN NOTE','a gift from the old song');A.sBuy();burst(e.x,e.y,48,40,300,3.5,1,false);
     for(let i=0;i<3;i++)G.rings.push({x:e.x,y:e.y,r:8,R:90+i*60,life:.5+i*.12,max:.5+i*.12,h:48,w:4})}
-  if(e.type==='boss')bossDie(e)}
-function bossDie(e){if(e.form===3)return finalDie(e);G.boss=null;G.bossKills++;S.stats.bosses++;$('#bossbar').classList.remove('on');ach('boss');if(G.bossKills>=3)ach('boss3');
+  if(e.type==='boss')bossDie(e);
+  if(G.stage&&!G.stageDone&&goalVal()>=goalNeed())stageClear()}
+function bossDie(e){if(G.stage)G.stageBossDown=true;if(e.form===3)return finalDie(e);G.boss=null;G.bossKills++;S.stats.bosses++;$('#bossbar').classList.remove('on');ach('boss');if(G.bossKills>=3)ach('boss3');
   const song=SONGS[G.song];
   for(let i=0;i<5;i++)setTimeout(()=>{if(G)burst(e.x+rnd(-50,50),e.y+rnd(-50,50),i%2?song.a:song.b,40,380,4,1.1,false)},i*90);
   burst(e.x,e.y,0,60,300,5,1.2,true);
@@ -944,7 +1016,7 @@ function bossDie(e){if(e.form===3)return finalDie(e);G.boss=null;G.bossKills++;S
   G.ebul.length=0;timeScale=.18;shake(22);buzz([60,40,140]);flash(.6,'#fff');G.bonusEchoes+=40;
   G.key+=2;if(G.key>7)G.key-=12;
   A.sBossDie(chordFreqs(3));
-  setTimeout(()=>{if(!G||G.dead)return;banner('MODULATION','the song rises a step');G.pending++},900);
+  setTimeout(()=>{if(!G||G.dead||G.stageDone)return;banner('MODULATION','the song rises a step');G.pending++},900);
   recalc()}
 function finalDie(e){G.boss=null;G.bossKills++;S.stats.bosses++;$('#bossbar').classList.remove('on');const song=SONGS[G.song];
   G.darkTarget=0;G.dark=0;G.ebul.length=0;timeScale=.12;shake(30);flash(1,'#fff');zoomP=.16;buzz([80,60,200]);A.sBossDie(chordFreqs(3));A.sCres(chordFreqs(3));
@@ -952,7 +1024,7 @@ function finalDie(e){G.boss=null;G.bossKills++;S.stats.bosses++;$('#bossbar').cl
   for(let i=0;i<6;i++)G.rings.push({x:e.x,y:e.y,r:20,R:300+i*160,life:.8+i*.18,max:.8+i*.18,h:i%2?song.a:song.b,w:8});
   for(const o of G.enemies)if(!o.dead&&o.type!=='boss'){o.dead=true;burst(o.x,o.y,song.a,4,140,2.5,.5,false)}
   for(let i=0;i<10;i++)dropGem(e.x+rnd(-60,60),e.y+rnd(-60,60),20);dropChest(e.x,e.y);G.bonusEchoes+=120;
-  if(!G.won){G.won=true;S.stats.restored=(S.stats.restored||0)+1;ach('t10');if(G.song==='dream')ach('dream');G.wonAt=G.T;
+  if(G.stage){}else if(!G.won){G.won=true;S.stats.restored=(S.stats.restored||0)+1;ach('t10');if(G.song==='dream')ach('dream');G.wonAt=G.T;
     setTimeout(()=>{if(G&&!G.dead&&state==='play')openWin()},2600)}
   else banner('SILENCE BROKEN','again');recalc()}
 function dropGem(x,y,v){if(G.gems.length>420){G.gems[Math.floor(R()*G.gems.length)].v+=v;return}
@@ -1125,16 +1197,18 @@ function update(dt){
   // camera
   const ck=1-Math.exp(-dt*7);cam.x=lerp(cam.x,P.x,ck);cam.y=lerp(cam.y,P.y,ck);
   // spawn
-  const rate=(1+G.T*.026+Math.pow(G.T/60,2)*.17)*G.mod.spawn*(G.boss?.4:1)*(G.endless?1.3:1);
+  const ET=Math.min(G.T+(G.t0||0),G.stage?480:1e9);const rate=(1+ET*.026+Math.pow(ET/60,2)*.17)*G.mod.spawn*(G.boss?.4:1)*(G.endless?1.3:1);
   G.spawnAcc+=rate*dt;const cap=S.settings.fx?280:200;
   while(G.spawnAcc>=1){G.spawnAcc--;if(G.enemies.length<cap)spawnRandom()}
-  if(G.T>=G.nextBoss&&G.boss&&G.boss.form!==3&&!G.endless&&G.T>=530){const ob=G.boss;ob.dead=true;G.boss=null;burst(ob.x,ob.y,0,40,300,4,1,true);banner('THE HUSH WITHDRAWS','something greater comes','boss')}
-  if(G.T>=G.nextBoss&&!G.boss){const fin=G.endless?(G.bossSpawned%4===3):G.T>=530;spawnBoss(fin);G.bossSpawned++;G.nextBoss=G.endless?G.T+120:(fin?1e9:G.nextBoss+180)}
+  if(!G.stage&&G.T>=G.nextBoss&&G.boss&&G.boss.form!==3&&!G.endless&&G.T>=530){const ob=G.boss;ob.dead=true;G.boss=null;burst(ob.x,ob.y,0,40,300,4,1,true);banner('THE HUSH WITHDRAWS','something greater comes','boss')}
+  if(G.T>=G.nextBoss&&!G.boss){const fin=G.stage?G.stage.r.boss[0]===3:G.endless?(G.bossSpawned%4===3):G.T>=530;spawnBoss(fin);G.bossSpawned++;G.nextBoss=G.stage?1e9:G.endless?G.T+120:(fin?1e9:G.nextBoss+180)}
+  if(G.stage&&!G.stageDone&&goalVal()>=goalNeed())stageClear();
   for(const t in G.events){if(G.events[t]&&G.T>=+t){const ev=G.events[t];G.events[t]=0;if(ev==='circle')encircle();else startStorm()}}
   if(G.storms&&G.T>=G.nextStorm&&!G.boss&&!G.stormT){G.nextStorm=G.T+180;startStorm()}
   if(G.stormT>0){G.stormT-=dt;if(G.stormT<=0){G.stormT=0;if(!(G.boss&&G.boss.form===3&&G.boss.phase>=2))G.darkTarget=0;ach('storm');banner('THE STORM PASSES','')}}
   G.dark=lerp(G.dark,G.darkTarget,1-Math.exp(-dt*1.6));
   if(G.T>=900)ach('t15');
+  if(G.stage&&G.stageDone)P.inv=99;
   if(G.T>=180)ach('t3');if(G.song==='abyss'&&G.T>=300)ach('abyss');
   if(G.T-G.lastHit>=90)ach('untouch');
   // combo
@@ -1152,7 +1226,7 @@ function update(dt){
   const gl=vl('gliss');
   if(gl){const n=1+(gl>=3)+(gl>=5);G.glA+=TAU/(240/Seq.bpm)*(gl>=5?1.5:1)*dt;const L=(120+18*gl)*(gl>=2?1.25:1)*P.area*(soloOn('kael')?2.5:1);G.beams=[];for(let i=0;i<n;i++)G.beams.push([G.glA+i/n*TAU,L]);
     if(G.duets.galaxy&&G.ebul.length)for(const [a,L2] of G.beams){const ex=P.x+Math.cos(a)*L2,ey=P.y+Math.sin(a)*L2;G.ebul=G.ebul.filter(b=>segD(b.x,b.y,P.x,P.y,ex,ey)>b.r+7)}}else G.beams=null;
-  if(G.T>=G.nextGold&&!G.gold&&!G.boss){const [x,y]=spawnPos(-140);const e=makeEnemy('gold',x,y,false);e.life=14;e.dmg=0;G.gold=e;G.nextGold=G.T+(85+R()*75)/(1+meta('golden')*.25);showTip('✪ A Golden Note appears — catch it!',3200);A.bell(A.now(),2093,.08,'s')}
+  if(G.T>=G.nextGold&&!G.gold&&!G.boss){const [x,y]=spawnPos(-140);const e=makeEnemy('gold',x,y,false);e.life=14;e.dmg=0;G.gold=e;G.nextGold=G.T+(G.goldEvery||(85+R()*75)/(1+meta('golden')*.25));showTip('✪ A Golden Note appears — catch it!',3200);A.bell(A.now(),2093,.08,'s')}
   const lgl=vl('legato');
   if(lgl){const life=(1+(lgl>=2?.4:0)+(lgl>=5?.5:0))*(G.duets.silk?2:1)*(soloOn('liora')?6:1);G.ribT+=dt;if(G.ribT>.045&&Math.hypot(P.vx,P.vy)>35){G.ribT=0;G.rib.push({x:P.x,y:P.y,t:G.T})}while(G.rib.length&&G.T-G.rib[0].t>life)G.rib.shift();G.ribLife=life}else if(G.rib.length)G.rib.length=0;
   for(const c of G.enemies)if(c.type==='cond'&&!c.dead)inRadius(c.x,c.y,170,o=>{if(o!==c)o.haste=.25});
@@ -1215,7 +1289,7 @@ function update(dt){
   G.gems=G.gems.filter(g=>!g.dead);
   G.enemies=G.enemies.filter(e=>!e.dead);
   updParts(dt);
-  if((G.pending>0||G.pendingMotif>0)&&state==='play')openLevel();
+  if((G.pending>0||G.pendingMotif>0)&&state==='play'&&!G.stageDone)openLevel();
 }
 function updParts(dt){
   for(const p of G.parts){p.life-=dt;const f=Math.pow(.06,dt);p.vx*=f;p.vy*=f;p.x+=p.vx*dt;p.y+=p.vy*dt}
@@ -1233,6 +1307,7 @@ function trailFx(song){const t=S.trail||'star',x=P.x+rnd(-3,3),y=P.y+rnd(-3,3),p
     case'comet':p.vx=p.vy=0;p.h=200;p.s=3.4;p.life=p.max=1;break;
     case'aurora':p.h=[150,205,280][Math.floor(Math.random()*3)];p.vy-=25;p.life=p.max=1.2;p.s=3;break;
     case'gilded':p.h=48;p.s=3.8;p.life=p.max=.75;break;
+    case'staff':{const sp=Math.hypot(P.vx,P.vy)||1,nx=-P.vy/sp,ny=P.vx/sp;for(let i=-2;i<=2;i++)G.parts.push({x:P.x+nx*i*5,y:P.y+ny*i*5,vx:0,vy:0,life:.7,max:.7,s:1.8,h:song.b,dark:false});return}
     case'hollow':p.dark=true;p.s=4.5;p.life=p.max=.8;G.parts.push({x,y,vx:0,vy:0,life:.5,max:.5,s:2,h:song.hush,dark:false});break}
   G.parts.push(p)}
 function collect(v){G.xp+=v*P.xpMul;A.chime++;
@@ -1452,7 +1527,7 @@ function setW(id,v){v=Math.round(v*1000)/10;if(hudC[id]!==v){hudC[id]=v;$(id).st
 function hud(){if(!G)return;
   setW('#hpbar i',clamp(P.hp/P.maxHp,0,1));setTxt('#hptxt',Math.ceil(Math.max(0,P.hp))+' / '+P.maxHp);
   setW('#xpbar i',clamp(G.xp/G.need,0,1));
-  setTxt('#tm',fmt(G.T));setTxt('#tsub',G.endless?'ENDLESS · '+G.bossKills+' HUSHED':G.won?'SONG RESTORED':G.boss&&G.boss.form===3?'SILENCE IT':G.boss?'THE HUSH IS HERE':G.stormT>0?'SILENCE STORM':G.T<540?'FINAL HUSH 9:00':'');
+  setTxt('#tm',fmt(G.T));setTxt('#tsub',G.stage?(G.stageDone?'COMPLETE':stageHud()):G.endless?'ENDLESS · '+G.bossKills+' HUSHED':G.won?'SONG RESTORED':G.boss&&G.boss.form===3?'SILENCE IT':G.boss?'THE HUSH IS HERE':G.stormT>0?'SILENCE STORM':G.T<540?'FINAL HUSH 9:00':'');
   setTxt('#lvl','LV '+G.level);setTxt('#kills','✦ '+G.kills);setTxt('#bpm',Seq.bpm+' BPM');
   const c=$('#combo');const con=G.combo>=5;if(hudC.con!==con){hudC.con=con;c.classList.toggle('on',con)}
   setTxt('#cnum','×'+G.combo);setTxt('#ctier',G.tier?TIER_N[G.tier-1]:'harmony');setW('#cbar',clamp(G.comboT/2.8,0,1));
@@ -1505,8 +1580,8 @@ function buildVerses(){ensureQuests();const ms=new Date();ms.setHours(24,0,0,0);
   $('#vsub').textContent=`New verses in ${hrs} hour${hrs===1?'':'s'} · ${S.stats.quests||0} completed all-time`;
   $('#vlist').innerHTML=S.q.list.map(q=>{const Q=QUESTS[q.i],k=Math.min(1,q.prog/Q.n);return`<div class="lrow ${q.done?'got':''}"><div class="i">${q.done?'✓':'☰'}</div><div class="m"><b>${qText(q)}</b><small>${q.done?'Complete':qProg(q)}</small><div class="qbar"><i style="width:${Math.round(k*100)}%"></i></div></div><span class="echo" style="font-weight:700;font-size:13px">◈ ${Q.rw}</span></div>`}).join('');show('#verses')}
 function goTitle(){wake(false);if(G){G=null}state='menu';Seq.mode='menu';Seq.setBpm(84);A.muffle(false);$('#bossbar').classList.remove('on');$('#hud').classList.remove('on');buildBg();
-  const dc=dailyCfg(),ds=SINGERS.find(s=>s.id===dc.singer);const stk=(S.lastDaily===dc.seed||S.lastDaily===prevDayKey(dc.seed))?S.dailyStreak:0;$('#dailyInfo').textContent=`${ds.name} · ${SONGS[dc.song].name} · ${dc.mod.name}`+(S.daily[dc.seed]?` · best ${S.daily[dc.seed]}`:'')+(stk?` · 🔥${stk}`:'');
-  ensureQuests();$('#versesInfo').textContent=`${S.q.list.filter(q=>q.done).length} of 3 complete today`;
+  const dc=dailyCfg(),ds=SINGERS.find(s=>s.id===dc.singer);const stk=(S.lastDaily===dc.seed||S.lastDaily===prevDayKey(dc.seed))?S.dailyStreak:0;$('#dailyInfo').textContent=dc.mod.name+(stk?` · 🔥${stk}`:'');
+  ensureQuests();$('#versesInfo').textContent=`${S.q.list.filter(q=>q.done).length} of 3 today`;$('#scoreInfo').textContent=`★ ${totalStars()} of 60`;
   show('#title')}
 function buildSelect(){
   $('#singers').innerHTML=SINGERS.map(s=>{const own=S.singers[s.id];const V=VOICES[s.voice];
@@ -1520,7 +1595,17 @@ function buildSelect(){
 }
 function mastHtml(id){const l=mLvl(id),x=(S.mast||{})[id]||0,lo=MT[l-1]||0,hi=MT[l]||lo;const k=hi>lo?(x-lo)/(hi-lo):1;return`<div class="mast">★ Mastery ${l}${l>1?` · +${((l-1)*1.5).toFixed(1)}% dmg`:''}</div><div class="mbar"><i style="width:${Math.round(k*100)}%"></i></div>`}
 $('#dyns').addEventListener('click',e=>{const c=e.target.closest('[data-dyn]');if(!c)return;A.init();const i=+c.dataset.dyn,sg=S.lastSong;if(i>Math.min(8,S.dyn[sg]||0)){A.sNo();c.classList.add('shake');setTimeout(()=>c.classList.remove('shake'),400);return}S.dynSel[sg]=i;save();A.sClick();buildSelect()});
-function openSelect(){buildSelect();show('#select');state='menu'}
+let selStage=null;
+function openSelect(stage){selStage=stage==null?null:stage;if(selStage!=null){S.lastSong=ACTS[STAGES[selStage].a].song;buildBg()}buildSelect();
+  const si=$('#stageInfo');if(selStage!=null){const st=STAGES[selStage];si.style.display='block';$('#songSect').style.display='none';$('#selTitle').textContent='Movement '+(selStage+1);
+    si.innerHTML=`<div class="tag" style="margin:0 0 4px;text-align:left">${ACTS[st.a].n} · ${SONGS[ACTS[st.a].song].name}</div><b>${st.n}</b><p>◆ ${goalText(st)}<br>★ ${starText(st.st[0])}<br>★ ${starText(st.st[1])}</p>`}
+  else{si.style.display='none';$('#songSect').style.display='';$('#selTitle').textContent='Prepare the Song'}show('#select');state='menu'}
+function buildScore(){const tot=totalStars();$('#starN').textContent=tot;let h='';
+  ACTS.forEach((A0,ai)=>{const open=tot>=A0.need,song=SONGS[A0.song];h+=`<div class="acth"><div class="sect" style="color:hsl(${song.a},100%,75%)">${A0.n} — ${song.name}</div><span>${open?'':`★ ${A0.need} to open`}</span></div>`;
+    STAGES.forEach((st,i)=>{if(st.a!==ai)return;const ok=stageOpen(i),n=(S.camp||{})[i]||0,boss=st.g[0]==='boss';
+      h+=`<button class="stg ${ok?'':'lock'} ${boss?'boss':''}" data-stage="${i}" style="--h:${song.a}"><div class="no">${ok?(boss?'♛':i+1):'🔒'}</div><div class="m"><b>${st.n}</b><small>${goalText(st)}</small></div><div class="st">${'★'.repeat(n)}<i>${'★'.repeat(3-n)}</i></div></button>`})});
+  $('#scoreBody').innerHTML=h;show('#score')}
+$('#scoreBody').addEventListener('click',e=>{const c=e.target.closest('[data-stage]');if(!c)return;A.init();const i=+c.dataset.stage;if(!stageOpen(i)){A.sNo();c.classList.add('shake');setTimeout(()=>c.classList.remove('shake'),400);return}A.sClick();openSelect(i)});
 $('#singers').addEventListener('click',e=>{const c=e.target.closest('[data-singer]');if(!c)return;A.init();const s=SINGERS.find(x=>x.id===c.dataset.singer);
   if(!S.singers[s.id]){if(S.echoes>=s.cost){S.echoes-=s.cost;S.singers[s.id]=1;S.lastSinger=s.id;save();A.sBuy();toast(VOICES[s.voice].icon,s.name+' joins the choir','');if(SINGERS.every(x=>S.singers[x.id]))ach('allsing');buildSelect();show('#select')}else{A.sNo();c.classList.add('shake');setTimeout(()=>c.classList.remove('shake'),400)}return}
   S.lastSinger=s.id;save();A.sClick();buildSelect()});
@@ -1530,7 +1615,7 @@ $('#songs').addEventListener('click',e=>{const c=e.target.closest('[data-song]')
 let lastOpt=null;
 function startRun(opt){A.init();Seq.start();wake(true);lastOpt=opt;newGame(opt);state='play';hideAll();$('#hud').classList.add('on');for(const k in hudC)delete hudC[k];
   if(IS_IOS&&!S.iosHint){S.iosHint=1;save();setTimeout(()=>toast('🔔','Hear the song','No sound? Flip your ringer switch on — HUSH is meant to be heard.'),900)}
-  if(opt.daily)banner('DAILY HUM',opt.mod.name+' — '+opt.mod.d);else banner(SONGS[opt.song].name.toUpperCase()+(opt.dyn?' · '+DYN[opt.dyn].s:''),opt.dyn?DYN[opt.dyn].n:'sing back the silence');
+  if(opt.daily)banner('DAILY HUM',opt.mod.name+' — '+opt.mod.d);else if(opt.stage!=null)banner(STAGES[opt.stage].n.toUpperCase(),goalText(STAGES[opt.stage]));else banner(SONGS[opt.song].name.toUpperCase()+(opt.dyn?' · '+DYN[opt.dyn].s:''),opt.dyn?DYN[opt.dyn].n:'sing back the silence');
   if(!S.seenTip){showTip('Drag to move · your voices play on the beat · tap DASH right on the beat',6500);S.seenTip=1;save()}
   else if(Math.random()<.5)showTip(['Lurchers lunge on the downbeat — sidestep on 1','Getting hit breaks your harmony combo','Tempo makes every voice play faster','Chorus notes block dark notes','DASH as the ring closes for a PERFECT','Two voices at their peak can become a Duet','Your Songbook remembers every Hushling you meet','Tap ✺ when the Crescendo ring glows'][Math.floor(Math.random()*8)],4000)}
 function showTip(t,ms){const el=$('#tip');el.textContent=t;el.classList.add('on');clearTimeout(showTip.h);showTip.h=setTimeout(()=>el.classList.remove('on'),ms)}
@@ -1583,9 +1668,13 @@ function showOver(){
   if(G.daily&&G.T>=30){const dk=G.dailyKey;if(S.lastDaily!==dk){S.dailyStreak=S.lastDaily===prevDayKey(dk)?(S.dailyStreak||0)+1:1;S.lastDaily=dk;streakB=Math.min(7,S.dailyStreak)*10;
     streakNote=`<span class="nb">☼ DAILY STREAK ${S.dailyStreak}</span>+${streakB} Echoes`;if(S.dailyStreak>=7)ach('streak7')}}
   const base=G.kills*.25+G.T*.3+G.bossKills*50+G.level*3+G.bonusEchoes+streakB+G.perfects*.4;
-  const earn=Math.floor(base*song.mult*(1+meta('echo')*.1)*(G.daily?1.5:1)*(1+.3*(G.dyn||0)));
+  let stageGain=0,stageNotes=[],stars=0;
+  if(G.stage){const si=G.stageIdx,stg=G.stage;if(G.stageDone){stars=1;for(const c of stg.st){const ok=starOk(c);stageNotes.push(`${ok?'★':'☆'} ${starText(c)}`);if(ok)stars++}}
+    S.camp=S.camp||{};const prev=S.camp[si]||0;if(stars>prev){stageGain=(stars-prev)*(20+stg.a*15);S.camp[si]=stars;stageNotes.unshift(`<span class="nb">+${stars-prev} STAR${stars-prev>1?'S':''}</span>`)}
+    const actDone=a=>STAGES.every((x,i)=>x.a!==a||(S.camp[i]||0)>=1);if(actDone(0))ach('act1');if(actDone(3)&&actDone(0)&&actDone(1)&&actDone(2))ach('act4');if(totalStars()>=60)ach('stars60')}
+  const earn=Math.floor(base*song.mult*(1+meta('echo')*.1)*(G.daily?1.5:1)*(1+.3*(G.dyn||0))*(G.stage?.6:1))+stageGain;
   S.echoes+=earn;S.lifetime+=earn;S.stats.runs++;S.stats.kills+=G.kills;S.stats.time+=G.T;
-  const notes=[];if(streakNote)notes.push(streakNote);
+  const notes=[...stageNotes];if(streakNote)notes.push(streakNote);
   if(G.won&&!G.daily){const nx=Math.min(8,(G.dyn||0)+1);if(nx>(S.dyn[G.song]||0)){S.dyn[G.song]=nx;S.dynSel[G.song]=nx;notes.push(`<span class="nb">NEW DYNAMIC UNLOCKED</span>${SONGS[G.song].name} at <i>${DYN[nx].n}</i> — ${DYN[nx].d}`)}
     if(G.dyn>=3)ach('dyn4');if(G.dyn>=8)ach('dyn8')}
   {const sid=G.singer.id,l0=mLvl(sid);S.mast[sid]=(S.mast[sid]||0)+Math.floor(G.T/2+G.kills/20+G.bossKills*30+(G.won?150:0));const l1=mLvl(sid);
@@ -1601,12 +1690,16 @@ function showOver(){
   for(const a of G.newAch)notes.push(`${a.i} ${a.n} <span class="echo">+${a.rw}</span>`);
   const nextSinger=SINGERS.find(s=>!S.singers[s.id]);if(nextSinger)notes.push(`<small style="color:var(--dim)">${nextSinger.name} awaits at ◈ ${nextSinger.cost} — you have ◈ ${S.echoes}</small>`);
   save();
-  $('#overTitle').textContent=won?(G.endless?'Encore Ends':'Song Restored'):'Silence Falls';$('#overTag').textContent=(won?'the song was restored':(G.daily?'daily hum · '+G.modName:'the silence returns'))+(G.dyn?' · '+DYN[G.dyn].n:'');
+  $('#overTitle').textContent=G.stage?(G.stageDone?'Movement Complete':'The Movement Falters'):won?(G.endless?'Encore Ends':'Song Restored'):'Silence Falls';$('#overTag').textContent=(won?'the song was restored':(G.daily?'daily hum · '+G.modName:'the silence returns'))+(G.dyn?' · '+DYN[G.dyn].n:'');
   const st=[['Time',fmt(G.T)],['Silenced',G.kills],['Level',G.level],['Best Harmony','×'+G.maxCombo],['Hushes',G.bossKills],['Score',score],['Perfects',G.perfects],['Best Streak','»'+G.maxPerf],['Duets',Object.keys(G.duets).length]];
   $('#ostats').innerHTML=st.map(([k,v])=>`<div class="stat"><b>${v}</b><small>${k}</small></div>`).join('');
   $('#onotes').innerHTML=notes.map(n=>`<div>${n}</div>`).join('');
   $('#setlist').innerHTML=G.voices.map(v=>{const V=VOICES[v.id];return`<div class="vi" style="--h:${V.h}" title="${V.name}">${V.icon}<b>${v.lvl}</b></div>`}).join('');
-  show('#over');drawShape();wake(false);$('#hud').classList.remove('on');$('#bossbar').classList.remove('on');
+  if(G.stage)$('#overTag').textContent=`${ACTS[G.stage.a].n} · ${G.stage.n}`;
+  const os=$('#ostars');os.style.display=G.stage?'':'none';os.innerHTML='★'.repeat(stars)+`<i>${'★'.repeat(3-stars)}</i>`;
+  const nx=G.stage&&G.stageDone&&STAGES[G.stageIdx+1]&&stageOpen(G.stageIdx+1);$('#btnNext').style.display=nx?'':'none';$('#btnScore').style.display=G.stage?'':'none';
+  $('#btnAgain').textContent=G.stage?'↻ Retry':'↻ Sing Again';$('#btnAgain').classList.toggle('primary',!nx);
+  $('#tip').classList.remove('on');show('#over');drawShape();wake(false);$('#hud').classList.remove('on');$('#bossbar').classList.remove('on');
   const t0=performance.now();const el=$('#earnN');(function cnt(){const k=Math.min(1,(performance.now()-t0)/1400);el.textContent=Math.floor(earn*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(cnt);else A.sBuy()})();
   setTimeout(()=>A.muffle(false),400)}
 
@@ -1644,9 +1737,12 @@ $('#sReset').addEventListener('click',e=>{const b=e.currentTarget;if(b.textConte
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;A.init();Seq.start();const act=b.dataset.act;if(act!=='start')A.sClick();
   const cur=[...$$('.screen.on')].map(s=>s.id)[0];
   switch(act){
-    case'select':openSelect();break;
+    case'select':openSelect(null);break;
+    case'score':buildScore();break;
+    case'selback':if(selStage!=null)buildScore();else goTitle();break;
+    case'next':if(G&&G.stage&&STAGES[G.stageIdx+1]&&stageOpen(G.stageIdx+1)){const ni=G.stageIdx+1;startRun({singer:S.singers[lastOpt.singer]?lastOpt.singer:'lumi',song:ACTS[STAGES[ni].a].song,stage:ni})}break;
     case'title':goTitle();break;
-    case'start':if(!S.singers[S.lastSinger])S.lastSinger='lumi';if(!S.songs[S.lastSong])S.lastSong='dawn';startRun({singer:S.lastSinger,song:S.lastSong,dyn:Math.min(S.dynSel[S.lastSong]||0,S.dyn[S.lastSong]||0)});break;
+    case'start':if(!S.singers[S.lastSinger])S.lastSinger='lumi';if(selStage!=null){startRun({singer:S.lastSinger,song:ACTS[STAGES[selStage].a].song,stage:selStage});break}if(!S.songs[S.lastSong])S.lastSong='dawn';startRun({singer:S.lastSinger,song:S.lastSong,dyn:Math.min(S.dynSel[S.lastSong]||0,S.dyn[S.lastSong]||0)});break;
     case'daily':startRun(dailyCfg());break;
     case'shop':prevScreen=cur;buildShop();break;
     case'achs':buildAchs();break;
@@ -1660,7 +1756,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
     case'quit':if(G){G.dead=true;G.deadT=99;state='over';showOver()}break;
     case'endless':G.endless=true;G.nextBoss=G.T+60;G.bossSpawned=0;state='play';A.muffle(false);hideAll();recalc();banner('ENDLESS','the hush grows hungrier');break;
     case'bow':state='over';G.dead=true;showOver();break;
-    case'again':if(lastOpt)startRun(lastOpt.daily?dailyCfg():{singer:S.singers[lastOpt.singer]?lastOpt.singer:'lumi',song:lastOpt.song,dyn:lastOpt.dyn||0});break;
+    case'again':if(lastOpt&&lastOpt.stage!=null){startRun(Object.assign({},lastOpt));break}if(lastOpt)startRun(lastOpt.daily?dailyCfg():{singer:S.singers[lastOpt.singer]?lastOpt.singer:'lumi',song:lastOpt.song,dyn:lastOpt.dyn||0});break;
   }});
 $('#pausebtn').addEventListener('click',e=>{e.stopPropagation();A.init();pause()});
 $('#cresbtn').addEventListener('click',e=>{e.stopPropagation();A.init();crescendo()});
@@ -1704,8 +1800,8 @@ function frame(ts){
   if(G&&state!=='over')hud();
   requestAnimationFrame(frame)}
 resize();goTitle();Seq.start();requestAnimationFrame(frame);
-const VER='2.0';
-if(S.stats.runs>0&&S.ver!==VER)setTimeout(()=>toast('✦','HUSH '+VER+' — Fortissimo','The Great Silence · Motifs · Dynamics · Daily Verses · Legato & Crash · trails · and more'),1200);
+const VER='3.0';
+if(S.stats.runs>0&&S.ver!==VER)setTimeout(()=>toast('✦','HUSH '+VER+' — Symphony','The Score campaign · Singer Solos · Call & Response · Phantoms, Leeches, Crystals · song themes'),1200);
 S.ver=VER;save();
 try{if('serviceWorker' in navigator&&location.protocol==='https:'&&window.top===window)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 </script>
