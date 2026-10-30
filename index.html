@@ -228,6 +228,7 @@ body.bigbtn #cresbtn,body.bigbtn #dashbtn{zoom:1.2}body.bigbtn #pausebtn{zoom:1.
 #flash{position:fixed;inset:0;pointer-events:none;z-index:4;background:#fff;opacity:0}
 #rot{display:none}
 .dpips i{font-style:italic;font-size:10px;margin-right:3px;opacity:.28}.dpips i.on{opacity:1;color:#ffd27a;text-shadow:0 0 6px rgba(255,200,90,.6)}
+.dhint{display:block;margin-top:6px;font-size:11px;color:#ffd76b;opacity:.9;line-height:1.35}.dhint i{opacity:.75}
 </style>
 </head>
 <body>
@@ -271,7 +272,7 @@ body.bigbtn #cresbtn,body.bigbtn #dashbtn{zoom:1.2}body.bigbtn #pausebtn{zoom:1.
     <div class="row"><button class="btn" data-act="achs">✧ Feats</button><button class="btn" data-act="how">? Guide</button></div>
   </div>
   <button class="back" data-act="settings" aria-label="Settings" style="font-size:19px">⚙</button>
-  <div class="ver">HUSH · v10.0 · made with every note</div>
+  <div class="ver">HUSH · v11.0 · made with every note</div>
 </div>
 
 <!-- SELECT -->
@@ -387,6 +388,7 @@ body.bigbtn #cresbtn,body.bigbtn #dashbtn{zoom:1.2}body.bigbtn #pausebtn{zoom:1.
     <p><b>Grow.</b> Collect light to level up. Pick new voices and harmonies. Two partner voices at their peak become a <b>Duet</b>. Elites and every Hush carry <b>music boxes</b> — walk into one to choose a <b>Motif</b>, a rule-bending gift for the rest of the song.</p>
     <p><b>Read the rhythm of the Hush.</b> Lurchers lunge on the downbeat. Wisps glow before they spit. Veils are shielded except on 2 &amp; 4. Conductors hasten everything near them — silence them first. A Hush arrives every three minutes, and the song modulates up a key each time you break one.</p>
     <p><b>Restore the song.</b> At 9:00 <b>The Great Silence</b> arrives. It puts out the lights. Silence it and the song is restored — then keep singing in Endless, or take a bow.</p>
+    <p><b>Overtones &amp; Laurels.</b> Once your band is complete, every level-up offers <b>Overtones</b>: small upgrades that stack forever (power, space, breath, tempo, brilliance, swell, reach). In Endless one is always on offer, experience flows faster the longer you last, and every Hush you silence grants a <b>Laurel</b>, an Overtone three times over. Voice cards now show which <b>Duets</b> they can form.</p>
     <p><b>Dynamics pay.</b> Every new Dynamic you restore a song at pays a one-time <b>bounty</b>, lights a pip on the song card and frames your poster in bronze, silver, gold, prism or silenzio black. Restoring a song at <i>fortissimo</i> earns its Signature trail. Restoring it at <i>silenzio</i> crowns you its Virtuoso: +15% Echoes on that song, forever.</p>
     <p><b>The Hush listens.</b> If your song silences Hushlings the moment they appear, the Hush adapts with more and tougher Hushlings, and pays more Echoes for it. Each Hush now fights in three <b>movements</b>: at two-thirds and one-third health it holds its note, shrugging off damage while shaped marks fall, then falters. Its health grows with your power, and the last third of every song is a finale of shapes.</p>
     <p><b>Signatures.</b> Every song has its own Signature Hushling, a dangerous foe that appears only there: Dawn's Gilded Herald, Dusk's Weeping Veil, Aurora's Lightweavers, Abyss's Maw, Dream's Somnambulist, Tide's Leviathan, Ember's Bellows and Hallow's Hollow Lantern. Each one warns you before it strikes. <b>Requiem</b> brings them all. Harder songs hit harder, and mid-song the marks take shapes: lines, crosses, and the <b>Fermata</b> ring, where the only safe place is the still eye in the middle.</p>
@@ -548,6 +550,14 @@ const HARM={
   refrain:{name:'Refrain',icon:'❀',h:130,d:'Regenerate 0.6 health per second.'},
   tempo:{name:'Tempo',icon:'♩',h:30,d:'+7 BPM. The whole song — and every voice — plays faster.'},
 };
+const OVT={
+  power:{n:'Overtone of Power',ic:'✸',h:15,d:'+7% damage to every voice.'},
+  space:{n:'Overtone of Space',ic:'◍',h:280,d:'+6% area for every wave, aura and note.'},
+  breath:{n:'Overtone of Breath',ic:'♥',h:340,d:'+14 max health, and heal fully.'},
+  tempo:{n:'Overtone of Tempo',ic:'➶',h:170,d:'+4% speed (up to +40%).'},
+  shine:{n:'Overtone of Brilliance',ic:'✦',h:50,d:'+3% critical chance (up to +30%).'},
+  swell:{n:'Overtone of Swell',ic:'✺',h:300,d:'Crescendo charges 10% faster.'},
+  reach:{n:'Overtone of Reach',ic:'❂',h:200,d:'+15% pickup reach and +5% experience.'}};
 const DUETS={
   constellation:{name:'Constellation',icon:'✶',a:'pulse',b:'arp',h:50,d:'Pulse bolts shatter into three homing sparks wherever they strike.'},
   quake:{name:'Subterranean',icon:'❍',a:'thump',b:'drone',h:30,d:'The Drone swells 50% larger and stronger, and every Thump drags foes inward into it.'},
@@ -556,6 +566,11 @@ const DUETS={
   fortis:{name:'Fortissimo',icon:'☄',a:'crash',b:'thump',h:350,d:'Every Crash also bursts a triple Thump wave, and its stuns last twice as long.'},
   cascade:{name:'Cascade',icon:'⁘',a:'harp',b:'arp',h:120,d:'Every harp string that pierces a Hushling sheds a homing spark.'},
   cathedral:{name:'Cathedral',icon:'⛫',a:'organ',b:'crash',h:20,d:'Organ pillars ring like bells — every eruption stuns and shatters dark notes.'},
+  static:{name:'Static',icon:'⚡',a:'arp',b:'chain',h:220,d:'Arpeggio sparks crackle: their hits often arc lightning into two more foes.'},
+  choir:{name:'Choir of Light',icon:'☉',a:'pulse',b:'orbit',h:55,d:'On every beat, each Chorus note fires its own bolt at a nearby Hushling.'},
+  carillon:{name:'Carillon',icon:'🔔',a:'echo',b:'organ',h:30,d:'Every Echo burst raises a ringing organ pillar where it falls.'},
+  riptide:{name:'Riptide',icon:'≈',a:'gliss',b:'legato',h:190,d:'Your ribbon burns 60% hotter and the Glissando sweeps 30% harder.'},
+  aeolian:{name:'Aeolian',icon:'⌇',a:'harp',b:'gliss',h:100,d:'+2 harp strings, and the Glissando sweeps 25% harder.'},
   galaxy:{name:'Galaxy',icon:'✹',a:'orbit',b:'gliss',h:260,d:'+2 Chorus notes that swell on the beat and strike 50% harder; Glissando beams erase dark notes.'},
 };
 const MOTIFS={
@@ -842,6 +857,8 @@ const ACH=[
   {id:'act1',i:'𝄞',n:'Overture',d:'Complete Act I of The Score',rw:80},
   {id:'act4',i:'𝄐',n:'The Score',d:'Complete every movement of The Score',rw:400},
   {id:'stars60',i:'★',n:'Sixty Stars',d:'Earn every star in The Score',rw:600},
+  {id:'laurel',i:'❦',n:'Laurels',d:'Earn a Laurel in Endless',rw:60},
+  {id:'ovt25',i:'✸',n:'Overtone Series',d:'Gather 25 Overtones in one song',rw:150},
   {id:'virt3',i:'❦',n:'Virtuoso',d:'Restore three songs at fortissimo',rw:300},
   {id:'virtall',i:'❧',n:'Maestro',d:'Restore every song at fortissimo',rw:1000},
   {id:'crown',i:'♛',n:'Crowned',d:'Restore a song at silenzio',rw:500},
@@ -1107,7 +1124,7 @@ function newGame(opt){
     enemies:[],shots:[],ebul:[],gems:[],parts:[],rings:[],bolts:[],texts:[],mines:[],ripples:[],
     voices:[{id:singer.voice,lvl:1}],harm:{},bar:Math.floor(Seq.step/16),level:1,xp:0,need:xpNeed(1),pending:0,kills:0,combo:0,comboT:0,maxCombo:0,score:0,
     cres:0,cresUses:0,spawnAcc:0,nextBoss:180,boss:null,bossKills:0,lastHit:0,rerolls:meta('reroll'),revive:meta('revive'),
-    endless:false,won:false,bonusEchoes:0,arpAng:0,orbA:0,newAch:[],arpIdx:0,noteK:0,chimeK:0,dead:false,deadT:0,bonusVoice:0,dmgTaken:0,glA:0,beams:null,orbs:null,tl:[],tlK:0,tlT:0,nextGold:(70+R()*60)/(1+meta('golden')*.25),gold:null,veils:0,duets:{},perfects:0,perfStreak:0,maxPerf:0,motifs:{},chests:[],pendingMotif:0,cardMode:'level',graceT:0,fermataT:0,chestsOpened:0,elitesK:0,condK:0,golds:0,mothK:0,rib:[],ribT:0,stunMax:0,step:0,call:null,callsWon:0,nextCall:140,zones:[],nextZone:300,nextCrystal:90,crystalK:0,phantomK:0,leechOff:0,solo:null,diss:{},pillars:[],rays:[],strikes:[],dodges:0,curses:[],nextCurse:0,dealt:0,dps:0,dpsT:0,adapt:1,lifeE:6,pools:[],nextSig:null,sigSeen:{},inPool:0,nextMoment:110,accelT:0,rainT:0,champsK:0,fires:[],tideMag:0,F:null,mockT:0,dark:0,darkTarget:0,stormT:0,bossSpawned:0,normalBoss:0,events:{270:'circle',420:'storm'}};
+    endless:false,won:false,bonusEchoes:0,arpAng:0,orbA:0,newAch:[],arpIdx:0,noteK:0,chimeK:0,dead:false,deadT:0,bonusVoice:0,dmgTaken:0,glA:0,beams:null,orbs:null,tl:[],tlK:0,tlT:0,nextGold:(70+R()*60)/(1+meta('golden')*.25),gold:null,veils:0,duets:{},perfects:0,perfStreak:0,maxPerf:0,motifs:{},chests:[],pendingMotif:0,cardMode:'level',graceT:0,fermataT:0,chestsOpened:0,elitesK:0,condK:0,golds:0,mothK:0,rib:[],ribT:0,stunMax:0,step:0,call:null,callsWon:0,nextCall:140,zones:[],nextZone:300,nextCrystal:90,crystalK:0,phantomK:0,leechOff:0,solo:null,diss:{},pillars:[],rays:[],strikes:[],dodges:0,curses:[],nextCurse:0,ovt:{},pendingLaurel:0,dealt:0,dps:0,dpsT:0,adapt:1,lifeE:6,pools:[],nextSig:null,sigSeen:{},inPool:0,nextMoment:110,accelT:0,rainT:0,champsK:0,fires:[],tideMag:0,F:null,mockT:0,dark:0,darkTarget:0,stormT:0,bossSpawned:0,normalBoss:0,events:{270:'circle',420:'storm'}};
   if(opt.mod)opt.mod.ap(G);
   if(opt.mods){for(const m of opt.mods)m.ap(G);G.weekly=opt.weekly;G.modName=opt.mods.map(m=>m.name).join(' · ')}
   if(opt.recital){G.recital=true;G.recIdx=0;G.events={};G.nextBoss=6;G.nextCall=1e9;G.mod.spawn*=.6;G.t0=240;G.startLv=9}
@@ -1140,6 +1157,7 @@ function recalc(){const s=G.singer.mods,h=id=>G.harm[id]||0;
   P.xpMul=(1+meta('xp')*.08+(s.xp||0)+m('hymnal')*.25)*G.mod.xp*(G.diss.tempest?1.5:1);
   P.cresMul=(1+meta('cres')*.15)*(m('dynamo')?1.5:1);
   P.dmg*=1+.01*Math.min(30,G.overflow||0);
+  {const o=id=>(G.ovt||{})[id]||0;P.dmg*=Math.pow(1.07,o('power'));P.area*=1+.06*o('space');P.maxHp+=14*o('breath');P.spd*=1+Math.min(.4,.04*o('tempo'));P.crit+=Math.min(.3,.03*o('shine'));P.cresMul*=1+.1*o('swell');P.mag*=1+.15*o('reach');P.xpMul*=1+.05*o('reach')}
   const x=id=>G.diss&&G.diss[id];if(x('brittle')){P.dmg*=1.6;P.maxHp=Math.max(1,Math.round(P.maxHp*.6))}if(x('frenzy'))P.spd*=1.3;if(x('overdrive')){P.dmg*=1.45;P.cresMul*=.5}if(x('deafen'))P.xpMul*=1.6;if(x('swarm'))P.xpMul*=1.7;
   const bpm=clamp(96+h('tempo')*7+G.bpmBonus+(G.endless?G.bossKills*2:0),60,178);Seq.setBpm(bpm);
   if(bpm>=140)ach('bpm');
@@ -1236,7 +1254,7 @@ function kill(e){if(e.sig){const st=S.stats.sig=S.stats.sig||{};st[e.type]=(st[e
   if(S.settings.fx&&Math.random()<.16)G.parts.push({x:e.x,y:e.y,vx:rnd(-30,30),vy:rnd(-90,-40),life:.9,max:.9,s:4,h:song.a,dark:false,note:1});
   if(e.type==='boss')bossDie(e);
   if(G.stage&&!G.stageDone&&goalVal()>=goalNeed())stageClear()}
-function bossDie(e){if(G.stage)G.stageBossDown=true;if(e.form===3)return finalDie(e);G.boss=null;G.bossKills++;if(!G.studio)S.stats.bosses++;$('#bossbar').classList.remove('on');ach('boss');if(G.bossKills>=3)ach('boss3');
+function bossDie(e){if(G.stage)G.stageBossDown=true;if(e.form===3)return finalDie(e);G.boss=null;G.bossKills++;if(G.endless)G.pendingLaurel=(G.pendingLaurel||0)+1;if(!G.studio)S.stats.bosses++;$('#bossbar').classList.remove('on');ach('boss');if(G.bossKills>=3)ach('boss3');
   const song=SONGS[G.song];
   for(let i=0;i<5;i++){const g0=G;setTimeout(()=>{if(G===g0)burst(e.x+rnd(-50,50),e.y+rnd(-50,50),i%2?song.a:song.b,40,380,4,1.1,false)},i*90)}
   burst(e.x,e.y,0,60,300,5,1.2,true);
@@ -1316,6 +1334,7 @@ function onStep(step){
   const muted=G.zones.some(z=>z.t>1.5&&z.t<z.life-.4&&(P.x-z.x)**2+(P.y-z.y)**2<z.r*z.r);if(muted&&s%4===0)addText(P.x,P.y-26,'muted',SONGS[G.song].hush,11,.5);
   const forceCrash=soloOn('tamsin')&&s%4===0;
   famStep(s);
+  if(G.duets.choir&&s%4===0){const ol=vl('orbit'),n=1+ol+(ol>=3?1:0),pl=vl('pulse'),dmg=(7+3*pl)*P.dmg;nearestN(P.x,P.y,n,460).forEach((e,i)=>{const a0=i/n*TAU+G.T,sx=P.x+Math.cos(a0)*50,sy=P.y+Math.sin(a0)*50,a=Math.atan2(e.y-sy,e.x-sx);G.shots.push({x:sx,y:sy,px:sx,py:sy,vx:Math.cos(a)*640,vy:Math.sin(a)*640,r:4,dmg,pierce:0,life:1,h:DUETS.choir.h,k:'bolt',hits:[]})})}
   strikeStep(step,s);
   bossMove(s,step);
   sigStep(s);
@@ -1339,9 +1358,9 @@ function onStep(step){
       if(pts.length>1){G.bolts.push({pts,life:.22,max:.22,h:V.h});shake(1.5)}break}
     case'drone':{const Rr=droneR(l);const dmg=(1.4+1*l)*(l>=3?1.4:1)*(l>=5?1.5:1)*P.dmg*(G.duets.quake?1.5:1);
       inRadius(P.x,P.y,Rr,e=>{e.slow=.25;e.slowAmt=l>=4?.55:.38;if(s%2===0)hit(e,dmg*2,0,0,0)});break}
-    case'gliss':{if(!G.beams)break;const dmg=(5+3*l)*(l>=4?1.35:1)*P.dmg;
+    case'gliss':{if(!G.beams)break;const dmg=(5+3*l)*(l>=4?1.35:1)*P.dmg*(G.duets.riptide?1.3:1)*(G.duets.aeolian?1.25:1);
       for(const [a,L] of G.beams){const ex=P.x+Math.cos(a)*L,ey=P.y+Math.sin(a)*L;inRadius((P.x+ex)/2,(P.y+ey)/2,L/2+10,(e)=>{if(segD(e.x,e.y,P.x,P.y,ex,ey)<e.r+8)hit(e,dmg,e.x-P.x,e.y-P.y,50)})}break}
-    case'legato':{if(s%2)break;const dmg=(4+2.4*l)*(l>=3?1.4:1)*(l>=5?1.5:1)*P.dmg*(soloOn('liora')?3:1),w=(11+(l>=4?7:0))*P.area,silk=G.duets.silk;
+    case'legato':{if(s%2)break;const dmg=(4+2.4*l)*(l>=3?1.4:1)*(l>=5?1.5:1)*(G.duets.riptide?1.6:1)*P.dmg*(soloOn('liora')?3:1),w=(11+(l>=4?7:0))*P.area,silk=G.duets.silk;
       for(let i=0;i<G.rib.length;i+=3){const pt=G.rib[i];inRadius(pt.x,pt.y,w,e=>{if(e.legS!==step){e.legS=step;hit(e,dmg,0,0,0);if(l>=4||silk){e.slow=.3;e.slowAmt=silk?.72:.35}}})}break}
     case'crash':{if(!(forceCrash||(s===0&&(l>=3||G.bar%2===0))))break;const fo=G.duets.fortis,Rr=(170+25*l)*P.area*(l>=2?1.2:1)*(l>=5?1.25:1),dmg=(10+6*l)*(l>=2?1.2:1)*(l>=5?1.6:1)*P.dmg,st=(.6+(l>=4?.5:0))*(fo?2:1);let n=0;
       inRadius(P.x,P.y,Rr,(e,dx,dy)=>{hit(e,dmg,dx,dy,120);e.stun=Math.max(e.stun,e.type==='boss'?st*.25:st);n++});G.stunMax=Math.max(G.stunMax,n);if(n>=50)ach('stun');
@@ -1349,7 +1368,7 @@ function onStep(step){
       for(let i=0;i<3;i++)G.rings.push({x:P.x,y:P.y,r:P.r,R:Rr*(1-i*.15),life:.55+i*.08,max:.55+i*.08,h:i===1?50:V.h,w:8-i*2});flash(.12,'#fff');shake(4);zoomP=Math.max(zoomP,.025);
       if(fo){const tl=vl('thump')||1,tR=(80+16*tl)*P.area*1.3,td=(12+6*tl)*2*P.dmg;for(let i=0;i<3;i++)G.rings.push({x:P.x,y:P.y,r:P.r,R:tR*(1+i*.35),life:.4+i*.12,max:.4+i*.12,h:VOICES.thump.h,w:7});inRadius(P.x,P.y,tR*1.7,(e,dx,dy)=>hit(e,td,dx,dy,300))}
       break}
-    case'harp':{if(l>=3?s%2:s%4!==2)break;const n=2+(l>=2)+(l>=4),dmg=(4+2*l)*P.dmg*(l>=4?1.15:1),a0=P.face,dirs=l>=5?[0,Math.PI]:[0];
+    case'harp':{if(l>=3?s%2:s%4!==2)break;const n=2+(l>=2)+(l>=4)+(G.duets.aeolian?2:0),dmg=(4+2*l)*P.dmg*(l>=4?1.15:1),a0=P.face,dirs=l>=5?[0,Math.PI]:[0];
       for(const d0 of dirs)for(let i=0;i<n;i++){const a=a0+d0+(i-(n-1)/2)*.13;G.shots.push({x:P.x,y:P.y,px:P.x,py:P.y,vx:Math.cos(a)*600,vy:Math.sin(a)*600,r:3,dmg,pierce:1+(l>=3),life:.75,h:V.h,k:'needle',hits:[]})}break}
     case'organ':{if(!(s===0||(l>=3&&s===8)))break;const n=1+(l>=2)+(l>=4),dmg=(26+11*l)*(l>=4?1.3:1)*P.dmg,Rr=66*P.area*(l>=5?1.4:1);const tg=nearestN(P.x,P.y,12,420);const used=[];
       for(const e of tg){if(used.length>=n)break;if(used.some(u=>(u.x-e.x)**2+(u.y-e.y)**2<(Rr*1.4)**2))continue;used.push({x:e.x,y:e.y})}
@@ -1357,7 +1376,7 @@ function onStep(step){
     case'echo':{const Rr=(62+10*l)*(l>=2?1.15:1)*(l>=5?1.25:1)*P.area;const dmg=(22+10*l)*(l>=4?1.4:1)*(l>=5?1.2:1)*P.dmg;
       if(l>=3?s%4===0:s%8===0)G.mines.push({x:P.x,y:P.y,det:step+8,R:Rr,dmg,born:G.T,h:V.h});break}
     }}
-  for(let i=G.mines.length-1;i>=0;i--){const m=G.mines[i];if(m.det<=step){G.mines.splice(i,1);inRadius(m.x,m.y,m.R,(e,dx,dy)=>hit(e,m.dmg,dx,dy,160));if(G.duets.thunder)chainFrom(m.x,m.y,4,m.dmg*.6,VOICES.chain.h);
+  for(let i=G.mines.length-1;i>=0;i--){const m=G.mines[i];if(m.det<=step){G.mines.splice(i,1);inRadius(m.x,m.y,m.R,(e,dx,dy)=>hit(e,m.dmg,dx,dy,160));if(G.duets.thunder)chainFrom(m.x,m.y,4,m.dmg*.6,VOICES.chain.h);if(G.duets.carillon)G.pillars.push({x:m.x,y:m.y,t:0,det:.2,R:m.R*.9,dmg:m.dmg*.8,h:DUETS.carillon.h,done:0});
     G.rings.push({x:m.x,y:m.y,r:6,R:m.R,life:.35,max:.35,h:m.h,w:5});burst(m.x,m.y,m.h,10,200,2.5,.4,false);G.ebul=G.ebul.filter(b=>(b.x-m.x)**2+(b.y-m.y)**2>m.R*m.R)}}
   // enemy rhythm
   const bar=Math.floor(step/16);
@@ -1538,7 +1557,7 @@ function update(dt){
   if(G.T>=900)ach('t15');
   if(G.stage&&G.stageDone)P.inv=99;
   if(G.immortal)P.hp=P.maxHp;
-  if(G.winPending&&state==='play'&&!G.pending&&!G.pendingMotif){G.winPending=false;openWin();return}
+  if(G.winPending&&state==='play'&&!G.pending&&!G.pendingMotif&&!G.pendingLaurel){G.winPending=false;openWin();return}
   if(G.T>=180)ach('t3');if(G.song==='abyss'&&G.T>=300)ach('abyss');
   if(G.T-G.lastHit>=90)ach('untouch');
   // combo
@@ -1571,7 +1590,7 @@ function update(dt){
     else spawnChampion()}
   if(G.sideT>0)G.sideT-=dt;
   G.dpsT+=dt;if(G.dpsT>=1){G.dps=G.dps*.9+G.dealt/G.dpsT*.1;G.dealt=0;G.dpsT=0;
-    if(!G.stage&&!G.studio&&G.T>120){const a0=G.adapt;if(G.lifeE<4)G.adapt=Math.min(3,G.adapt+.02);else if(G.lifeE>6.5)G.adapt=Math.max(1,G.adapt-.02);
+    if(!G.stage&&!G.studio&&G.T>120){const a0=G.adapt;if(G.lifeE<4)G.adapt=Math.min(G.endless?1.6:3,G.adapt+.02);if(G.endless&&G.adapt>1.6)G.adapt=Math.max(1.6,G.adapt-.05);else if(G.lifeE>6.5)G.adapt=Math.max(1,G.adapt-.02);
       if(a0<1.5&&G.adapt>=1.5)addText(P.x,P.y-50,'the Hush is listening…',SONGS[G.song].hush,14,1.6);if(G.adapt>=2)ach('listen')}}
   G.inPool=0;if(G.pools.length){for(const q of G.pools){q.t+=dt;if(q.t>.8&&!G.stageDone&&(P.x-q.x)**2+(P.y-q.y)**2<q.r*q.r){G.inPool=1;if(P.inv<=0){const dr=6*(.7+.3*SONGS[G.song].diff)*dt;P.hp-=dr;G.dmgTaken+=dr;if(P.hp<=0){P.hp=.01;hurt(1,q.x,q.y)}}}}G.pools=G.pools.filter(q=>q.t<q.life)}
   for(const e of G.enemies){if(e.type!=='weaver'||e.dead||weaverBeam(e)!==2||P.inv>0)continue;const m=e.mate,vx=m.x-e.x,vy=m.y-e.y,l2=vx*vx+vy*vy||1;if(l2>700*700)continue;const t=clamp(((P.x-e.x)*vx+(P.y-e.y)*vy)/l2,0,1),qx=e.x+vx*t-P.x,qy=e.y+vy*t-P.y;if(qx*qx+qy*qy<(P.r+7)**2){hurt(13*(.7+.3*SONGS[G.song].diff),P.x+qx,P.y+qy);break}}
@@ -1633,7 +1652,7 @@ function update(dt){
     if(b.k==='spark'){if(!b.tgt||b.tgt.dead){b.tgt=nearestN(b.x,b.y,1,420)[0]||null}
       if(b.tgt){const a=Math.atan2(b.tgt.y-b.y,b.tgt.x-b.x),ca=Math.atan2(b.vy,b.vx);let da=a-ca;while(da>Math.PI)da-=TAU;while(da<-Math.PI)da+=TAU;const na=ca+clamp(da,-8*dt,8*dt);const sp=Math.min(560,Math.hypot(b.vx,b.vy)+500*dt);b.vx=Math.cos(na)*sp;b.vy=Math.sin(na)*sp}}
     b.x+=b.vx*dt;b.y+=b.vy*dt;
-    inRadius(b.x,b.y,b.r,(e,dx,dy)=>{if(b.life<=0||b.hits.includes(e))return;b.hits.push(e);hit(e,b.dmg,b.vx,b.vy,90);burst(b.x,b.y,b.h,4,120,2,.25,false);if(b.k==='needle'&&G.duets.cascade){const a=R()*TAU;G.shots.push({x:b.x,y:b.y,px:b.x,py:b.y,vx:Math.cos(a)*280,vy:Math.sin(a)*280,r:3,dmg:b.dmg*.6,pierce:0,life:1,h:DUETS.cascade.h,k:'spark',hits:[e],tgt:null})}if(b.k==='bolt'&&G.duets.constellation)for(let i=0;i<3;i++){const a=R()*TAU;G.shots.push({x:b.x,y:b.y,px:b.x,py:b.y,vx:Math.cos(a)*300,vy:Math.sin(a)*300,r:3.5,dmg:b.dmg*.45,pierce:0,life:1.1,h:DUETS.constellation.h,k:'spark',hits:[e],tgt:null})}if(b.pierce>0)b.pierce--;else b.life=0})}
+    inRadius(b.x,b.y,b.r,(e,dx,dy)=>{if(b.life<=0||b.hits.includes(e))return;b.hits.push(e);hit(e,b.dmg,b.vx,b.vy,90);burst(b.x,b.y,b.h,4,120,2,.25,false);if(b.k==='spark'&&G.duets.static&&Math.random()<.4)chainFrom(e.x,e.y,2,b.dmg*.7,DUETS.static.h);if(b.k==='needle'&&G.duets.cascade){const a=R()*TAU;G.shots.push({x:b.x,y:b.y,px:b.x,py:b.y,vx:Math.cos(a)*280,vy:Math.sin(a)*280,r:3,dmg:b.dmg*.6,pierce:0,life:1,h:DUETS.cascade.h,k:'spark',hits:[e],tgt:null})}if(b.k==='bolt'&&G.duets.constellation)for(let i=0;i<3;i++){const a=R()*TAU;G.shots.push({x:b.x,y:b.y,px:b.x,py:b.y,vx:Math.cos(a)*300,vy:Math.sin(a)*300,r:3.5,dmg:b.dmg*.45,pierce:0,life:1.1,h:DUETS.constellation.h,k:'spark',hits:[e],tgt:null})}if(b.pierce>0)b.pierce--;else b.life=0})}
   G.shots=G.shots.filter(b=>b.life>0);
   const bsp=G.bspd||1;for(const b of G.ebul){b.life-=dt;b.x+=b.vx*dt*bsp;b.y+=b.vy*dt*bsp;if((b.x-P.x)**2+(b.y-P.y)**2<(b.r+P.r-2)**2){b.life=0;hurt(b.dmg,b.x,b.y)}}
   G.ebul=G.ebul.filter(b=>b.life>0);
@@ -1649,7 +1668,7 @@ function update(dt){
   G.gems=G.gems.filter(g=>!g.dead);
   G.enemies=G.enemies.filter(e=>!e.dead);
   updParts(dt);
-  if((G.pending>0||G.pendingMotif>0)&&state==='play'&&!G.stageDone)openLevel();
+  if((G.pending>0||G.pendingMotif>0||G.pendingLaurel>0)&&state==='play'&&!G.stageDone)openLevel();
 }
 function updParts(dt){
   for(const p of G.parts){p.life-=dt;const f=Math.pow(.06,dt);p.vx*=f;p.vy*=f;p.x+=p.vx*dt;p.y+=p.vy*dt}
@@ -1680,7 +1699,7 @@ function trailFx(song){const t=S.trail||'star',x=P.x+rnd(-3,3),y=P.y+rnd(-3,3),p
     case'requiemt':p.dark=Math.random()<.5;p.h=350;p.s=4;p.life=p.max=.9;break;
     case'hollow':p.dark=true;p.s=4.5;p.life=p.max=.8;G.parts.push({x,y,vx:0,vy:0,life:.5,max:.5,s:2,h:song.hush,dark:false});break}
   G.parts.push(p)}
-function collect(v){G.xp+=v*P.xpMul*(G.accelT>0?1.5:1);A.chime++;
+function collect(v){G.xp+=v*P.xpMul*(G.accelT>0?1.5:1)*(G.endless?1+Math.max(0,G.T-(G.wonAt||600))/60*.12:1);A.chime++;
   while(G.xp>=G.need){G.xp-=G.need;G.level++;G.need=xpNeed(G.level);G.pending++}}
 function die(){G.dead=true;G.deadT=0;P.hp=0;timeScale=.3;A.sDeath();A.muffle(true);shake(20);flash(.5,'#ff2d6b');
   const song=SONGS[G.song];burst(P.x,P.y,song.a,80,420,4,1.6,false);burst(P.x,P.y,0,40,260,4,1.4,true);
@@ -2040,8 +2059,8 @@ function makePoster(){if(!G)return;const W2=1080,H2=1350,c=document.createElemen
   x.fillText(`${song.name.toUpperCase()}${G.dyn?' · '+DYN[G.dyn].n.toUpperCase():''}${mode?' · '+mode.toUpperCase():''}`.split('').join(String.fromCharCode(8202)),W2/2,300);
   x.fillStyle='#fff';x.font='800 78px Unbounded, system-ui, sans-serif';x.fillText($('#overTitle').textContent,W2/2,H2*.64);x.font='400 34px Outfit, system-ui, sans-serif';x.fillStyle='rgba(235,228,255,.75)';x.fillText(`${sg.name}, ${sg.title}`,W2/2,H2*.64+66);
   const stx=[['TIME',fmt(G.T)],['SILENCED',G.kills],['HARMONY','×'+G.maxCombo],['PERFECTS',G.perfects],['LEVEL',G.level],['HUSHES',G.bossKills]];stx.forEach(([k,v],i)=>{const cx=W2/2+((i%3)-1)*320,cy=H2*.735+Math.floor(i/3)*112;x.fillStyle='#fff';x.font='800 52px Unbounded, system-ui, sans-serif';x.fillText(String(v),cx,cy);x.fillStyle='rgba(200,190,240,.7)';x.font='600 22px Outfit, system-ui, sans-serif';x.fillText(k,cx,cy+44)});
-  const tl=G.tl.concat([G.kills-G.tlK]),n=Math.max(1,tl.length),mx=Math.max(4,...tl),bw=Math.min(28,860/n);for(let i=0;i<n;i++){const bh=Math.max(3,tl[i]/mx*34),cx=W2/2-(n*bw)/2+i*bw+bw/2;x.fillStyle=hsla(lerp(song.a,song.b,i/Math.max(1,n-1)),100,68,.95);x.fillRect(cx-bw*.3,H2*.935-bh,bw*.6,bh*2)}
-  x.fillStyle='rgba(200,190,240,.6)';x.font='500 22px Outfit, system-ui, sans-serif';x.fillText(new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'})+'  ·  '+GAME_URL.replace('https://',''),W2/2,H2-((G.dyn||0)?70:40));
+  const tl=G.tl.concat([G.kills-G.tlK]),n=Math.max(1,tl.length),mx=Math.max(4,...tl),bw=Math.min(28,860/n);for(let i=0;i<n;i++){const bh=Math.max(3,tl[i]/mx*30),cx=W2/2-(n*bw)/2+i*bw+bw/2;x.fillStyle=hsla(lerp(song.a,song.b,i/Math.max(1,n-1)),100,68,.95);x.fillRect(cx-bw*.3,H2*((G.dyn||0)?.905:.935)-bh,bw*.6,bh*2)}
+  x.fillStyle='rgba(200,190,240,.6)';x.font='500 22px Outfit, system-ui, sans-serif';x.fillText(new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'})+'  ·  '+GAME_URL.replace('https://',''),W2/2,H2-((G.dyn||0)?64:40));
   {const dy=G.dyn||0;if(dy>0){const tiers=[null,['#c98a52','#7a4a26'],['#c98a52','#7a4a26'],['#d8dde8','#7d8696'],['#d8dde8','#7d8696'],['#ffd27a','#a8741e'],['#ffd27a','#a8741e'],null,['#ffffff','#000000']];const tc=tiers[dy];
     const stroke=(col,w,inset)=>{x.strokeStyle=col;x.lineWidth=w;x.strokeRect(inset,inset,W2-inset*2,H2-inset*2)};
     if(dy===7){const lg=x.createLinearGradient(0,0,W2,H2);for(let i=0;i<=6;i++)lg.addColorStop(i/6,`hsl(${i*60},100%,70%)`);stroke(lg,10,22);stroke('rgba(255,255,255,.35)',2,40)}
@@ -2105,19 +2124,22 @@ function rollCards(n){const pool=[];
   for(const id in HARM)if((G.harm[id]||0)<5)pool.push({k:'harm',id,w:1});
   for(const id in DUETS){const D=DUETS[id];if(!G.duets[id]&&vl(D.a)>=5&&vl(D.b)>=5)pool.push({k:'duet',id,w:6})}
   const out=[];while(out.length<n&&pool.length){let tot=0;for(const p of pool)tot+=p.w;let r=R()*tot;let i=0;for(;i<pool.length;i++){r-=pool[i].w;if(r<=0)break}out.push(pool.splice(Math.min(i,pool.length-1),1)[0])}
+  const full=!pool.length&&out.length<n;if(out.length<n||G.endless&&!out.some(c=>c.k==='ovt')){const ks=Object.keys(OVT).filter(k=>!out.some(c=>c.id===k));while(out.length<n&&ks.length)out.push({k:'ovt',id:ks.splice(Math.floor(R()*ks.length),1)[0],x:1});if(G.endless&&!out.some(c=>c.k==='ovt')&&ks.length)out[out.length-1]={k:'ovt',id:ks[Math.floor(R()*ks.length)],x:1}}
   if(!out.length)out.push({k:'encore'});return out}
-function openLevel(){state='levelup';A.muffle(true);A.sLevel(chordFreqs(3).slice(0,4));G.cardMode=G.pendingMotif>0?'motif':'level';G.cards=G.cardMode==='motif'?rollMotifs(3):rollCards(cardCount());renderCards();show('#levelup')}
-function renderCards(){const mm=G.cardMode==='motif';$('#lvtag').textContent=mm?'A MUSIC BOX OPENS':'LEVEL '+(G.level-G.pending+1);$('#lvh').textContent=mm?'Choose a Motif':G.pending>1?`A New Harmony (+${G.pending-1})`:'A New Harmony';
+function rollLaurels(){const ks=Object.keys(OVT),out=[];while(out.length<3&&ks.length)out.push({k:'ovt',id:ks.splice(Math.floor(R()*ks.length),1)[0],x:3});return out}
+function openLevel(){state='levelup';A.muffle(true);A.sLevel(chordFreqs(3).slice(0,4));G.cardMode=G.pendingMotif>0?'motif':G.pendingLaurel>0?'laurel':'level';G.cards=G.cardMode==='motif'?rollMotifs(3):G.cardMode==='laurel'?rollLaurels():rollCards(cardCount());renderCards();show('#levelup')}
+function renderCards(){const mm=G.cardMode==='motif';const ml=G.cardMode==='laurel';$('#lvtag').textContent=mm?'A MUSIC BOX OPENS':ml?'A HUSH FALLS SILENT':'LEVEL '+(G.level-G.pending+1);$('#lvh').textContent=mm?'Choose a Motif':ml?'Choose a Laurel':G.pending>1?`A New Harmony (+${G.pending-1})`:'A New Harmony';
   $('#cards').innerHTML=G.cards.map((c,i)=>{let ic,h,name,kind,desc,lvl,isNew=false;
-    if(c.k==='voice'){const V=VOICES[c.id],cur=vl(c.id);ic=V.icon;h=V.h;name=V.name;lvl=cur+1;isNew=!cur;kind=isNew?'Voice':'Voice · Lv '+lvl;desc=V.d[lvl-1]}
+    if(c.k==='voice'){const V=VOICES[c.id],cur=vl(c.id);ic=V.icon;h=V.h;name=V.name;lvl=cur+1;isNew=!cur;kind=isNew?'Voice':'Voice · Lv '+lvl;desc=V.d[lvl-1];const dh=Object.values(DUETS).filter(D=>(D.a===c.id||D.b===c.id)&&!G.duets[Object.keys(DUETS).find(k=>DUETS[k]===D)]).sort((A1,B1)=>vl(B1.a===c.id?B1.b:B1.a)-vl(A1.a===c.id?A1.b:A1.a)).map(D=>{const o=D.a===c.id?D.b:D.a;return`${D.icon} ${D.name} <i>with ${VOICES[o].icon}${vl(o)?' '+vl(o)+'/5':''}</i>`});if(dh.length)desc+=`<span class="dhint">Duet: ${dh.slice(0,2).join(' · ')}</span>`}
     else if(c.k==='harm'){const Hh=HARM[c.id],cur=G.harm[c.id]||0;ic=Hh.icon;h=Hh.h;name=Hh.name;lvl=cur+1;kind='Harmony · Lv '+lvl;desc=Hh.d;isNew=!cur}
     else if(c.k==='duet'){const D=DUETS[c.id];ic=D.icon;h=D.h;name=D.name;lvl=0;kind='Duet · '+VOICES[D.a].icon+' + '+VOICES[D.b].icon;desc=D.d}
     else if(c.k==='motif'){const M=MOTIFS[c.id];ic=M.icon;h=M.h;name=M.name;lvl=0;kind='Motif';desc=M.d;isNew=!S.seen.m[c.id]}
     else if(c.k==='diss'){const D=DISS[c.id];ic=D.ic;h=350;name=D.n;lvl=0;kind='Dissonance';desc=D.d;isNew=!S.seen.x[c.id]}
+    else if(c.k==='ovt'){const O=OVT[c.id],cur=(G.ovt||{})[c.id]||0;ic=O.ic;h=O.h;name=c.x>1?O.n.replace('Overtone','Laurel'):O.n;kind=c.x>1?'Laurel · ×3 · now '+cur:'Overtone · now '+cur;desc=O.d+(c.x>1?' Three times over.':' Stacks forever.');lvl=0}
     else if(c.k==='skip'){ic='✕';h=240;name='Keep it closed';kind='Pass';desc='Leave the box shut and walk on. +10 Echoes.';lvl=0}
     else{ic='❀';h=130;name='Encore';kind='Overflow';desc='Your band is complete. +1% damage for the rest of the song, and heal 10.';lvl=0}
     const pips=lvl?`<div class="pips" style="--h:${h}">${[1,2,3,4,5].map(j=>`<i class="${j<=lvl?'on':''}"></i>`).join('')}</div>`:'';
-    return`<button class="lcard ${isNew?'new':''} ${c.k==='duet'||c.k==='motif'?'duet':c.k==='diss'?'diss':''}" data-i="${i}" style="--h:${h};animation-delay:${i*.07}s"><div class="top"><div class="ic">${ic}</div><div><div class="k">${kind}</div><h3>${name}</h3></div></div><div class="txt"><div class="mob"><div class="k">${kind}</div><h3>${name}</h3></div><p>${desc}</p>${pips}</div></button>`}).join('');
+    return`<button class="lcard ${isNew?'new':''} ${c.k==='duet'||c.k==='motif'||c.x>1?'duet':c.k==='diss'?'diss':''}" data-i="${i}" style="--h:${h};animation-delay:${i*.07}s"><div class="top"><div class="ic">${ic}</div><div><div class="k">${kind}</div><h3>${name}</h3></div></div><div class="txt"><div class="mob"><div class="k">${kind}</div><h3>${name}</h3></div><p>${desc}</p>${pips}</div></button>`}).join('');
   $('#reroll').style.display=G.rerolls>0&&!mm?'':'none';$('#rerollN').textContent='('+G.rerolls+')'}
 function pickCard(i){const c=G.cards&&G.cards[i];if(!c||state!=='levelup')return;
   if(c.k==='voice'){const v=G.voices.find(v=>v.id===c.id);if(v)v.lvl++;else G.voices.push({id:c.id,lvl:1});addText(P.x,P.y-30,VOICES[c.id].name+(v?' '+v.lvl:' joins'),VOICES[c.id].h,15,1.4)}
@@ -2126,10 +2148,12 @@ function pickCard(i){const c=G.cards&&G.cards[i];if(!c||state!=='levelup')return
   else if(c.k==='diss'){G.diss[c.id]=1;S.seen.x[c.id]=1;ach('diss');save();if(c.id==='swarm')G.mod.spawn*=2;if(c.id==='presto'){G.bpmBonus+=25;G.mod.ehp*=1.3}if(c.id==='deafen')$('#beat').style.opacity=0;banner(DISS[c.id].n.toUpperCase(),'a dissonance enters the song');flash(.35,'#ff3d6b')}
   else if(c.k==='motif'){G.motifs[c.id]=1;S.seen.m[c.id]=1;if(c.id==='encoreseal')G.revive++;ach('motif');if(Object.keys(G.motifs).length>=5)ach('motif5');if(Object.keys(MOTIFS).every(k=>S.seen.m[k]))ach('motifall');save();
     banner(MOTIFS[c.id].name.toUpperCase(),'a motif joins your song');flash(.35,'#ffd76b')}
+  else if(c.k==='ovt'){G.ovt=G.ovt||{};G.ovt[c.id]=(G.ovt[c.id]||0)+(c.x||1);if(c.x>1){banner('LAUREL',OVT[c.id].n.replace('Overtone','Laurel'));flash(.35,'#ffd76b');ach('laurel')}else addText(P.x,P.y-30,OVT[c.id].n,OVT[c.id].h,14,1.2);const tot=Object.values(G.ovt).reduce((a,b)=>a+b,0);if(tot>=25)ach('ovt25');if(c.id==='breath'){recalc();P.hp=P.maxHp}}
   else if(c.k==='skip'){G.bonusEchoes+=10}
   else{G.overflow=(G.overflow||0)+1;P.hp=Math.min(P.maxHp,P.hp+10*(G.heal||1))}
-  const wasM=G.cardMode==='motif';if(c.k==='diss'&&G.diss.brittle)P.hp=Math.min(P.hp,P.maxHp);recalc();if(c.k==='motif'&&c.id==='keysig')P.hp+=20;P.hp=Math.min(P.hp,P.maxHp);A.sBuy();if(wasM)G.pendingMotif--;else G.pending--;
+  const wasM=G.cardMode==='motif',wasL=G.cardMode==='laurel';if(c.k==='diss'&&G.diss.brittle)P.hp=Math.min(P.hp,P.maxHp);recalc();if(c.k==='motif'&&c.id==='keysig')P.hp+=20;P.hp=Math.min(P.hp,P.maxHp);A.sBuy();if(wasM)G.pendingMotif--;else if(wasL)G.pendingLaurel--;else G.pending--;
   if(G.pendingMotif>0){G.cardMode='motif';G.cards=rollMotifs(3);renderCards()}
+  else if(G.pendingLaurel>0){G.cardMode='laurel';G.cards=rollLaurels();renderCards()}
   else if(G.pending>0){G.cardMode='level';G.cards=rollCards(cardCount());renderCards()}
   else{state='play';A.muffle(false);hideAll();P.inv=Math.max(P.inv,.6);levelWave()}}
 function levelWave(){const song=SONGS[G.song];addRays(P.x,P.y,song.a,.6);G.rings.push({x:P.x,y:P.y,r:P.r,R:170,life:.45,max:.45,h:song.a,w:6});G.rings.push({x:P.x,y:P.y,r:P.r,R:120,life:.35,max:.35,h:song.b,w:3});
@@ -2140,7 +2164,7 @@ $('#reroll').addEventListener('click',()=>{if(G&&G.rerolls>0&&state==='levelup'&
 /* pause / win / over */
 function buildList(){const ch=(ic,h,t,sub)=>`<span class="ch" style="--h:${h}"><i>${ic}</i>${t}${sub?` <small>${sub}</small>`:''}</span>`;const sec=(t,a)=>a.length?`<div class="bh">${t}</div><div class="bc">${a.join('')}</div>`:'';
   return sec('VOICES',G.voices.map(v=>ch(VOICES[v.id].icon,VOICES[v.id].h,VOICES[v.id].name,'Lv '+v.lvl)))+sec('DUETS',Object.keys(G.duets).map(id=>ch(DUETS[id].icon,DUETS[id].h,DUETS[id].name)))
-   +sec('MARKS OF SILENCE',G.curses.map(k=>ch('☠',350,CURSES[k].n)))+sec(`DISSONANCES · ${dCount()}/${MAXD}`,Object.keys(G.diss).map(id=>ch(DISS[id].ic,350,DISS[id].n)))+sec(`MOTIFS · ${mCount()}/${MAXM}`,Object.keys(G.motifs).map(id=>ch(MOTIFS[id].icon,MOTIFS[id].h,MOTIFS[id].name)))+sec('HARMONIES',Object.entries(G.harm).map(([id,l])=>ch(HARM[id].icon,HARM[id].h,HARM[id].name,'Lv '+l)))}
+   +sec('OVERTONES',Object.entries(G.ovt||{}).map(([k,n])=>ch(OVT[k].ic,OVT[k].h,OVT[k].n.replace('Overtone of ','')+' ×'+n)))+sec('MARKS OF SILENCE',G.curses.map(k=>ch('☠',350,CURSES[k].n)))+sec(`DISSONANCES · ${dCount()}/${MAXD}`,Object.keys(G.diss).map(id=>ch(DISS[id].ic,350,DISS[id].n)))+sec(`MOTIFS · ${mCount()}/${MAXM}`,Object.keys(G.motifs).map(id=>ch(MOTIFS[id].icon,MOTIFS[id].h,MOTIFS[id].name)))+sec('HARMONIES',Object.entries(G.harm).map(([id,l])=>ch(HARM[id].icon,HARM[id].h,HARM[id].name,'Lv '+l)))}
 function pause(){if(state!=='play'||!G||G.dead)return;state='paused';A.muffle(true);const pb=$('#pauseBuild');pb.className='build';pb.innerHTML=buildList();$('#pauseInfo').textContent=`${SONGS[G.song].name}${G.dyn?' · '+DYN[G.dyn].s:''} · ${fmt(G.T)} · Lv ${G.level}`+(G.modName?' · '+G.modName:'');show('#pause')}
 function resume(){if(state!=='paused')return;state='play';wake(true);A.muffle(false);hideAll();A.init()}
 function openWin(){state='win';A.muffle(true);A.sBossDie(chordFreqs(3));flash(.7,'#fff');show('#win')}
@@ -2309,8 +2333,8 @@ function frame(ts){
   if(G&&state!=='over')hud();
   requestAnimationFrame(frame)}
 document.querySelectorAll('.btn .sub').forEach(e=>e.parentNode.classList.add('bsub'));fixSave();applyPrefs();goTitle();Seq.start();requestAnimationFrame(frame);
-const VER='10.0';
-if(S.stats.runs>0&&S.ver!==VER)setTimeout(()=>toast('✦','HUSH '+VER+' — Virtuoso','Dynamics pay bounties, trails and crowns. The Hush listens, and every Hush fights in three movements.'),1200);
+const VER='11.0';
+if(S.stats.runs>0&&S.ver!==VER)setTimeout(()=>toast('✦','HUSH '+VER+' — Encore','Overtones and Laurels: you never stop growing. Five new Duets, with hints on every voice card.'),1200);
 S.ver=VER;save();
 try{if('serviceWorker' in navigator&&location.protocol==='https:'&&window.top===window)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 </script>

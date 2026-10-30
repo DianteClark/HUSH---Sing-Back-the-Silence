@@ -1,5 +1,39 @@
 # Changelog
 
+## 11.0 — "Encore"
+In Endless your band stopped growing while the Hush kept getting stronger. Now you grow too.
+
+**Overtones**: once your band is complete, level-ups stop offering a flat +1% and offer **Overtones**, small upgrades that stack forever:
+- *Power*: +7% damage, multiplying with each stack.
+- *Space*: +6% area.
+- *Breath*: +14 max health and a full heal.
+- *Tempo*: +4% speed, up to +40%.
+- *Brilliance*: +3% critical chance, up to +30%.
+- *Swell*: Crescendo charges 10% faster.
+- *Reach*: +15% pickup reach and +5% experience.
+
+In Endless, one Overtone is always among your choices. Your stacks show in the pause screen.
+
+**Laurels**: every Hush you silence in Endless lets you choose one of three Laurels. A Laurel is an Overtone three times over.
+
+**Endless growth**
+- Experience flows faster the longer the encore lasts: +12% per minute.
+- The Hush's adaptive pressure is capped lower in Endless (×1.6), since Endless already scales on its own.
+- In testing, a band entering Endless gained 15 levels and 7 Overtones in four minutes, and doubled its damage.
+
+**Duets**: none were removed. A Duet only appears when both of its voices reach level 5, and some voices had only one possible partner, so many runs never saw one. There are now five new Duets, and every voice can pair with at least two others:
+- **Static** (Arpeggio + Snare Arc): sparks arc lightning into two more foes.
+- **Choir of Light** (Pulse + Chorus): every Chorus note fires its own bolt on the beat.
+- **Carillon** (Echo + Organ): every Echo burst raises an organ pillar.
+- **Riptide** (Glissando + Legato): the ribbon burns 60% hotter and the sweep hits 30% harder.
+- **Aeolian** (Harp + Glissando): +2 harp strings and a stronger sweep.
+
+**Duet hints**: voice cards now show which Duets that voice can form, partners already in your band first, with their level, such as "✦ 3/5".
+
+**Also**
+- New feats: *Laurels* (earn a Laurel in Endless) and *Overtone Series* (gather 25 Overtones in one song).
+- Framed posters now keep the waveform clear of the date line.
+
 ## 10.0 — "Virtuoso"
 Two promises: playing harder always pays, and a great build never makes the song safe.
 

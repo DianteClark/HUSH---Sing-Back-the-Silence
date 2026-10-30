@@ -1,5 +1,5 @@
 // HUSH service worker — plays offline once loaded. Bump VERSION on every release.
-const VERSION = 'hush-10.0.0';
+const VERSION = 'hush-11.0.0';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
