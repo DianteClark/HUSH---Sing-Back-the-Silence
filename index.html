@@ -227,6 +227,7 @@ body.bigbtn #cresbtn,body.bigbtn #dashbtn{zoom:1.2}body.bigbtn #pausebtn{zoom:1.
 .shake{animation:shk .35s}@keyframes shk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 #flash{position:fixed;inset:0;pointer-events:none;z-index:4;background:#fff;opacity:0}
 #rot{display:none}
+.dpips i{font-style:italic;font-size:10px;margin-right:3px;opacity:.28}.dpips i.on{opacity:1;color:#ffd27a;text-shadow:0 0 6px rgba(255,200,90,.6)}
 </style>
 </head>
 <body>
@@ -270,7 +271,7 @@ body.bigbtn #cresbtn,body.bigbtn #dashbtn{zoom:1.2}body.bigbtn #pausebtn{zoom:1.
     <div class="row"><button class="btn" data-act="achs">✧ Feats</button><button class="btn" data-act="how">? Guide</button></div>
   </div>
   <button class="back" data-act="settings" aria-label="Settings" style="font-size:19px">⚙</button>
-  <div class="ver">HUSH · v8.0 · made with every note</div>
+  <div class="ver">HUSH · v10.0 · made with every note</div>
 </div>
 
 <!-- SELECT -->
@@ -386,6 +387,8 @@ body.bigbtn #cresbtn,body.bigbtn #dashbtn{zoom:1.2}body.bigbtn #pausebtn{zoom:1.
     <p><b>Grow.</b> Collect light to level up. Pick new voices and harmonies. Two partner voices at their peak become a <b>Duet</b>. Elites and every Hush carry <b>music boxes</b> — walk into one to choose a <b>Motif</b>, a rule-bending gift for the rest of the song.</p>
     <p><b>Read the rhythm of the Hush.</b> Lurchers lunge on the downbeat. Wisps glow before they spit. Veils are shielded except on 2 &amp; 4. Conductors hasten everything near them — silence them first. A Hush arrives every three minutes, and the song modulates up a key each time you break one.</p>
     <p><b>Restore the song.</b> At 9:00 <b>The Great Silence</b> arrives. It puts out the lights. Silence it and the song is restored — then keep singing in Endless, or take a bow.</p>
+    <p><b>Dynamics pay.</b> Every new Dynamic you restore a song at pays a one-time <b>bounty</b>, lights a pip on the song card and frames your poster in bronze, silver, gold, prism or silenzio black. Restoring a song at <i>fortissimo</i> earns its Signature trail. Restoring it at <i>silenzio</i> crowns you its Virtuoso: +15% Echoes on that song, forever.</p>
+    <p><b>The Hush listens.</b> If your song silences Hushlings the moment they appear, the Hush adapts with more and tougher Hushlings, and pays more Echoes for it. Each Hush now fights in three <b>movements</b>: at two-thirds and one-third health it holds its note, shrugging off damage while shaped marks fall, then falters. Its health grows with your power, and the last third of every song is a finale of shapes.</p>
     <p><b>Signatures.</b> Every song has its own Signature Hushling, a dangerous foe that appears only there: Dawn's Gilded Herald, Dusk's Weeping Veil, Aurora's Lightweavers, Abyss's Maw, Dream's Somnambulist, Tide's Leviathan, Ember's Bellows and Hallow's Hollow Lantern. Each one warns you before it strikes. <b>Requiem</b> brings them all. Harder songs hit harder, and mid-song the marks take shapes: lines, crosses, and the <b>Fermata</b> ring, where the only safe place is the still eye in the middle.</p>
     <p><b>Rest Marks.</b> The Hush aims at where you stand: a red ring fills for one bar and lands on the downbeat. Keep moving — or dash through it right on the beat for a <b>Riposte</b>. Late in a song, and in Endless, they come faster and in pairs. <b>Cantors</b> snipe from far away along a red line. In Endless, a new <b>Mark of Silence</b> curses the song every two minutes.</p>
     <p><b>Living moments.</b> Mid-song the music may surge into an <b>Accelerando</b> (faster, more experience), a <b>Note Rain</b> may fall, or a named <b>Champion</b> with three strange powers may come for you. Elites can carry powers too — read their tags.</p>
@@ -659,11 +662,21 @@ const TRAILS={
   gilded:{n:'Gilded',d:'Pure gold. Earned by restoring a song at forte.',feat:'dyn4'},
   hollow:{n:'Hollow',d:'The silence itself, tamed. Earned at silenzio.',feat:'dyn8'},
   jack:{n:"Jack-o'-Light",d:"Pumpkin embers and wisps. Earned by restoring the song in Hallow.",feat:'hallow'},
+  herald:{n:'Herald\'s Gold',d:'Rays of Dawn. Restore Dawn at fortissimo.',sd:'dawn'},
+  weeping:{n:'Weeping',d:'Slow violet tears. Restore Dusk at fortissimo.',sd:'dusk'},
+  weave:{n:'Lightweave',d:'Two threads of light. Restore Aurora at fortissimo.',sd:'aurora'},
+  maw:{n:'Hunger',d:'Darkness drawn into you. Restore Abyss at fortissimo.',sd:'abyss'},
+  sleep:{n:'Sleepwalk',d:'Afterimages of where you were. Restore Dream at fortissimo.',sd:'dream'},
+  wake:{n:'Wake',d:'Bubbles and spray. Restore Tide at fortissimo.',sd:'tide'},
+  cinder:{n:'Cinder',d:'A bellows-breath of sparks. Restore Ember at fortissimo.',sd:'ember'},
+  lanternt:{n:'Hollow Light',d:'Lantern flame. Restore Hallow at fortissimo.',sd:'hallow'},
+  requiemt:{n:'Requiem',d:'Crimson and void. Restore Requiem at fortissimo.',sd:'requiem'},
   staff:{n:'Staff Lines',d:'Five lines of music trail behind you. Earned by completing The Score.',feat:'act4'},
 };
 const MT=[0,150,400,800,1400,2200,3200,4500,6000,8000];
 function mLvl(id){const x=(S.mast||{})[id]||0;let l=0;for(const t of MT)if(x>=t)l++;return l}
-const trailOwned=id=>S.trails[id]||(TRAILS[id].feat&&S.ach[TRAILS[id].feat]);
+const dynBest=id=>(S.dynBest||{})[id]||0;
+const trailOwned=id=>S.trails[id]||(TRAILS[id].feat&&S.ach[TRAILS[id].feat])||(TRAILS[id].sd&&dynBest(TRAILS[id].sd)>=5);
 const EVENTS=[{id:'hallow',n:"Hallow's Hush",from:1020,to:1107,song:'hallow',chip:'🎃',d:'The Hallow song is open, Hushlings wear lantern faces, and Golden Notes are twice as sweet.'},
   {id:'silent',n:'Silent Night',from:1215,to:105,song:null,chip:'❄',d:'Snow falls on every song, and every song pays 25% more Echoes.'}];
 function evActive(){const d=new Date(),v=(d.getMonth()+1)*100+d.getDate();return EVENTS.find(e=>e.from<=e.to?(v>=e.from&&v<=e.to):(v>=e.from||v<=e.to))||null}
@@ -829,6 +842,11 @@ const ACH=[
   {id:'act1',i:'𝄞',n:'Overture',d:'Complete Act I of The Score',rw:80},
   {id:'act4',i:'𝄐',n:'The Score',d:'Complete every movement of The Score',rw:400},
   {id:'stars60',i:'★',n:'Sixty Stars',d:'Earn every star in The Score',rw:600},
+  {id:'virt3',i:'❦',n:'Virtuoso',d:'Restore three songs at fortissimo',rw:300},
+  {id:'virtall',i:'❧',n:'Maestro',d:'Restore every song at fortissimo',rw:1000},
+  {id:'crown',i:'♛',n:'Crowned',d:'Restore a song at silenzio',rw:500},
+  {id:'phase',i:'Ⅲ',n:'Third Movement',d:'Break a Hush through all its movements',rw:60},
+  {id:'listen',i:'👂',n:'It Listens',d:'Make the Hush adapt to ×2',rw:80},
   {id:'sig1',i:'☼',n:'Signature',d:'Silence a song\'s Signature Hushling',rw:40},
   {id:'sigall',i:'✶',n:'Every Voice of Silence',d:'Silence all eight Signatures',rw:300},
   {id:'requiem',i:'✝',n:'Requiem',d:'Restore the song in Requiem',rw:500},
@@ -996,7 +1014,7 @@ const Seq={bpm:84,step:0,next:0,running:false,events:[],mode:'menu',
     if(this.events.length>96)this.events.splice(0,this.events.length-32)}};
 setInterval(()=>Seq.tick(),25);
 
-function fixSave(){if(!SONGS[S.lastSong])S.lastSong='dawn';if(!SINGERS.some(x=>x.id===S.lastSinger))S.lastSinger='lumi';if(S.fam&&!FAMS[S.fam])S.fam=null;if(S.trail&&!TRAILS[S.trail])S.trail='star'}
+function fixSave(){if(!S.dynBest){S.dynBest={};for(const k in (S.dyn||{}))S.dynBest[k]=S.dyn[k]}if(!SONGS[S.lastSong])S.lastSong='dawn';if(!SINGERS.some(x=>x.id===S.lastSinger))S.lastSinger='lumi';if(S.fam&&!FAMS[S.fam])S.fam=null;if(S.trail&&!TRAILS[S.trail])S.trail='star'}
 function curSong(){return SONGS[G?G.song:S.lastSong]||SONGS.dawn}
 function musicStep(step,t){
   if(!A.ctx)return;
@@ -1089,7 +1107,7 @@ function newGame(opt){
     enemies:[],shots:[],ebul:[],gems:[],parts:[],rings:[],bolts:[],texts:[],mines:[],ripples:[],
     voices:[{id:singer.voice,lvl:1}],harm:{},bar:Math.floor(Seq.step/16),level:1,xp:0,need:xpNeed(1),pending:0,kills:0,combo:0,comboT:0,maxCombo:0,score:0,
     cres:0,cresUses:0,spawnAcc:0,nextBoss:180,boss:null,bossKills:0,lastHit:0,rerolls:meta('reroll'),revive:meta('revive'),
-    endless:false,won:false,bonusEchoes:0,arpAng:0,orbA:0,newAch:[],arpIdx:0,noteK:0,chimeK:0,dead:false,deadT:0,bonusVoice:0,dmgTaken:0,glA:0,beams:null,orbs:null,tl:[],tlK:0,tlT:0,nextGold:(70+R()*60)/(1+meta('golden')*.25),gold:null,veils:0,duets:{},perfects:0,perfStreak:0,maxPerf:0,motifs:{},chests:[],pendingMotif:0,cardMode:'level',graceT:0,fermataT:0,chestsOpened:0,elitesK:0,condK:0,golds:0,mothK:0,rib:[],ribT:0,stunMax:0,step:0,call:null,callsWon:0,nextCall:140,zones:[],nextZone:300,nextCrystal:90,crystalK:0,phantomK:0,leechOff:0,solo:null,diss:{},pillars:[],rays:[],strikes:[],dodges:0,curses:[],nextCurse:0,pools:[],nextSig:null,sigSeen:{},inPool:0,nextMoment:110,accelT:0,rainT:0,champsK:0,fires:[],tideMag:0,F:null,mockT:0,dark:0,darkTarget:0,stormT:0,bossSpawned:0,normalBoss:0,events:{270:'circle',420:'storm'}};
+    endless:false,won:false,bonusEchoes:0,arpAng:0,orbA:0,newAch:[],arpIdx:0,noteK:0,chimeK:0,dead:false,deadT:0,bonusVoice:0,dmgTaken:0,glA:0,beams:null,orbs:null,tl:[],tlK:0,tlT:0,nextGold:(70+R()*60)/(1+meta('golden')*.25),gold:null,veils:0,duets:{},perfects:0,perfStreak:0,maxPerf:0,motifs:{},chests:[],pendingMotif:0,cardMode:'level',graceT:0,fermataT:0,chestsOpened:0,elitesK:0,condK:0,golds:0,mothK:0,rib:[],ribT:0,stunMax:0,step:0,call:null,callsWon:0,nextCall:140,zones:[],nextZone:300,nextCrystal:90,crystalK:0,phantomK:0,leechOff:0,solo:null,diss:{},pillars:[],rays:[],strikes:[],dodges:0,curses:[],nextCurse:0,dealt:0,dps:0,dpsT:0,adapt:1,lifeE:6,pools:[],nextSig:null,sigSeen:{},inPool:0,nextMoment:110,accelT:0,rainT:0,champsK:0,fires:[],tideMag:0,F:null,mockT:0,dark:0,darkTarget:0,stormT:0,bossSpawned:0,normalBoss:0,events:{270:'circle',420:'storm'}};
   if(opt.mod)opt.mod.ap(G);
   if(opt.mods){for(const m of opt.mods)m.ap(G);G.weekly=opt.weekly;G.modName=opt.mods.map(m=>m.name).join(' · ')}
   if(opt.recital){G.recital=true;G.recIdx=0;G.events={};G.nextBoss=6;G.nextCall=1e9;G.mod.spawn*=.6;G.t0=240;G.startLv=9}
@@ -1119,7 +1137,7 @@ function recalc(){const s=G.singer.mods,h=id=>G.harm[id]||0;
   P.crit=.05+h('over')*.08+(s.crit||0)+G.mod.crit;
   P.regen=h('refrain')*.6*G.heal*(G.curses&&G.curses.includes('hunger')?.5:1);
   P.dmg*=1+.015*(mLvl(G.singer.id)-1);
-  P.xpMul=(1+meta('xp')*.08+(s.xp||0)+m('hymnal')*.25)*G.mod.xp;
+  P.xpMul=(1+meta('xp')*.08+(s.xp||0)+m('hymnal')*.25)*G.mod.xp*(G.diss.tempest?1.5:1);
   P.cresMul=(1+meta('cres')*.15)*(m('dynamo')?1.5:1);
   P.dmg*=1+.01*Math.min(30,G.overflow||0);
   const x=id=>G.diss&&G.diss[id];if(x('brittle')){P.dmg*=1.6;P.maxHp=Math.max(1,Math.round(P.maxHp*.6))}if(x('frenzy'))P.spd*=1.3;if(x('overdrive')){P.dmg*=1.45;P.cresMul*=.5}if(x('deafen'))P.xpMul*=1.6;if(x('swarm'))P.xpMul*=1.7;
@@ -1144,10 +1162,10 @@ function nearestN(x,y,n,maxD,excl){const out=[];const md=maxD*maxD;
   return out.map(o=>o[1])}
 
 /* ---------------- enemies ---------------- */
-function enemyScale(){const ET=G.T+(G.t0||0);return(1+ET/60*.3+(G.endless?Math.pow(Math.max(0,G.T-(G.wonAt||600))/60,1.75)*.85:0))*SONGS[G.song].diff*G.mod.ehp}
+function enemyScale(){const ET=G.T+(G.t0||0);return(G.adapt||1)*(1+ET/60*.3+(G.endless?Math.pow(Math.max(0,G.T-(G.wonAt||600))/60,1.75)*.85:0))*SONGS[G.song].diff*G.mod.ehp}
 function makeEnemy(type,x,y,elite){const d=EN[type],sc=enemyScale();
   const e={type,x,y,vx:0,vy:0,kbx:0,kby:0,r:d.r*(elite?1.45:1),hp:d.hp*sc*(elite?5:1),spd:d.spd*(1+Math.min(.35,(G.T+(G.t0||0))/600*.25))*(elite?.9:1),dmg:d.dmg*(elite?1.5:1)*(.7+.3*SONGS[G.song].diff)*(1+Math.min(1,(G.T+(G.t0||0))/600*.5))*(G.endless?1+Math.max(0,G.T-(G.wonAt||600))/120*.7:1),
-    xp:d.xp,elite:!!elite,t:(S.seen.e[type]=1,R()*10),flash:0,orbCd:0,slow:0,dead:false,charge:0,dash:0,ang:R()*TAU,shield:type==='veil',stun:0,haste:0,ph:R()*TAU,solid:true};
+    xp:d.xp,elite:!!elite,born:G.T,t:(S.seen.e[type]=1,R()*10),flash:0,orbCd:0,slow:0,dead:false,charge:0,dash:0,ang:R()*TAU,shield:type==='veil',stun:0,haste:0,ph:R()*TAU,solid:true};
   if(G.giant&&type!=='boss'&&type!=='crystal'&&type!=='gold')e.r*=G.giant;
   e.maxHp=e.hp;G.enemies.push(e);return e}
 function spawnPos(extra=0){const a=R()*TAU;const d=Math.hypot(W,H)/2/Z+50+extra;return[P.x+Math.cos(a)*d,P.y+Math.sin(a)*d]}
@@ -1169,21 +1187,22 @@ function spawnChampion(){const types=['lurch','wisp','bloat','veil','cond'].filt
 function spawnBoss(fin){const [x,y]=spawnPos(80);const e=makeEnemy('boss',x,y,false);
   e.hp=e.maxHp=2600*(1+G.bossKills*1.1)*SONGS[G.song].diff*G.mod.ehp*(G.endless?1.5:1)*(G.bossHp||1);e.spd=50+G.bossKills*4;G.boss=e;
   e.form=fin?3:(G.normalBoss++)%3;if(e.form===1)e.spd*=.5;
-  if(fin){e.r=84;e.hp=e.maxHp=9500*SONGS[G.song].diff*G.mod.ehp*(G.endless?2:1)*(G.bossHp||1);e.spd=36;e.phase=1;lbT=3}else lbT=2.2;S.seen.e['boss'+e.form]=1;$('#bossname').textContent=BOSS[e.form].n;
+  if(fin){e.r=84;e.hp=e.maxHp=9500*SONGS[G.song].diff*G.mod.ehp*(G.endless?2:1)*(G.bossHp||1);e.spd=36;e.phase=1;lbT=3}else lbT=2.2;
+  e.mov=0;e.ward=0;e.bw=0;S.seen.e['boss'+e.form]=1;$('#bossname').textContent=BOSS[e.form].n;
   banner(BOSS[e.form].n,BOSS[e.form].s,'boss');A.sBoss();shake(8);$('#bossbar').classList.add('on')}
 function startStorm(){G.stormT=26;G.darkTarget=1;banner('SILENCE STORM','stay close to your light','boss');A.sBoss();for(let i=0;i<3;i++){const [x,y]=spawnPos();for(let j=0;j<6;j++)makeEnemy('moth',x+rr(-30,30),y+rr(-30,30),false)}}
 function encircle(){const n=40;for(let i=0;i<n;i++){const a=i/n*TAU;makeEnemy(G.T>400?'lurch':'mote',P.x+Math.cos(a)*470,P.y+Math.sin(a)*470,false)}banner('THE QUIET CLOSES IN','break the circle')}
 
 /* ---------------- combat ---------------- */
 let inTrem=false;
-function hit(e,dmg,kx=0,ky=0,kb=0){if(e.dead||(e.type==='phantom'&&!e.solid))return;if(G.motifs.coda&&P.hp<P.maxHp*.35)dmg*=1.5;if(G.motifs.cadence&&G.bar%4===3)dmg*=2;if(e.shield){dmg*=.15;kb*=.3;if(Math.random()<.25)burst(e.x,e.y,195,2,140,2,.2,false)}const crit=R()<P.crit;if(crit)dmg*=2;e.hp-=dmg;e.flash=.07;
+function hit(e,dmg,kx=0,ky=0,kb=0){if(e.dead||(e.type==='phantom'&&!e.solid))return;if(G.motifs.coda&&P.hp<P.maxHp*.35)dmg*=1.5;if(G.motifs.cadence&&G.bar%4===3)dmg*=2;if(e.shield){dmg*=.15;kb*=.3;if(Math.random()<.25)burst(e.x,e.y,195,2,140,2,.2,false)}const crit=R()<P.crit;if(crit)dmg*=2;if(e.ward>0){dmg*=.04;if(Math.random()<.3)burst(e.x,e.y,0,2,160,2.5,.3,false)}if(e.type==='boss'&&!G.stage){const cap=e.maxHp/(e.form===3?45:24),room=Math.max(0,cap*1.5-(e.bw||0));if(dmg>room){dmg=room;if(Math.random()<.04)addText(e.x+rr(-30,30),e.y-e.r,'resists',0,11,.5)}e.bw=(e.bw||0)+dmg}G.dealt+=Math.min(dmg,Math.max(0,e.hp));e.hp-=dmg;e.flash=.07;
   if(kb&&e.type!=='boss'){const l=Math.hypot(kx,ky)||1;const f=kb*(e.type==='bloat'?.35:1)*(e.elite?.5:1);e.kbx+=kx/l*f;e.kby+=ky/l*f}
   if(crit&&G.motifs.tremolo&&!inTrem){inTrem=true;chainFrom(e.x,e.y,2,dmg*.5,MOTIFS.tremolo.h);inTrem=false}
   if(crit&&S.settings.nums&&G.texts.length<40)G.texts.push({x:e.x+rnd(-6,6),y:e.y-e.r,t:'✧'+Math.round(dmg),life:.7,max:.7,h:55,sz:13});
   if(e.hp<=0)kill(e)}
 function kill(e){if(e.sig){const st=S.stats.sig=S.stats.sig||{};st[e.type]=(st[e.type]||0)+1;ach('sig1');if(Object.keys(SIG).every(k=>st[k]))ach('sigall');G.bonusEchoes+=8;addText(e.x,e.y-e.r-10,SIG[e.type].n+' silenced',SIG[e.type].h,14,1.2);addRays&&addRays(e.x,e.y,SIG[e.type].h,.6);
     if(e.type==='weeper')G.pools.push({x:e.x,y:e.y,r:80,t:0,life:6});if(e.mate)e.mate.mate=null}
-  e.dead=true;G.kills++;G.combo++;G.comboT=2.8;if(G.combo>G.maxCombo)G.maxCombo=G.combo;
+  e.dead=true;G.kills++;if(e.type!=='boss'&&!e.sig&&!e.elite&&e.type!=='shard')G.lifeE+=((G.T-(e.born||G.T))-G.lifeE)*.03;G.combo++;G.comboT=2.8;if(G.combo>G.maxCombo)G.maxCombo=G.combo;
   G.cres=Math.min(100,G.cres+(e.elite?10:e.type==='bloat'?3:1.1)*P.cresMul*(G.boss?.6:1));
   G.score+=Math.round(10*(1+Math.min(G.combo,500)*.02)*(e.elite?5:1));
   const song=SONGS[G.song];
@@ -1298,6 +1317,7 @@ function onStep(step){
   const forceCrash=soloOn('tamsin')&&s%4===0;
   famStep(s);
   strikeStep(step,s);
+  bossMove(s,step);
   sigStep(s);
   if(soloOn('odette')&&s%4===0){for(let i=0;i<4;i++){const a=R()*TAU,d=rr(60,200);G.pillars.push({x:P.x+Math.cos(a)*d,y:P.y+Math.sin(a)*d,t:0,det:.2,R:80*P.area,dmg:(40+G.level*3)*P.dmg,h:12,done:0})}}
   if(song.gim==='ember'&&s===0&&G.bar%2===0&&!G.stageDone){for(let i=0;i<3;i++){const a=R()*TAU,d=rr(90,280);G.fires.push({x:P.x+Math.cos(a)*d,y:P.y+Math.sin(a)*d,r:rr(55,85),t:0,life:6})}}
@@ -1420,7 +1440,7 @@ function strikeStep(step,s){G.stepNow=step;const ET=G.T+(G.t0||0);
   const sd=SONGS[G.song].diff;
   if(G.stageDone||G.dead||ET<90/Math.sqrt(sd)||G.studio&&G.immortal)return;
   if(s!==0)return;const bar=G.bar,mins=ET/60*(.7+.3*sd);
-  if(ET>=Math.max(150,330/sd)&&bar%8===4||G.boss&&!G.boss.dead&&ET>=120&&bar%4===2){pattern(step,(G.curses.includes('quicken')?16:24)+(G.motifs.anticipation?8:0),(.15+Math.min(.1,mins*.008))*(.8+.2*sd));return}let every=mins<4?4:mins<7?2:1;if(G.diss.tempest)every=Math.max(1,every/2);if(bar%every!==0)return;
+  if(ET>=Math.max(150,330/sd)&&bar%8===4||ET>=420&&!G.won&&!G.endless&&bar%4===0||G.boss&&!G.boss.dead&&ET>=120&&bar%4===2){pattern(step,(G.curses.includes('quicken')?16:24)+(G.motifs.anticipation?8:0),(.15+Math.min(.1,mins*.008))*(.8+.2*sd));return}let every=mins<4?4:mins<7?2:1;if(G.diss.tempest)every=Math.max(1,every/2);if(bar%every!==0)return;
   let n=1+(mins>=7?1:0)+(G.endless?1:0)+(G.boss?1:0)+(G.curses.includes('echoing')?1:0)+(G.diss.tempest&&mins>=4?1:0);n=Math.min(n,5);
   const lead=(G.curses.includes('quicken')?8:16)+(G.motifs.anticipation?8:0),pct=(.16+Math.min(.1,mins*.008))*(G.dyn>=5?1.15:1)*(.8+.2*sd);
   const beat=60/Seq.bpm;for(let i=0;i<n;i++){let x=P.x,y=P.y;if(i===1){x+=P.vx*beat*3.2;y+=P.vy*beat*3.2}else if(i>1){const a=R()*TAU,dd=rr(90,220);x+=Math.cos(a)*dd;y+=Math.sin(a)*dd}
@@ -1445,6 +1465,11 @@ function pattern(step,lead,pct){const types=['band','cross','donut','chord','ban
   else{add({x:P0.x,y:P0.y,r:70});const o=R()*TAU;for(let i=0;i<3;i++){const a=o+i/3*TAU;add({x:P0.x+Math.cos(a)*170,y:P0.y+Math.sin(a)*170,r:80})}}
   if(!G.patTip){G.patTip=1;banner('SHAPED SILENCE','lines, crosses, rings — read the shape, then move')}
   A.tom(A.now()+.02,55,.3)}
+function bossMove(s,step){const b=G.boss;if(!b||b.dead||G.stageDone)return;const f=b.hp/b.maxHp;
+  if(b.mov<2&&f<(b.mov===0?.66:.33)&&!b.ward){b.mov++;b.ward=4;b.hp=Math.max(b.hp,b.maxHp*(b.mov===1?.66:.33));const nm=['','SECOND MOVEMENT','THIRD MOVEMENT'][b.mov];banner(nm,'the Hush holds its note — survive the shapes','boss');A.sBoss();shake(10);flash(.3,'#fff');
+    G.rings.push({x:b.x,y:b.y,r:b.r,R:b.r*4,life:.6,max:.6,h:SONGS[G.song].hush,w:8});const pool=sigPool();const n=Math.min(1+b.mov,pool.length?2:0);for(let i=0;i<n;i++)spawnSig(pool[Math.floor(R()*pool.length)],b.mov===2);
+    if(!pool.length)for(let i=0;i<2;i++){const [x,y]=spawnPos();giveAffix(makeEnemy('lurch',x,y,true),1)}}
+  if(b.ward>0&&s===0){b.ward--;pattern(step,16,(.12+b.mov*.03)*(.8+.2*SONGS[G.song].diff));if(!b.ward){addText(b.x,b.y-b.r-20,'it falters!',48,18,1.2);G.cres=Math.min(100,G.cres+15*P.cresMul);if(b.mov===2)ach('phase')}}}
 function sigPool(){const sg=SONGS[G.song];return Object.keys(SIG).filter(k=>sg.sigAll||SIG[k].song===G.song)}
 function sigStep(s){if(s!==0||G.stageDone||G.dead||G.stage||G.only)return;const pool=sigPool();if(!pool.length)return;const ET=G.T+(G.t0||0),sd=SONGS[G.song].diff;
   if(ET<150/Math.sqrt(sd))return;if(G.nextSig==null)G.nextSig=ET;if(ET<G.nextSig)return;
@@ -1500,7 +1525,7 @@ function update(dt){
   // camera
   const ck=1-Math.exp(-dt*7);cam.x=lerp(cam.x,P.x,ck);cam.y=lerp(cam.y,P.y,ck);
   // spawn
-  const ET=Math.min(G.T+(G.t0||0),G.stage?480:1e9);const rate=(1+ET*.026+Math.pow(ET/60,2)*.17)*G.mod.spawn*(G.boss?.4:1)*(G.endless?1.3:1);
+  const ET=Math.min(G.T+(G.t0||0),G.stage?480:1e9);const rate=(1+ET*.026+Math.pow(ET/60,2)*.17)*G.mod.spawn*(1+((G.adapt||1)-1)*.5)*(G.boss?.4:1)*(G.endless?1.3:1);
   G.spawnAcc+=rate*dt;const cap=S.settings.fx?280:200;
   while(G.spawnAcc>=1){G.spawnAcc--;if(G.enemies.length<cap)spawnRandom()}
   if(!G.stage&&!G.recital&&G.T>=G.nextBoss&&G.boss&&G.boss.form!==3&&!G.endless&&G.T>=530){const ob=G.boss;ob.dead=true;G.boss=null;burst(ob.x,ob.y,0,40,300,4,1,true);banner('THE HUSH WITHDRAWS','something greater comes','boss')}
@@ -1545,6 +1570,9 @@ function update(dt){
     else if(m==='rain'){G.rainT=10;G.rainN=0;banner('NOTE RAIN','gather the falling light');A.bell(A.now(),1760,.08,'s')}
     else spawnChampion()}
   if(G.sideT>0)G.sideT-=dt;
+  G.dpsT+=dt;if(G.dpsT>=1){G.dps=G.dps*.9+G.dealt/G.dpsT*.1;G.dealt=0;G.dpsT=0;
+    if(!G.stage&&!G.studio&&G.T>120){const a0=G.adapt;if(G.lifeE<4)G.adapt=Math.min(3,G.adapt+.02);else if(G.lifeE>6.5)G.adapt=Math.max(1,G.adapt-.02);
+      if(a0<1.5&&G.adapt>=1.5)addText(P.x,P.y-50,'the Hush is listening…',SONGS[G.song].hush,14,1.6);if(G.adapt>=2)ach('listen')}}
   G.inPool=0;if(G.pools.length){for(const q of G.pools){q.t+=dt;if(q.t>.8&&!G.stageDone&&(P.x-q.x)**2+(P.y-q.y)**2<q.r*q.r){G.inPool=1;if(P.inv<=0){const dr=6*(.7+.3*SONGS[G.song].diff)*dt;P.hp-=dr;G.dmgTaken+=dr;if(P.hp<=0){P.hp=.01;hurt(1,q.x,q.y)}}}}G.pools=G.pools.filter(q=>q.t<q.life)}
   for(const e of G.enemies){if(e.type!=='weaver'||e.dead||weaverBeam(e)!==2||P.inv>0)continue;const m=e.mate,vx=m.x-e.x,vy=m.y-e.y,l2=vx*vx+vy*vy||1;if(l2>700*700)continue;const t=clamp(((P.x-e.x)*vx+(P.y-e.y)*vy)/l2,0,1),qx=e.x+vx*t-P.x,qy=e.y+vy*t-P.y;if(qx*qx+qy*qy<(P.r+7)**2){hurt(13*(.7+.3*SONGS[G.song].diff),P.x+qx,P.y+qy);break}}
   if(G.endless&&!G.dead){if(!G.nextCurse)G.nextCurse=G.T+120;if(G.T>=G.nextCurse){G.nextCurse=G.T+120;addCurse()}const es=G.T-(G.wonAt||600);if(es>=600)ach('encore10')}
@@ -1599,7 +1627,7 @@ function update(dt){
     if(e.type==='gold'&&d>farD+200){e.dead=true;G.gold=null;continue}
     if(d>farD&&e.type!=='boss'&&e.type!=='shard'&&e.type!=='gold'&&e.type!=='crystal'&&!e.latched){const [nx,ny]=spawnPos();e.x=nx;e.y=ny}
   }
-  if(G.boss&&!G.boss.dead){$('#bossfill').style.width=(G.boss.hp/G.boss.maxHp*100)+'%'}
+  if(G.boss&&!G.boss.dead){const b=G.boss;if(b.bw>0)b.bw=Math.max(0,b.bw-b.maxHp/(b.form===3?45:24)*dt);$('#bossfill').style.width=(G.boss.hp/G.boss.maxHp*100)+'%'}
   // shots
   for(const b of G.shots){b.life-=dt;b.px=b.x;b.py=b.y;
     if(b.k==='spark'){if(!b.tgt||b.tgt.dead){b.tgt=nearestN(b.x,b.y,1,420)[0]||null}
@@ -1641,6 +1669,15 @@ function trailFx(song){const t=S.trail||'star',x=P.x+rnd(-3,3),y=P.y+rnd(-3,3),p
     case'gilded':p.h=48;p.s=3.8;p.life=p.max=.75;break;
     case'jack':p.h=Math.random()<.7?28:275;p.vy-=35;p.s=3.4;p.life=p.max=.9;break;
     case'staff':{const sp=Math.hypot(P.vx,P.vy)||1,nx=-P.vy/sp,ny=P.vx/sp;for(let i=-2;i<=2;i++)G.parts.push({x:P.x+nx*i*5,y:P.y+ny*i*5,vx:0,vy:0,life:.7,max:.7,s:1.8,h:song.b,dark:false});return}
+    case'herald':p.h=48;p.s=3;if(Math.random()<.3){const a=R()*TAU;p.vx=Math.cos(a)*90;p.vy=Math.sin(a)*90;p.life=p.max=.4}break;
+    case'weeping':p.h=285;p.s=3.4;p.vy+=55;p.vx*=.3;p.life=p.max=1.1;break;
+    case'weave':{const sp=Math.hypot(P.vx,P.vy)||1,nx=-P.vy/sp,ny=P.vx/sp,w=Math.sin(G.T*9)*7;G.parts.push({x:P.x+nx*w,y:P.y+ny*w,vx:0,vy:0,life:.8,max:.8,s:2.2,h:150,dark:false},{x:P.x-nx*w,y:P.y-ny*w,vx:0,vy:0,life:.8,max:.8,s:2.2,h:200,dark:false});return}
+    case'maw':{const a=R()*TAU;p.x=P.x+Math.cos(a)*40;p.y=P.y+Math.sin(a)*40;p.vx=-Math.cos(a)*70;p.vy=-Math.sin(a)*70;p.dark=Math.random()<.6;p.h=350;p.s=3.4;p.life=p.max=.55;break}
+    case'sleep':p.vx=p.vy=0;p.h=205;p.s=6;p.life=p.max=.9;break;
+    case'wake':p.h=195;p.s=rnd(2,4.5);p.vy-=30;p.vx+=rnd(-20,20);p.life=p.max=1;break;
+    case'cinder':p.h=rnd(5,35);p.s=3;p.vx=-P.vx*.35+rnd(-40,40);p.vy=-P.vy*.35+rnd(-40,40);p.life=p.max=.6;break;
+    case'lanternt':p.h=28;p.s=4.6+Math.sin(G.T*20)*1.2;p.vy-=25;p.life=p.max=.8;break;
+    case'requiemt':p.dark=Math.random()<.5;p.h=350;p.s=4;p.life=p.max=.9;break;
     case'hollow':p.dark=true;p.s=4.5;p.life=p.max=.8;G.parts.push({x,y,vx:0,vy:0,life:.5,max:.5,s:2,h:song.hush,dark:false});break}
   G.parts.push(p)}
 function collect(v){G.xp+=v*P.xpMul*(G.accelT>0?1.5:1);A.chime++;
@@ -1888,6 +1925,7 @@ function drawEnemy(e,now,song){
     if(e.type==='bloat'){g.strokeStyle=hsla(rim,100,60,.3);g.lineWidth=1;g.beginPath();g.arc(e.x,e.y,r*.6,0,TAU);g.stroke()}
   }
   if(e.sig)drawSigFx(e,now);
+  if(e.type==='boss'&&e.ward>0){g.strokeStyle=`rgba(255,255,255,${.35+.25*Math.sin(now*12)})`;g.lineWidth=4;g.setLineDash([14,10]);g.beginPath();g.arc(e.x,e.y,e.r*1.9,now*.8,now*.8+TAU);g.stroke();g.setLineDash([])}
   if(e.type==='cantor'&&e.charge){g.strokeStyle=`rgba(255,60,90,${.35+.35*Math.sin(now*30)})`;g.lineWidth=2;g.setLineDash([10,8]);g.beginPath();g.moveTo(e.x,e.y);g.lineTo(e.x+Math.cos(e.aim)*900,e.y+Math.sin(e.aim)*900);g.stroke();g.setLineDash([])}
   if(e.stun>0){g.fillStyle='rgba(255,240,200,.9)';for(let i=0;i<3;i++){const a=now*6+i/3*TAU;g.beginPath();g.arc(e.x+Math.cos(a)*r*.9,e.y-r*1.3+Math.sin(a)*r*.3,1.8,0,TAU);g.fill()}}
   if(e.haste>0&&e.type!=='cond'){g.strokeStyle=hsla(rim,100,75,.5);g.lineWidth=1;g.beginPath();g.arc(e.x,e.y,r*1.35,0,TAU);g.stroke()}
@@ -1925,7 +1963,7 @@ function setW(id,v){v=Math.round(v*1000)/10;if(hudC[id]!==v){hudC[id]=v;$(id).st
 function hud(){if(!G)return;
   setW('#hpbar i',clamp(P.hp/P.maxHp,0,1));setTxt('#hptxt',Math.ceil(Math.max(0,P.hp))+' / '+P.maxHp);
   setW('#xpbar i',clamp(G.xp/G.need,0,1));
-  setTxt('#tm',fmt(G.T));setTxt('#tsub',G.recital?(G.stageDone?'COMPLETE':`RECITAL · HUSH ${Math.max(1,G.recIdx)} / 4`):G.studio?'STUDIO':G.weekly?'WEEKLY CONCERT':G.stage?(G.stageDone?'COMPLETE':stageHud()):G.endless?'ENDLESS · '+G.bossKills+' HUSHED'+(G.curses.length?' · '+G.curses.length+(G.curses.length>1?' MARKS':' MARK'):''):G.won?'SONG RESTORED':G.boss&&G.boss.form===3?'SILENCE IT':G.boss?'THE HUSH IS HERE':G.stormT>0?'SILENCE STORM':G.T<540?'FINAL HUSH 9:00':'');
+  setTxt('#tm',fmt(G.T));setTxt('#tsub',G.recital?(G.stageDone?'COMPLETE':`RECITAL · HUSH ${Math.max(1,G.recIdx)} / 4`):G.studio?'STUDIO':G.weekly?'WEEKLY CONCERT':G.stage?(G.stageDone?'COMPLETE':stageHud()):(G.endless?'ENDLESS · '+G.bossKills+' HUSHED'+(G.curses.length?' · '+G.curses.length+(G.curses.length>1?' MARKS':' MARK'):''):G.won?'SONG RESTORED':G.boss&&G.boss.form===3?'SILENCE IT':G.boss?'THE HUSH IS HERE':G.stormT>0?'SILENCE STORM':G.T<540?'FINAL HUSH 9:00':'')+(G.adapt>1.05?' · LISTENING ×'+G.adapt.toFixed(1):''));
   setTxt('#lvl','LV '+G.level);setTxt('#kills','✦ '+G.kills);setTxt('#bpm',Seq.bpm+' BPM');
   const c=$('#combo');const con=G.combo>=5;if(hudC.con!==con){hudC.con=con;c.classList.toggle('on',con)}
   setTxt('#cnum','×'+G.combo);setTxt('#ctier',G.tier?TIER_N[G.tier-1]:'harmony');setW('#cbar',clamp(G.comboT/2.8,0,1));
@@ -2003,7 +2041,15 @@ function makePoster(){if(!G)return;const W2=1080,H2=1350,c=document.createElemen
   x.fillStyle='#fff';x.font='800 78px Unbounded, system-ui, sans-serif';x.fillText($('#overTitle').textContent,W2/2,H2*.64);x.font='400 34px Outfit, system-ui, sans-serif';x.fillStyle='rgba(235,228,255,.75)';x.fillText(`${sg.name}, ${sg.title}`,W2/2,H2*.64+66);
   const stx=[['TIME',fmt(G.T)],['SILENCED',G.kills],['HARMONY','×'+G.maxCombo],['PERFECTS',G.perfects],['LEVEL',G.level],['HUSHES',G.bossKills]];stx.forEach(([k,v],i)=>{const cx=W2/2+((i%3)-1)*320,cy=H2*.735+Math.floor(i/3)*112;x.fillStyle='#fff';x.font='800 52px Unbounded, system-ui, sans-serif';x.fillText(String(v),cx,cy);x.fillStyle='rgba(200,190,240,.7)';x.font='600 22px Outfit, system-ui, sans-serif';x.fillText(k,cx,cy+44)});
   const tl=G.tl.concat([G.kills-G.tlK]),n=Math.max(1,tl.length),mx=Math.max(4,...tl),bw=Math.min(28,860/n);for(let i=0;i<n;i++){const bh=Math.max(3,tl[i]/mx*34),cx=W2/2-(n*bw)/2+i*bw+bw/2;x.fillStyle=hsla(lerp(song.a,song.b,i/Math.max(1,n-1)),100,68,.95);x.fillRect(cx-bw*.3,H2*.935-bh,bw*.6,bh*2)}
-  x.fillStyle='rgba(200,190,240,.6)';x.font='500 22px Outfit, system-ui, sans-serif';x.fillText(new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'})+'  ·  '+GAME_URL.replace('https://',''),W2/2,H2-40);
+  x.fillStyle='rgba(200,190,240,.6)';x.font='500 22px Outfit, system-ui, sans-serif';x.fillText(new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'})+'  ·  '+GAME_URL.replace('https://',''),W2/2,H2-((G.dyn||0)?70:40));
+  {const dy=G.dyn||0;if(dy>0){const tiers=[null,['#c98a52','#7a4a26'],['#c98a52','#7a4a26'],['#d8dde8','#7d8696'],['#d8dde8','#7d8696'],['#ffd27a','#a8741e'],['#ffd27a','#a8741e'],null,['#ffffff','#000000']];const tc=tiers[dy];
+    const stroke=(col,w,inset)=>{x.strokeStyle=col;x.lineWidth=w;x.strokeRect(inset,inset,W2-inset*2,H2-inset*2)};
+    if(dy===7){const lg=x.createLinearGradient(0,0,W2,H2);for(let i=0;i<=6;i++)lg.addColorStop(i/6,`hsl(${i*60},100%,70%)`);stroke(lg,10,22);stroke('rgba(255,255,255,.35)',2,40)}
+    else if(dy===8){x.fillStyle='#000';x.fillRect(0,0,W2,26);x.fillRect(0,H2-26,W2,26);x.fillRect(0,0,26,H2);x.fillRect(W2-26,0,26,H2);stroke('#fff',3,34);stroke('rgba(255,255,255,.3)',1,46)}
+    else{stroke(tc[1],12,20);stroke(tc[0],4,22);stroke(tc[0]+'66',1.5,40)}
+    const col=dy===7?'#fff':tc[0];for(const [cx,cy] of [[40,40],[W2-40,40],[40,H2-40],[W2-40,H2-40]]){x.save();x.translate(cx,cy);x.rotate(Math.PI/4);x.fillStyle=col;x.fillRect(-9,-9,18,18);x.restore()}
+    x.fillStyle=dy===8?'#000':'rgba(10,6,20,.85)';x.beginPath();x.arc(W2-110,110,54,0,TAU);x.fill();x.strokeStyle=col;x.lineWidth=3;x.stroke();x.fillStyle=col;x.font='italic 800 '+(DYN[dy].s.length>3?26:38)+'px Georgia, serif';x.textAlign='center';x.textBaseline='middle';x.fillText(DYN[dy].s,W2-110,112)}
+    if(G.won&&(S.crown||{})[G.song]){x.fillStyle='#ffd27a';x.font='800 26px Outfit, system-ui, sans-serif';x.textAlign='center';x.fillText('♛ VIRTUOSO OF '+SONGS[G.song].name.toUpperCase(),W2/2,345)}}
   ach('poster');c.toBlob(async b=>{if(!b)return;const file=new File([b],'hush-song.png',{type:'image/png'});try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],text:'HUSH — '+GAME_URL});return}}catch(e){if(e&&e.name==='AbortError')return}
     const url=URL.createObjectURL(b);$('#posterImg').src=url;$('#posterView').style.display='flex'},'image/png')}
 $('#posterClose').addEventListener('click',()=>{$('#posterView').style.display='none'});
@@ -2022,7 +2068,7 @@ function buildSelect(){
   $('#dynDesc').innerHTML=sel?`<b><i>${DYN[sel].n}</i></b> — Echoes ×${(1+.3*sel).toFixed(1)}<br>`+DYN.slice(1,sel+1).map(d=>'· '+d.d).join('<br>'):`<b><i>piano</i></b> — the song as written.`+(mx<8?`<br><span style="color:var(--dim)">Restore ${SONGS[sg].name} at <i>${DYN[mx].s}</i> to unlock <i>${DYN[mx+1].n}</i>.</span>`:'');
   $('#songs').innerHTML=Object.entries(SONGS).filter(([id,s])=>!s.event||songOpen(id)).map(([id,s])=>{const own=songOpen(id);const b=S.songBest[id];
     return`<button class="card ${own?'':'locked'} ${S.lastSong===id&&own?'sel':''}" data-song="${id}" style="--h:${s.a}"><div class="orb" style="--h:${s.a};width:40px;height:40px;font-size:18px">${own?'♬':'🔒'}</div><h3>${s.name}</h3><div class="t">${s.mode}</div>
-    <p>${own?`Difficulty ${'●'.repeat(Math.round(s.diff*2-1))}${'○'.repeat(Math.max(0,4-Math.round(s.diff*2-1)))}<br>Echoes ×${s.mult}${b?`<br>Best ${fmt(b.time)} · ${b.score}`:''}${S.dyn[id]?`<br>Restored to <i>${DYN[S.dyn[id]-1].s}</i>`:''}`:'Unlock: '+s.req}</p></button>`}).join('');
+    <p>${own?`Difficulty ${'●'.repeat(Math.round(s.diff*2-1))}${'○'.repeat(Math.max(0,4-Math.round(s.diff*2-1)))}<br>Echoes ×${s.mult}${b?`<br>Best ${fmt(b.time)} · ${b.score}`:''}${dynBest(id)?`<br><span class="dpips">${DYN.map((d,i)=>`<i class="${i<dynBest(id)?'on':''}">${d.s}</i>`).join('')}</span>${(S.crown||{})[id]?' ♛':''}`:S.dyn[id]?`<br>Restored to <i>${DYN[S.dyn[id]-1].s}</i>`:''}`:'Unlock: '+s.req}</p></button>`}).join('');
 }
 function mastHtml(id){const l=mLvl(id),x=(S.mast||{})[id]||0,lo=MT[l-1]||0,hi=MT[l]||lo;const k=hi>lo?(x-lo)/(hi-lo):1;return`<div class="mast">★ Mastery ${l}${l>1?` · +${((l-1)*1.5).toFixed(1)}% dmg`:''}</div><div class="mbar"><i style="width:${Math.round(k*100)}%"></i></div>`}
 $('#dyns').addEventListener('click',e=>{const c=e.target.closest('[data-dyn]');if(!c)return;A.init();const i=+c.dataset.dyn,sg=S.lastSong;if(i>Math.min(8,S.dyn[sg]||0)){A.sNo();c.classList.add('shake');setTimeout(()=>c.classList.remove('shake'),400);return}S.dynSel[sg]=i;save();A.sClick();buildSelect()});
@@ -2109,11 +2155,16 @@ function showOver(){
     S.camp=S.camp||{};const prev=S.camp[si]||0;if(stars>prev){stageGain=(stars-prev)*(20+stg.a*15);S.camp[si]=stars;stageNotes.unshift(`<span class="nb">+${stars-prev} STAR${stars-prev>1?'S':''}</span>`)}
     const actDone=a=>STAGES.every((x,i)=>x.a!==a||(S.camp[i]||0)>=1);if(actDone(0))ach('act1');if(actDone(3)&&actDone(0)&&actDone(1)&&actDone(2))ach('act4');if(totalStars()>=60)ach('stars60')}
   const evm=(evActive()||{}).id==='silent'?1.25:1;
-  const earn=Math.floor(base*song.mult*(1+meta('echo')*.1)*(G.daily?1.5:1)*(1+.3*(G.dyn||0))*(G.stage?.6:1)*(G.diss.greed?2:1)*(G.diss.requiem?1.5:1)*evm*(G.weekly?2:1)*(G.recital?1.4:1)*(G.studio?(G.immortal?0:.5):1))+stageGain;
+  const earn=Math.floor(base*song.mult*(1+meta('echo')*.1)*(G.daily?1.5:1)*(1+.3*(G.dyn||0))*(G.stage?.6:1)*(G.diss.greed?2:1)*(G.diss.requiem?1.5:1)*(G.diss.tempest?1.5:1)*(1+.15*((S.crown||{})[G.song]?1:0))*(1+Math.min(.5,((G.adapt||1)-1)*.25))*evm*(G.weekly?2:1)*(G.recital?1.4:1)*(G.studio?(G.immortal?0:.5):1))+stageGain;
   S.echoes+=earn;S.lifetime+=earn;if(!G.studio){S.stats.runs++;S.stats.kills+=G.kills;S.stats.time+=G.T}
   const notes=[...stageNotes];if(streakNote)notes.push(streakNote);
   if(G.won&&!G.daily&&!G.studio){const nx=Math.min(8,(G.dyn||0)+1);if(nx>(S.dyn[G.song]||0)){S.dyn[G.song]=nx;S.dynSel[G.song]=nx;notes.push(`<span class="nb">NEW DYNAMIC UNLOCKED</span>${SONGS[G.song].name} at <i>${DYN[nx].n}</i> — ${DYN[nx].d}`)}
-    if(G.dyn>=3)ach('dyn4');if(G.dyn>=8)ach('dyn8')}
+    if(G.dyn>=3)ach('dyn4');if(G.dyn>=8)ach('dyn8');
+    S.dynBest=S.dynBest||{};const tier=(G.dyn||0)+1;if(tier>(S.dynBest[G.song]||0)){const b0=S.dynBest[G.song]||0;let bounty=0;for(let t=b0+1;t<=tier;t++)bounty+=Math.round(80*t*(1+t*.3));S.dynBest[G.song]=tier;S.echoes+=bounty;S.lifetime+=bounty;
+      notes.push(`<span class="nb">◈ DYNAMIC BOUNTY</span>${SONGS[G.song].name} restored at <i>${DYN[G.dyn||0].n}</i> — +${bounty} Echoes`);
+      if(tier>=5&&b0<5){const tid=Object.keys(TRAILS).find(k=>TRAILS[k].sd===G.song);if(tid)notes.push(`<span class="nb">NEW TRAIL</span>${TRAILS[tid].n} — ${TRAILS[tid].d.split('.')[0]}`)}
+      if(tier>=9){S.crown=S.crown||{};if(!S.crown[G.song]){S.crown[G.song]=1;ach('crown');notes.push(`<span class="nb">♛ VIRTUOSO CROWN</span>${SONGS[G.song].name} now pays +15% Echoes, forever`)}}
+      const ff=Object.keys(SONGS).filter(k=>dynBest(k)>=5).length;if(ff>=3)ach('virt3');if(Object.keys(SONGS).filter(k=>!SONGS[k].event).every(k=>dynBest(k)>=5))ach('virtall')}}
   if(!G.studio){const sid=G.singer.id,l0=mLvl(sid);S.mast[sid]=(S.mast[sid]||0)+Math.floor(G.T/2+G.kills/20+G.bossKills*30+(G.won?150:0));const l1=mLvl(sid);
     if(l1>l0)notes.push(`<span class="nb">★ MASTERY ${l1}</span>${G.singer.name} sings stronger (+${((l1-1)*1.5).toFixed(1)}% damage)`);if(l1>=5)ach('master5');if(l1>=10)ach('master10')}
   if(!G.studio)updateQuests(notes);
@@ -2159,7 +2210,7 @@ let wl=null;async function wake(on){try{if(on&&navigator.wakeLock&&!wl){wl=await
 
 /* shop / achievements / settings */
 function buildShop(){const tr=Object.entries(TRAILS).map(([id,T])=>{const own=trailOwned(id),worn=S.trail===id;
-    return`<div class="lrow ${own?'got':''}"><div class="i">${worn?'✦':own?'✧':T.feat?'🔒':'·'}</div><div class="m"><b>${T.n}</b><small>${T.d}</small></div><button class="buy ${worn?'max':own?'':T.feat?'no':S.echoes<T.cost?'no':''}" data-trail="${id}">${worn?'WORN':own?'WEAR':T.feat?'FEAT':'◈ '+T.cost}</button></div>`}).join('');
+    return`<div class="lrow ${own?'got':''}"><div class="i">${worn?'✦':own?'✧':T.feat||T.sd?'🔒':'·'}</div><div class="m"><b>${T.n}</b><small>${T.d}</small></div><button class="buy ${worn?'max':own?'':T.feat||T.sd?'no':S.echoes<T.cost?'no':''}" data-trail="${id}">${worn?'WORN':own?'WEAR':T.sd?'ff':T.feat?'FEAT':'◈ '+T.cost}</button></div>`}).join('');
   const fm=Object.entries(FAMS).map(([id,F])=>{const own=famOwned(id),on=S.fam===id;return`<div class="lrow ${own?'got':''}"><div class="i" style="color:hsl(${F.h},100%,74%)">${F.ic}</div><div class="m"><b>${F.n}</b><small>${F.d}</small></div><button class="buy ${on?'max':own?'':F.feat?'no':S.echoes<F.cost?'no':''}" data-fam="${id}">${on?'WITH YOU':own?'BRING':F.feat?'EVENT':'◈ '+F.cost}</button></div>`}).join('');
   $('#shopList').innerHTML='<div class="sect">Resonance</div>'+META.map(m=>{const l=meta(m.id);const mx=l>=m.max;const c=mx?0:m.cost(l);
   return`<div class="lrow ${l?'got':''}"><div class="i">${m.icon}</div><div class="m"><b>${m.name}</b><small>${m.d} · ${l}/${m.max}</small><div class="pips">${Array.from({length:m.max},(_,j)=>`<i class="${j<l?'on':''}"></i>`).join('')}</div></div>
@@ -2258,8 +2309,8 @@ function frame(ts){
   if(G&&state!=='over')hud();
   requestAnimationFrame(frame)}
 document.querySelectorAll('.btn .sub').forEach(e=>e.parentNode.classList.add('bsub'));fixSave();applyPrefs();goTitle();Seq.start();requestAnimationFrame(frame);
-const VER='8.0';
-if(S.stats.runs>0&&S.ver!==VER)setTimeout(()=>toast('✦','HUSH '+VER+' — Signatures','Every song now has its own Signature Hushling. Marks take shape. Requiem awaits beyond Dream.'),1200);
+const VER='10.0';
+if(S.stats.runs>0&&S.ver!==VER)setTimeout(()=>toast('✦','HUSH '+VER+' — Virtuoso','Dynamics pay bounties, trails and crowns. The Hush listens, and every Hush fights in three movements.'),1200);
 S.ver=VER;save();
 try{if('serviceWorker' in navigator&&location.protocol==='https:'&&window.top===window)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 </script>

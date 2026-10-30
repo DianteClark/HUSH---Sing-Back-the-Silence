@@ -27,6 +27,8 @@ You are a small light in a world gone quiet. Dark **Hushlings** drift in to swal
 - **7 Familiars** that follow you into every song
 - **Perfect-beat dashing** with a visual metronome ring, and harmony tiers from *piano* to *tutti*
 - **12 Singers**, each with their own voice, a signature Crescendo **Solo** and a 10-level Mastery
+- **Dynamics that pay** — one-time bounties, prestige poster frames, Signature trails at *fortissimo*, and a Virtuoso Crown at *silenzio*
+- **A Hush that listens** — adaptive pressure for strong builds, and bosses that fight in three movements
 - **Signature Hushlings** — one dangerous foe unique to each song, with a fair warning before every strike
 - **8 Songs** (+ seasonal **Hallow**) — Dawn, Dusk, Aurora, Abyss, Dream, the living songs Tide and Ember, and **Requiem**, the hardest song, where every Signature sings at once — each its own musical mode, palette, difficulty and composed theme, and **9 Dynamics** per song from *p* to *∅ silenzio*
 - Hushlings that move to the rhythm, four forms of the Hush, and a final boss — **The Great Silence** — that puts out the lights

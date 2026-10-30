@@ -1,5 +1,30 @@
 # Changelog
 
+## 10.0 — "Virtuoso"
+Two promises: playing harder always pays, and a great build never makes the song safe.
+
+**Dynamics pay**
+- **Bounties**: the first time you restore a song at a new Dynamic, you get a one-time Echo bounty that grows with each step (a few hundred at *mp*, thousands at *silenzio*). Skipping ahead pays every step you skipped.
+- **Pips**: each song card shows its nine Dynamics, from *p* to *∅*, lit up as you conquer them.
+- **Prestige frames** on posters: bronze (*mp*, *mf*), silver (*f*, *ff*), gold (*fff*, *sfz*), a prism for *tutti* and silenzio black. Each carries a Dynamic badge.
+- **Signature trails**: restore a song at *fortissimo* to wear its Signature. The nine are *Herald's Gold, Weeping, Lightweave, Hunger, Sleepwalk, Wake, Cinder, Hollow Light* and *Requiem*.
+- **Virtuoso Crown**: restore a song at *silenzio* and it pays **+15% Echoes forever**. Your posters for that song carry the crown.
+- New feats: *Virtuoso* (three songs at ff), *Maestro* (every song at ff), *Crowned*, *Third Movement* and *It Listens*.
+- Existing saves keep their Dynamic progress, and any Signature trail already earned unlocks right away.
+
+**The Hush listens**
+- If Hushlings die the moment they appear, the Hush adapts: tougher Hushlings and more of them, up to ×3. It pays up to +50% more Echoes for the trouble, and eases off when you slow down. The HUD shows "LISTENING ×n".
+
+**Bosses fight in movements**
+- At two-thirds and one-third health, a Hush **holds its note**. It shrugs off damage for four bars while shaped Rest Marks fall and the song's Signatures join the fight, then it falters and you get a burst of Crescendo.
+- A Hush can only lose so much health per second, so even a maxed build gets a real fight: at least about 24 seconds for a normal Hush and 45 for the final one. Weaker builds are unaffected.
+
+**Finale**
+- The last third of every song (from 7:00) brings shaped Rest Marks every four bars.
+
+**Fixes**
+- *Tempest* now actually grants the +50% experience and Echoes it promised.
+
 ## 8.0 — "Signatures"
 Every song now feels like its own fight. Harder songs hit harder, mid-song Rest Marks take shapes, and a new song waits beyond Dream.
 
