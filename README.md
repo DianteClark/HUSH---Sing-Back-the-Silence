@@ -15,17 +15,19 @@ You are a small light in a world gone quiet. Dark **Hushlings** drift in to swal
 - **Locally:** open `index.html` in any modern browser — no build step, no dependencies.
 - **Install it:** host it (e.g. GitHub Pages), open it on your phone, and choose *Add to Home Screen*. It runs fullscreen with its own icon and works offline after the first load.
 
-**Controls** — drag anywhere to move (or WASD / arrows). Voices attack on their own, on the beat. Tap ✺ / Space for a Crescendo when the ring is full. `P`/`Esc` pauses, `1–4` pick harmonies, `R` rerolls.
+**Controls** — drag anywhere to move (or WASD / arrows). Voices attack on their own, on the beat. Tap **DASH** (Shift / J / second finger) — land it on the beat for a PERFECT. Tap ✺ / Space for a Crescendo when the ring is full. `P`/`Esc` pauses, `1–4` pick harmonies, `R` rerolls.
 
 ## What's inside
 
 - **8 voices** (weapons that are also instruments), 5 levels each, up to 6 at once
+- **4 Duets** — partner voices at their peak merge into something new
+- **Perfect-beat dashing** with a visual metronome ring
 - **8 harmonies** — including *Tempo*, which literally speeds up the song and every voice with it
 - **8 Singers** to unlock, each starting with a different voice
-- **4 Songs** — Dawn, Dusk, Abyss, Dream — each its own musical mode, palette and difficulty
+- **5 Songs** — Dawn, Dusk, Aurora, Abyss, Dream — each its own musical mode, palette and difficulty
 - Enemies that move to the rhythm: Lurchers lunge on the downbeat, Wisps spit on beat 3, Veils drop their shields only on 2 &amp; 4
-- **The Hush** boss every three minutes — defeat it and the song modulates up a key
-- Rare **Golden Notes** to chase down, a **Daily Hum** seeded challenge with a twist, **Resonance** meta-progression, 19 feats, endless mode
+- **The Hush** boss every three minutes, in three rotating forms — defeat it and the song modulates up a key
+- Rare **Golden Notes** to chase down, a **Daily Hum** seeded challenge with a twist, daily streaks, **Resonance** meta-progression, a **Songbook** collection, 24 feats, endless mode, and one-tap run sharing
 - An end-of-run **shape of your song** — your run drawn as a waveform
 
 All audio is synthesized in real time with the Web Audio API; all art is drawn procedurally on canvas. One HTML file.
