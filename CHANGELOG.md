@@ -1,5 +1,39 @@
 # Changelog
 
+## 5.0 — "Opus"
+An update big enough to skip a number.
+
+**Living songs**
+- **Tide** (melodic minor · oceanic) — every few bars a current sweeps the whole field, carrying Hushlings, dark notes, light and you. Unlocks at 20 stars in The Score.
+- **Ember** (Mixolydian · fierce) — fires break out around you every two bars. They scorch the Hush far worse than you; lure them in. Unlocks after restoring the song three times.
+- Both have their own composed themes, palettes and Dynamics ladders.
+
+**Seasonal events**
+- A new event calendar. **Hallow's Hush** (Oct 20 – Nov 7) opens the **Hallow** song (harmonic minor), puts lantern faces on the Hushlings, doubles Golden Note rewards, and brings an event trail (*Jack-o'-Light*), an event Familiar (*Jack*) and two event feats.
+- **Silent Night** (Dec 15 – Jan 5): snow on every song and +25% Echoes.
+
+**Familiars**
+- Seven companions that follow you into every song: *Metronome Finch, Lantern Moth, Little Bell, Hymn Shell, Firefly, Mockingbird* and the event-only *Jack*. Bring one from Resonance.
+
+**Dissonances**
+- Eight risk-and-reward gifts that sometimes appear in music boxes: *Brittle Glass, Frenzy, Greed, Overdrive, Deafened, Swarm Song, Requiem, Presto*. Restore the song holding three for a feat.
+
+**Modes**
+- **Recital** — every form of the Hush back to back, ending with The Great Silence. Starts at level 10. Fastest time recorded.
+- **Weekly Concert** — a seeded week-long challenge: one Singer, one Song, three twists, double Echoes.
+- **Studio** — set the tempo, crowd, toughness, starting level, give yourself the full band, or turn on immortality and just listen.
+- Four new twists for the Daily Hum and Weekly Concert: *Giants, Nightfall, Golden Age, Maestro*.
+
+**Memory**
+- **Concert Hall** — your last 25 songs with their shapes, and personal records (longest song, fastest restore, fastest Recital, best harmony, PERFECT streak, most silenced).
+- **Posters** — turn any finished song into a shareable image.
+- **Fragments of the old song** — twenty pieces of HUSH's story, found as you play, kept in the Songbook.
+
+**Phones**
+- Left-handed buttons, larger buttons, and a battery saver (lower resolution, 30 fps).
+
+- 14 new feats (64 total). Songbook now covers Dissonances, Familiars and Fragments.
+
 ## 3.0 — "Symphony"
 
 **The Score — a 20-movement campaign**

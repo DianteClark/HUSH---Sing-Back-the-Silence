@@ -22,12 +22,13 @@ You are a small light in a world gone quiet. Dark **Hushlings** drift in to swal
 - **The Score** — a 20-movement campaign in four acts, with 60 stars to earn
 - **10 voices** (weapons that are also instruments), 5 levels each, up to 6 at once — your build *is* your band
 - **6 Duets** — partner voices at their peak merge into something new
-- **16 Motifs** — rule-bending gifts found in music boxes
+- **16 Motifs** and **8 Dissonances** — rule-bending gifts (and risky bargains) found in music boxes
+- **7 Familiars** that follow you into every song
 - **Perfect-beat dashing** with a visual metronome ring, and harmony tiers from *piano* to *tutti*
 - **10 Singers**, each with their own voice, a signature Crescendo **Solo** and a 10-level Mastery
-- **5 Songs** — Dawn, Dusk, Aurora, Abyss, Dream — each its own musical mode, palette, difficulty and composed theme, and **9 Dynamics** per song from *p* to *∅ silenzio*
+- **7 Songs** (+ seasonal **Hallow**) — Dawn, Dusk, Aurora, Abyss, Dream, and the living songs Tide and Ember — each its own musical mode, palette, difficulty and composed theme, and **9 Dynamics** per song from *p* to *∅ silenzio*
 - Hushlings that move to the rhythm, four forms of the Hush, and a final boss — **The Great Silence** — that puts out the lights
-- **Call & Response** rhythm events, Phantoms that only exist on the beat, Leeches, Resonant Crystals, Silence Zones, Silence Storms, Golden Notes, **Daily Hum** + **Daily Verses**, streaks, Resonance meta-progression, a **Songbook** collection, a **Wardrobe** of trails, 50 feats, Endless mode, and one-tap run sharing
+- **Call & Response** rhythm events, Phantoms that only exist on the beat, Leeches, Resonant Crystals, Silence Zones, Silence Storms, Golden Notes, **Daily Hum** + **Daily Verses**, streaks, Resonance meta-progression, a **Songbook** collection, a **Wardrobe** of trails, 64 feats, seasonal events, **Modes** (Recital boss rush, Weekly Concert, Studio), the **Concert Hall** run history, shareable posters, twenty lore **Fragments**, Endless mode, and one-tap run sharing
 
 All audio is synthesized in real time with the Web Audio API; all art is drawn procedurally on canvas. One HTML file.
 
