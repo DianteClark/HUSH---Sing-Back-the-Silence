@@ -23,7 +23,9 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;background:#05040c;color:var(--ink);font-family:Outfit,system-ui,sans-serif;user-select:none;-webkit-user-select:none}
 #c{position:fixed;inset:0;display:block;touch-action:none}
-button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
+button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none;touch-action:manipulation}
+html{-webkit-touch-callout:none;-webkit-text-size-adjust:100%}
+@media (max-height:760px){.logo{font-size:min(17vw,120px)}.tag2{margin-bottom:16px}.menu{gap:8px}.btn{padding:13px 18px}}
 .screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
 padding:calc(18px + var(--st)) calc(16px + var(--sr)) calc(18px + var(--sb)) calc(16px + var(--sl));opacity:0;pointer-events:none;transition:opacity .45s ease;z-index:10}
 .screen.on{opacity:1;pointer-events:auto}
@@ -117,6 +119,7 @@ box-shadow:0 10px 40px rgba(0,0,0,.5),inset 0 0 40px hsla(var(--h),90%,50%,.08);
 #combo .cbar{width:70px;height:3px;background:rgba(255,255,255,.1);margin-top:4px;border-radius:2px;overflow:hidden}#combo .cbar i{display:block;height:100%;background:hsl(var(--a),100%,65%)}
 #vbar{position:fixed;left:calc(10px + var(--sl));bottom:calc(12px + var(--sb));display:flex;flex-direction:column;gap:6px}
 .vrow{display:flex;gap:5px;flex-wrap:wrap;max-width:calc(100vw - 210px)}
+.vi.motif{border-radius:50%;border-color:hsla(48,100%,70%,.7);background:rgba(40,28,8,.75)}
 .vi.duet{border-color:#ffd76b;box-shadow:0 0 10px rgba(255,215,107,.55)}
 #dashbtn{position:fixed;right:calc(108px + var(--sr));bottom:calc(24px + var(--sb));width:62px;height:62px;border-radius:50%;pointer-events:auto;background:rgba(10,6,24,.6);border:1.5px solid hsla(var(--b),100%,70%,.6);display:grid;place-items:center;transition:transform .1s,opacity .2s;touch-action:none}
 #dashbtn span{font-size:28px;font-weight:800;color:hsl(var(--b),100%,80%);margin-top:-5px;text-shadow:0 0 10px hsl(var(--b),100%,60%)}
@@ -181,6 +184,12 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
 .tog.on{background:hsl(var(--a),90%,55%)}.tog.on::after{transform:translateX(22px)}
 .how p{color:#d9d2f5;line-height:1.55;font-size:14.5px;margin-bottom:10px}
 .how b{color:#fff}
+.build{width:min(520px,100%);margin-top:8px;max-height:46vh;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.build .bh{font-family:Unbounded,system-ui,sans-serif;font-size:10px;letter-spacing:.25em;color:var(--dim);margin:10px 2px 6px}
+.build .bc{display:flex;gap:6px;flex-wrap:wrap}
+.build .ch{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:12px;background:var(--panel);border:1px solid hsla(var(--h),100%,65%,.35);font-size:12px}
+.build .ch i{font-style:normal;color:hsl(var(--h),100%,74%);font-size:14px}
+.build .ch small{color:var(--dim)}
 .shake{animation:shk .35s}@keyframes shk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 #flash{position:fixed;inset:0;pointer-events:none;z-index:4;background:#fff;opacity:0}
 #rot{display:none}
@@ -253,7 +262,8 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
 <div class="screen dim" id="pause">
   <div class="big" style="font-size:clamp(28px,8vw,48px)">Fermata</div>
   <div class="tag" id="pauseInfo">the song holds its breath</div>
-  <div class="menu" style="margin-top:18px">
+  <div id="pauseBuild"></div>
+  <div class="menu" style="margin-top:14px">
     <button class="btn primary" data-act="resume">Resume</button>
     <button class="btn" data-act="settings">⚙ Settings</button>
     <button class="btn" data-act="quit">End Song</button>
@@ -355,7 +365,7 @@ input[type=range]{width:50%;accent-color:hsl(var(--a),100%,60%)}
     <div class="set"><span>Screen shake</span><button class="tog" id="sShake"></button></div>
     <div class="set"><span>Full visual effects</span><button class="tog" id="sFx"></button></div>
     <div class="set"><span>Critical hit numbers</span><button class="tog" id="sNums"></button></div>
-    <div class="set"><span>Vibration <small style="color:var(--dim)">(where supported)</small></span><button class="tog" id="sHap"></button></div>
+    <div class="set" id="setHap"><span>Vibration</span><button class="tog" id="sHap"></button></div>
     <div class="set"><span>Beat guide ring</span><button class="tog" id="sGuide"></button></div>
     <div class="set"><span>Timing offset <small id="latV" style="color:var(--dim)">0 ms</small><br><small style="color:var(--dim);font-size:11px">raise if PERFECTs feel early (Bluetooth audio)</small></span><input type="range" min="0" max="300" step="10" id="sLat"></div>
     <div class="set"><span>Reset all progress</span><button class="btn" id="sReset" style="padding:10px 14px;font-size:13px">Reset</button></div>
@@ -380,14 +390,15 @@ const fmt=s=>{s=Math.floor(s);return Math.floor(s/60)+':'+String(s%60).padStart(
 /* ---------------- save ---------------- */
 const SAVE_KEY='hush_save_v1';
 const defSave=()=>({echoes:0,lifetime:0,meta:{},singers:{lumi:1},songs:{dawn:1},ach:{},best:{time:0,kills:0},songBest:{},daily:{},
-  stats:{runs:0,kills:0,time:0,bosses:0},settings:{music:.8,sfx:.8,shake:1,fx:1,nums:1,haptic:1,guide:1,lat:0},lastSinger:'lumi',lastSong:'dawn',seenTip:0,seen:{e:{},d:{}},dailyStreak:0,lastDaily:0});
+  stats:{runs:0,kills:0,time:0,bosses:0,restored:0,quests:0},settings:{music:.8,sfx:.8,shake:1,fx:1,nums:1,haptic:1,guide:1,lat:0},lastSinger:'lumi',lastSong:'dawn',seenTip:0,seen:{e:{},d:{},m:{}},dailyStreak:0,lastDaily:0});
 let S;
 try{const raw=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');const d=defSave();S=Object.assign(d,raw);
   for(const k of ['settings','stats','best','meta','singers','songs','ach','songBest','daily'])S[k]=Object.assign(d[k]||{},defSave()[k],raw[k]||{});}
 catch(e){S=defSave()}
-S.seen=Object.assign({e:{},d:{}},S.seen||{});S.seen.e=S.seen.e||{};S.seen.d=S.seen.d||{};
+S.seen=Object.assign({e:{},d:{},m:{}},S.seen||{});S.seen.e=S.seen.e||{};S.seen.d=S.seen.d||{};S.seen.m=S.seen.m||{};
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S))}catch(e){}}
 const meta=id=>S.meta[id]||0;
+const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 const GAME_URL='https://dianteclark.github.io/HUSH---Sing-Back-the-Silence/';
 
 /* ---------------- data ---------------- */
@@ -424,6 +435,24 @@ const DUETS={
   thunder:{name:'Thunderhead',icon:'☈',a:'chain',b:'echo',h:240,d:'Echo notes burst into chain lightning that leaps through four foes.'},
   galaxy:{name:'Galaxy',icon:'✹',a:'orbit',b:'gliss',h:260,d:'+2 Chorus notes that swell on the beat and strike 50% harder; Glissando beams erase dark notes.'},
 };
+const MOTIFS={
+  metronome:{name:'Metronome',icon:'⏱',h:45,d:'The PERFECT window is twice as wide.'},
+  staccato:{name:'Staccato',icon:'•',h:190,d:'Dash recharges twice as fast.'},
+  sforzando:{name:'Sforzando',icon:'>',h:15,d:'PERFECT dash shockwaves are twice as large and twice as strong.'},
+  fermata:{name:'Fermata',icon:'𝄐',h:260,d:'After a Crescendo, every Hushling moves at half speed for 5 seconds.'},
+  coda:{name:'Coda',icon:'𝄌',h:340,d:'Below 35% health, all voices deal +50% damage.'},
+  cadence:{name:'Cadence',icon:'𝄇',h:130,d:'Every fourth bar, your voices strike twice as hard.'},
+  tremolo:{name:'Tremolo',icon:'≋',h:255,d:'Critical harmonics arc lightning into two nearby foes.'},
+  grace:{name:'Grace Note',icon:'♢',h:170,d:'A shield of light blocks one hit, returning every 20 seconds.'},
+  keysig:{name:'Key Signature',icon:'♯',h:300,d:'+20 max health. Each modulation fully restores your health.'},
+  rubato:{name:'Rubato',icon:'~',h:210,d:'Every Hushling moves 12% slower.'},
+  hymnal:{name:'Hymnal',icon:'✎',h:55,d:'+25% experience and +20% light reach.'},
+  encoreseal:{name:'Encore Seal',icon:'☀',h:40,d:'Rise once more this song, at half health.'},
+  overture:{name:'Overture',icon:'❦',h:100,d:'One more choice on every level up.'},
+  dynamo:{name:'Dynamo',icon:'ϟ',h:60,d:'Crescendo charges 50% faster.'},
+  resolution:{name:'Resolution',icon:'◐',h:150,d:'Heal 2 health for every 15 Hushlings silenced.'},
+  vibrato:{name:'Vibrato',icon:'∾',h:280,d:'Each silenced Hushling has a 7% chance to release a homing spark.'},
+};
 const BOSS=[{n:'THE HUSH',s:'a silence that devours songs',h:0},{n:'THE STILLNESS',s:'it does not move — until it does',h:70},{n:'THE LAST REST',s:'the pause at the end of every song',h:-70}];
 const FOES=[
   {id:'mote',ic:'●',n:'Mote',d:'Drifts toward any sound. Alone it is nothing. It is never alone.'},
@@ -458,6 +487,10 @@ const META=[
   {id:'echo',icon:'◈',name:'Echo Finder',d:'+10% Echoes earned',max:5,cost:l=>100+l*85},
   {id:'cards',icon:'❖',name:'Wider Repertoire',d:'Choose from 4 harmonies instead of 3',max:1,cost:()=>420},
   {id:'revive',icon:'☀',name:'Encore',d:'Once per song, rise again at half health',max:1,cost:()=>650},
+  {id:'luck',icon:'✉',name:'Fortune',d:'+5% chance elites carry a music box',max:4,cost:l=>120+l*90},
+  {id:'dash',icon:'»',name:'Quick Feet',d:'Dash recharges 8% faster',max:3,cost:l=>100+l*80},
+  {id:'prelude',icon:'𝄆',name:'Prelude',d:'Begin every song with a random Motif',max:1,cost:()=>1500},
+  {id:'golden',icon:'✪',name:'Golden Hour',d:'Golden Notes appear 25% more often',max:2,cost:l=>200+l*150},
 ];
 const ACH=[
   {id:'first',i:'♪',n:'First Breath',d:'Finish your first song',rw:20},
@@ -484,6 +517,9 @@ const ACH=[
   {id:'duets4',i:'❂',n:'The Full Score',d:'Discover all four Duets',rw:150},
   {id:'streak7',i:'☼',n:'Seven Mornings',d:'Play the Daily Hum 7 days in a row',rw:120},
   {id:'veil',i:'⬡',n:'Through the Veil',d:'Silence 25 Veils in one song',rw:50},
+  {id:'motif',i:'♮',n:'Found Melody',d:'Open a music box and take a Motif',rw:40},
+  {id:'motif5',i:'♯',n:'Key of Many',d:'Hold 5 Motifs in one song',rw:80},
+  {id:'motifall',i:'𝄢',n:'Complete Repertoire',d:'Discover every Motif',rw:200},
 ];
 const MODS=[
   {id:'double',name:'Double Time',d:'+30 BPM. Everything plays faster.',ap:G=>G.bpmBonus+=30},
@@ -651,7 +687,7 @@ const stars=[0,1,2].map(L=>Array.from({length:L===2?26:70},()=>({x:Math.random()
 
 /* ---------------- state ---------------- */
 let state='menu',G=null,P=null;const cam={x:0,y:0};
-let beatPulse=0,shakeA=0,flashA=0,flashCol='#fff',timeScale=1,lastBeatIdx=-1,menuT=0,prevScreen='title';
+let zoomP=0,beatPulse=0,shakeA=0,flashA=0,flashCol='#fff',timeScale=1,lastBeatIdx=-1,menuT=0,prevScreen='title';
 const keys={};const joy={on:false,id:null,ox:0,oy:0,x:0,y:0,dx:0,dy:0};
 const amb=Array.from({length:70},()=>({x:Math.random(),y:Math.random(),vx:rnd(-.01,.01),vy:rnd(-.02,-.004),s:rnd(1,3.2),h:Math.random()}));
 const ambDark=Array.from({length:9},()=>({x:Math.random(),y:Math.random(),a:Math.random()*TAU,s:rnd(10,22)}));
@@ -667,24 +703,26 @@ function newGame(opt){
     enemies:[],shots:[],ebul:[],gems:[],parts:[],rings:[],bolts:[],texts:[],mines:[],ripples:[],
     voices:[{id:singer.voice,lvl:1}],harm:{},level:1,xp:0,need:xpNeed(1),pending:0,kills:0,combo:0,comboT:0,maxCombo:0,score:0,
     cres:0,cresUses:0,spawnAcc:0,nextBoss:180,boss:null,bossKills:0,events:{270:0,450:0,555:0},lastHit:0,rerolls:meta('reroll'),revive:meta('revive'),
-    endless:false,won:false,bonusEchoes:0,arpAng:0,orbA:0,newAch:[],arpIdx:0,noteK:0,chimeK:0,dead:false,deadT:0,bonusVoice:0,dmgTaken:0,glA:0,beams:null,orbs:null,tl:[],tlK:0,tlT:0,nextGold:70+R()*60,gold:null,veils:0,duets:{},perfects:0,perfStreak:0,maxPerf:0};
+    endless:false,won:false,bonusEchoes:0,arpAng:0,orbA:0,newAch:[],arpIdx:0,noteK:0,chimeK:0,dead:false,deadT:0,bonusVoice:0,dmgTaken:0,glA:0,beams:null,orbs:null,tl:[],tlK:0,tlT:0,nextGold:(70+R()*60)/(1+meta('golden')*.25),gold:null,veils:0,duets:{},perfects:0,perfStreak:0,maxPerf:0,motifs:{},chests:[],pendingMotif:0,cardMode:'level',graceT:0,fermataT:0,chestsOpened:0,elitesK:0,condK:0,golds:0,mothK:0};
   if(opt.mod)opt.mod.ap(G);
   if(G.bonusVoice){const ids=Object.keys(VOICES).filter(v=>v!==singer.voice);G.voices.push({id:ids[Math.floor(R()*ids.length)],lvl:1})}
   P={x:0,y:0,vx:0,vy:0,r:11,hp:100,maxHp:100,inv:0,face:0,trail:0,dash:0,dashCd:0,dvx:0,dvy:0,dashFx:0};
+  G.heal=1;if(meta('prelude')){const ks=Object.keys(MOTIFS).filter(k=>k!=='encoreseal');const k=ks[Math.floor(R()*ks.length)];G.motifs[k]=1;S.seen.m[k]=1}
   recalc();P.hp=P.maxHp;cam.x=0;cam.y=0;A.pend=0;A.chime=0;
   Seq.mode='run';
   buildBg();
 }
 function recalc(){const s=G.singer.mods,h=id=>G.harm[id]||0;
-  P.maxHp=Math.round((100+meta('hp')*12+(s.hp||0)+h('vigor')*20)*G.mod.hp);
+  const m=id=>G.motifs[id]?1:0;
+  P.maxHp=Math.round((100+meta('hp')*12+(s.hp||0)+h('vigor')*20+m('keysig')*20)*G.mod.hp);
   P.spd=200*(1+meta('spd')*.05+(s.spd||0)+h('swift')*.1);
-  P.mag=105*(1+meta('mag')*.2+(s.mag||0)+h('reach')*.35);
+  P.mag=105*(1+meta('mag')*.2+(s.mag||0)+h('reach')*.35+m('hymnal')*.2);
   P.dmg=(1+meta('dmg')*.06+h('power')*.12)*G.mod.dmg;
   P.area=(1+h('amp')*.12+(s.area||0))*G.mod.area;
   P.crit=.05+h('over')*.08+(s.crit||0)+G.mod.crit;
   P.regen=h('refrain')*.6;
-  P.xpMul=(1+meta('xp')*.08+(s.xp||0))*G.mod.xp;
-  P.cresMul=1+meta('cres')*.15;
+  P.xpMul=(1+meta('xp')*.08+(s.xp||0)+m('hymnal')*.25)*G.mod.xp;
+  P.cresMul=(1+meta('cres')*.15)*(m('dynamo')?1.5:1);
   const bpm=clamp(96+h('tempo')*7+G.bpmBonus+(G.endless?G.bossKills*2:0),60,178);Seq.setBpm(bpm);
   if(bpm>=140)ach('bpm');
   if(G.voices.length>=6)ach('choir');
@@ -728,8 +766,10 @@ function spawnBoss(){const [x,y]=spawnPos(80);const e=makeEnemy('boss',x,y,false
 function encircle(){const n=40;for(let i=0;i<n;i++){const a=i/n*TAU;makeEnemy(G.T>400?'lurch':'mote',P.x+Math.cos(a)*470,P.y+Math.sin(a)*470,false)}banner('THE QUIET CLOSES IN','break the circle')}
 
 /* ---------------- combat ---------------- */
-function hit(e,dmg,kx=0,ky=0,kb=0){if(e.dead)return;if(e.shield){dmg*=.15;kb*=.3;if(Math.random()<.25)burst(e.x,e.y,195,2,140,2,.2,false)}const crit=R()<P.crit;if(crit)dmg*=2;e.hp-=dmg;e.flash=.07;
+let inTrem=false;
+function hit(e,dmg,kx=0,ky=0,kb=0){if(e.dead)return;if(G.motifs.coda&&P.hp<P.maxHp*.35)dmg*=1.5;if(G.motifs.cadence&&G.bar%4===3)dmg*=2;if(e.shield){dmg*=.15;kb*=.3;if(Math.random()<.25)burst(e.x,e.y,195,2,140,2,.2,false)}const crit=R()<P.crit;if(crit)dmg*=2;e.hp-=dmg;e.flash=.07;
   if(kb&&e.type!=='boss'){const l=Math.hypot(kx,ky)||1;const f=kb*(e.type==='bloat'?.35:1)*(e.elite?.5:1);e.kbx+=kx/l*f;e.kby+=ky/l*f}
+  if(crit&&G.motifs.tremolo&&!inTrem){inTrem=true;chainFrom(e.x,e.y,2,dmg*.5,MOTIFS.tremolo.h);inTrem=false}
   if(crit&&S.settings.nums&&G.texts.length<40)G.texts.push({x:e.x+rnd(-6,6),y:e.y-e.r,t:'✧'+Math.round(dmg),life:.7,max:.7,h:55,sz:13});
   if(e.hp<=0)kill(e)}
 function kill(e){e.dead=true;G.kills++;G.combo++;G.comboT=2.8;if(G.combo>G.maxCombo)G.maxCombo=G.combo;
@@ -739,7 +779,9 @@ function kill(e){e.dead=true;G.kills++;G.combo++;G.comboT=2.8;if(G.combo>G.maxCo
   burst(e.x,e.y,e.elite?50:song.a,e.type==='boss'?0:6+e.r*.5,170,2.6,.55,false);
   burst(e.x,e.y,0,4+e.r*.3,120,3.2,.5,true);
   if(S.settings.fx)G.rings.push({x:e.x,y:e.y,r:e.r,R:e.r*2.6,life:.3,max:.3,h:song.a,w:2});
-  let v=e.xp*(e.elite?8:1);if(e.elite)G.bonusEchoes+=2;
+  let v=e.xp*(e.elite?8:1);if(e.elite){G.bonusEchoes+=2;G.elitesK++;timeScale=Math.min(timeScale,.55);if(R()<.3+meta('luck')*.05)dropChest(e.x,e.y)}
+  if(G.motifs.resolution&&G.kills%15===0)P.hp=Math.min(P.maxHp,P.hp+2*G.heal);
+  if(G.motifs.vibrato&&R()<.07){const a=R()*TAU;G.shots.push({x:e.x,y:e.y,px:e.x,py:e.y,vx:Math.cos(a)*260,vy:Math.sin(a)*260,r:4,dmg:(10+G.level)*P.dmg,pierce:0,life:1.4,h:MOTIFS.vibrato.h,k:'spark',hits:[e],tgt:null})}
   while(v>0){const p=v>=20?20:v>=5?5:1;v-=p;dropGem(e.x+rnd(-8,8),e.y+rnd(-8,8),p)}
   A.pend++;
   if(G.combo%50===0&&G.combo>0){addText(P.x,P.y-40,'×'+G.combo+' HARMONY',song.a,20,1.4);A.bell(A.now()+.02,chordFreqs(4)[0],.08,'s')}
@@ -747,7 +789,7 @@ function kill(e){e.dead=true;G.kills++;G.combo++;G.comboT=2.8;if(G.combo>G.maxCo
   if(G.kills>=100)ach('k100');if(G.kills>=1000)ach('k1000');
   if(e.type==='bloat'){for(let i=0;i<3;i++){const m=makeEnemy('mote',e.x+rnd(-15,15),e.y+rnd(-15,15),false);m.kbx=rnd(-200,200);m.kby=rnd(-200,200)}}
   if(e.type==='veil'){G.veils++;if(G.veils>=25)ach('veil')}
-  if(e.type==='gold'){G.gold=null;G.bonusEchoes+=25;G.pending++;ach('gold');buzz(30);banner('GOLDEN NOTE','a gift from the old song');A.sBuy();burst(e.x,e.y,48,40,300,3.5,1,false);
+  if(e.type==='gold'){G.golds++;G.gold=null;G.bonusEchoes+=25;G.pending++;ach('gold');buzz(30);banner('GOLDEN NOTE','a gift from the old song');A.sBuy();burst(e.x,e.y,48,40,300,3.5,1,false);
     for(let i=0;i<3;i++)G.rings.push({x:e.x,y:e.y,r:8,R:90+i*60,life:.5+i*.12,max:.5+i*.12,h:48,w:4})}
   if(e.type==='boss')bossDie(e)}
 function bossDie(e){G.boss=null;G.bossKills++;S.stats.bosses++;$('#bossbar').classList.remove('on');ach('boss');if(G.bossKills>=3)ach('boss3');
@@ -756,6 +798,7 @@ function bossDie(e){G.boss=null;G.bossKills++;S.stats.bosses++;$('#bossbar').cla
   burst(e.x,e.y,0,60,300,5,1.2,true);
   for(let i=0;i<4;i++)G.rings.push({x:e.x,y:e.y,r:20,R:300+i*120,life:.6+i*.15,max:.6+i*.15,h:i%2?song.a:song.b,w:6});
   for(let i=0;i<5;i++)dropGem(e.x+rnd(-40,40),e.y+rnd(-40,40),20);
+  dropChest(e.x,e.y);if(G.motifs.keysig)P.hp=P.maxHp;
   G.ebul.length=0;timeScale=.18;shake(22);buzz([60,40,140]);flash(.6,'#fff');G.bonusEchoes+=40;
   G.key+=2;if(G.key>7)G.key-=12;
   A.sBossDie(chordFreqs(3));
@@ -763,7 +806,8 @@ function bossDie(e){G.boss=null;G.bossKills++;S.stats.bosses++;$('#bossbar').cla
   recalc()}
 function dropGem(x,y,v){if(G.gems.length>420){G.gems[Math.floor(R()*G.gems.length)].v+=v;return}
   const a=R()*TAU,s=rr(30,110);G.gems.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,v,m:false,t:R()*TAU})}
-function hurt(dmg,sx,sy){if(P.inv>0||G.dead)return;P.hp-=dmg;P.inv=.75;G.lastHit=G.T;G.dmgTaken+=dmg;shake(9);buzz(45);flash(.25,'#ff2d6b');A.sHurt();
+function hurt(dmg,sx,sy){if(P.inv>0||G.dead)return;
+  if(G.motifs.grace&&G.graceT<=0){G.graceT=20;P.inv=.7;flash(.25,'#9ff0e0');A.bell(A.now(),1760,.08,'s');addText(P.x,P.y-30,'grace',170,13,.8);G.rings.push({x:P.x,y:P.y,r:P.r,R:70,life:.4,max:.4,h:170,w:5});return}P.hp-=dmg;P.inv=.75;G.lastHit=G.T;G.dmgTaken+=dmg;shake(9);buzz(45);flash(.25,'#ff2d6b');A.sHurt();
   if(G.combo>10)addText(P.x,P.y-30,'chord broken',340,13,.9);G.combo=Math.floor(G.combo/2);
   burst(P.x,P.y,340,14,220,3,.5,false);
   const dx=P.x-sx,dy=P.y-sy,l=Math.hypot(dx,dy)||1;P.vx+=dx/l*260;P.vy+=dy/l*260;
@@ -780,15 +824,21 @@ function dash(){if(!G||state!=='play'||G.dead||P.dashCd>0)return;
   let ix=0,iy=0;if(joy.on){ix=joy.dx;iy=joy.dy}else{if(keys.ArrowLeft||keys.KeyA)ix--;if(keys.ArrowRight||keys.KeyD)ix++;if(keys.ArrowUp||keys.KeyW)iy--;if(keys.ArrowDown||keys.KeyS)iy++}
   const a=Math.hypot(ix,iy)>.2?Math.atan2(iy,ix):P.face;P.face=a;
   const beat=60/Seq.bpm,t=A.now()-audioLat();let off=(t-lastBeatT)%beat;if(off<0)off+=beat;off=Math.min(off,beat-off);
-  const song=SONGS[G.song];P.dash=.16;P.dvx=Math.cos(a)*760;P.dvy=Math.sin(a)*760;P.dashCd=beat*.85;
-  const grade=off<.085?2:off<.16?1:0;P.dashFx=grade;
+  const song=SONGS[G.song];P.dash=.16;P.dvx=Math.cos(a)*760;P.dvy=Math.sin(a)*760;P.dashCd=beat*.85*(G.motifs.staccato?.5:1)*(1-meta('dash')*.08);
+  const wm=G.motifs.metronome?2:1,grade=off<.085*wm?2:off<.16*wm?1:0;P.dashFx=grade;
   if(grade===2){G.perfects++;G.perfStreak++;G.maxPerf=Math.max(G.maxPerf,G.perfStreak);P.inv=Math.max(P.inv,.45);G.cres=Math.min(100,G.cres+4*P.cresMul);G.comboT=Math.max(G.comboT,2.8);
-    const Rr=78*P.area,dmg=(14+G.level*1.6)*P.dmg;inRadius(P.x,P.y,Rr,(e,dx,dy)=>hit(e,dmg,dx,dy,320));
+    const sf=G.motifs.sforzando?2:1,Rr=78*P.area*sf,dmg=(14+G.level*1.6)*P.dmg*sf;zoomP=Math.max(zoomP,.035);inRadius(P.x,P.y,Rr,(e,dx,dy)=>hit(e,dmg,dx,dy,320));
     G.rings.push({x:P.x,y:P.y,r:P.r,R:Rr,life:.35,max:.35,h:song.a,w:5});burst(P.x,P.y,song.a,14,260,3,.45,false);
     addText(P.x,P.y-34,G.perfStreak>=4?'PERFECT ×'+G.perfStreak:'PERFECT',song.a,15,.8);A.bell(A.now()+.01,chordFreqs(4)[G.perfStreak%4],.07,'s');buzz(15);
     if(G.perfects>=50)ach('groove');if(G.perfStreak>=16)ach('streak16')}
   else if(grade===1){G.perfStreak=0;P.inv=Math.max(P.inv,.25);G.cres=Math.min(100,G.cres+1.5*P.cresMul);addText(P.x,P.y-30,'good',song.b,12,.6);A.bell(A.now()+.01,chordFreqs(3)[0],.04,'s')}
   else{G.perfStreak=0;P.inv=Math.max(P.inv,.12);A.sDash()}}
+function dropChest(x,y){G.chests.push({x,y,t:0});A.bell(A.now()+.05,1318,.06,'s');A.bell(A.now()+.15,1760,.06,'s')}
+function rollMotifs(n){const pool=Object.keys(MOTIFS).filter(id=>!G.motifs[id]);const out=[];while(out.length<n&&pool.length)out.push({k:'motif',id:pool.splice(Math.floor(R()*pool.length),1)[0]});if(!out.length)out.push({k:'encore'});return out}
+function cardCount(){return 3+(meta('cards')?1:0)+(G.motifs.overture?1:0)}
+function edgeArrow(wx,wy,h){const sx=(wx-cam.x)*Z+W/2,sy=(wy-cam.y)*Z+H/2,m=34;if(sx>=0&&sx<=W&&sy>=0&&sy<=H)return;
+  const ax=clamp(sx,m,W-m),ay=clamp(sy,m+60,H-m-110),a=Math.atan2(sy-H/2,sx-W/2);g.globalCompositeOperation='lighter';dg(h,ax,ay,26+beatPulse*8,.8);g.globalCompositeOperation='source-over';
+  g.fillStyle=hsla(h,100,82,1);g.beginPath();g.moveTo(ax+Math.cos(a)*14,ay+Math.sin(a)*14);g.lineTo(ax+Math.cos(a+2.4)*9,ay+Math.sin(a+2.4)*9);g.lineTo(ax+Math.cos(a-2.4)*9,ay+Math.sin(a-2.4)*9);g.fill()}
 function buzz(p){if(S.settings.haptic&&navigator.vibrate)try{navigator.vibrate(p)}catch(e){}}
 function segD(px,py,ax,ay,bx,by){const vx=bx-ax,vy=by-ay,l2=vx*vx+vy*vy||1;const t=clamp(((px-ax)*vx+(py-ay)*vy)/l2,0,1);return Math.hypot(px-ax-vx*t,py-ay-vy*t)}
 function shake(v){if(S.settings.shake)shakeA=Math.min(30,shakeA+v)}
@@ -796,7 +846,7 @@ function flash(a,col){flashA=Math.max(flashA,a);flashCol=col;const f=$('#flash')
 
 /* ---------------- voices (fire on beat) ---------------- */
 function onStep(step){
-  const s=step%16;
+  const s=step%16;G.bar=Math.floor(step/16);
   if(s%4===0){beatPulse=1;const bi=(s/4)|0;$$('#beat i').forEach((el,i)=>el.classList.toggle('on',i===bi));if(S.settings.fx)G.ripples.push({x:P.x,y:P.y,t:G.T,big:s===0});if(G.ripples.length>4)G.ripples.shift()}
   if(G.dead)return;
   const song=SONGS[G.song];
@@ -854,6 +904,7 @@ function crescendo(free){if(!G||G.dead)return;if(!free){if(G.cres<100||state!=='
   const dmg=(70+G.level*9)*P.dmg;
   for(const e of G.enemies){if(e.dead)continue;if(Math.abs(e.x-P.x)<vw&&Math.abs(e.y-P.y)<vh){hit(e,e.type==='boss'?Math.min(dmg*3,e.maxHp*.12):dmg,e.x-P.x,e.y-P.y,500)}}
   G.ebul.length=0;for(const gm of G.gems)if(Math.abs(gm.x-P.x)<vw&&Math.abs(gm.y-P.y)<vh)gm.m=true;
+  if(G.motifs.fermata)G.fermataT=5;zoomP=Math.max(zoomP,.08);
   banner(free?'ENCORE':'CRESCENDO','')}
 
 /* ---------------- update ---------------- */
@@ -896,13 +947,17 @@ function update(dt){
   const gl=vl('gliss');
   if(gl){const n=1+(gl>=3)+(gl>=5);G.glA+=TAU/(240/Seq.bpm)*(gl>=5?1.5:1)*dt;const L=(120+18*gl)*(gl>=2?1.25:1)*P.area;G.beams=[];for(let i=0;i<n;i++)G.beams.push([G.glA+i/n*TAU,L]);
     if(G.duets.galaxy&&G.ebul.length)for(const [a,L2] of G.beams){const ex=P.x+Math.cos(a)*L2,ey=P.y+Math.sin(a)*L2;G.ebul=G.ebul.filter(b=>segD(b.x,b.y,P.x,P.y,ex,ey)>b.r+7)}}else G.beams=null;
-  if(G.T>=G.nextGold&&!G.gold&&!G.boss){const [x,y]=spawnPos(-140);const e=makeEnemy('gold',x,y,false);e.life=14;e.dmg=0;G.gold=e;G.nextGold=G.T+85+R()*75;showTip('✪ A Golden Note appears — catch it!',3200);A.bell(A.now(),2093,.08,'s')}
+  if(G.T>=G.nextGold&&!G.gold&&!G.boss){const [x,y]=spawnPos(-140);const e=makeEnemy('gold',x,y,false);e.life=14;e.dmg=0;G.gold=e;G.nextGold=G.T+(85+R()*75)/(1+meta('golden')*.25);showTip('✪ A Golden Note appears — catch it!',3200);A.bell(A.now(),2093,.08,'s')}
+  if(G.graceT>0)G.graceT-=dt;if(G.fermataT>0)G.fermataT-=dt;
+  for(const c of G.chests){c.t+=dt;if((c.x-P.x)**2+(c.y-P.y)**2<(P.r+22)**2){c.dead=true;G.pendingMotif++;G.chestsOpened++;burst(c.x,c.y,48,36,300,3.5,.9,false);flash(.3,'#ffd76b');buzz(25);
+    for(let i=0;i<3;i++)G.rings.push({x:c.x,y:c.y,r:8,R:70+i*40,life:.45+i*.1,max:.45+i*.1,h:48,w:4})}}
+  if(G.chests.length)G.chests=G.chests.filter(c=>!c.dead);
   G.tlT+=dt;if(G.tlT>=5){G.tlT-=5;G.tl.push(G.kills-G.tlK);G.tlK=G.kills}
   // enemies
   const farD=Math.hypot(W,H)/Z*.9+200;
   for(const e of G.enemies){if(e.dead)continue;e.t+=dt;e.flash-=dt;
     const dx=P.x-e.x,dy=P.y-e.y,d=Math.hypot(dx,dy)||1;let tvx=0,tvy=0;let sm=4;
-    const slow=e.slow>0?1-e.slowAmt:1;e.slow-=dt;
+    const slow=(e.slow>0?1-e.slowAmt:1)*(G.motifs.rubato?.88:1)*(G.fermataT>0?.5:1);e.slow-=dt;
     switch(e.type){
       case'shard':tvx=e.vx;tvy=e.vy;sm=0;if(d>farD+300){e.dead=true;continue}break;
       case'gold':{e.life-=dt;if(e.life<=0){e.dead=true;G.gold=null;addText(e.x,e.y,'it slipped away…',48,13,1.2);continue}
@@ -939,7 +994,7 @@ function update(dt){
   G.gems=G.gems.filter(g=>!g.dead);
   G.enemies=G.enemies.filter(e=>!e.dead);
   updParts(dt);
-  if(G.pending>0&&state==='play')openLevel();
+  if((G.pending>0||G.pendingMotif>0)&&state==='play')openLevel();
 }
 function updParts(dt){
   for(const p of G.parts){p.life-=dt;const f=Math.pow(.06,dt);p.vx*=f;p.vy*=f;p.x+=p.vx*dt;p.y+=p.vy*dt}
@@ -978,6 +1033,7 @@ function render(dt){
   if(!G){renderMenu(now,song);post();return}
   // world
   let shx=0,shy=0;if(shakeA>0){shx=rnd(-1,1)*shakeA;shy=rnd(-1,1)*shakeA}
+  const Z0=Z;Z=Z0*(1+zoomP);
   g.setTransform(DPR*Z,0,0,DPR*Z,DPR*(W/2-cam.x*Z+shx),DPR*(H/2-cam.y*Z+shy));
   const vw=W/Z/2+60,vh=H/Z/2+60,vx0=cam.x-vw,vx1=cam.x+vw,vy0=cam.y-vh,vy1=cam.y+vh;
   const vis=(x,y,r)=>x+r>vx0&&x-r<vx1&&y+r>vy0&&y-r<vy1;
@@ -1000,6 +1056,10 @@ function render(dt){
     dg(h,gm.x,gm.y+bob,sz*3.4,.75);g.fillStyle=hsla(h,100,88,1);g.beginPath();g.moveTo(gm.x,gm.y+bob-sz);g.lineTo(gm.x+sz*.7,gm.y+bob);g.lineTo(gm.x,gm.y+bob+sz);g.lineTo(gm.x-sz*.7,gm.y+bob);g.fill()}
   for(const m of G.mines){const prog=clamp((G.T-m.born)/(240/Seq.bpm/2),0,1);dg(m.h,m.x,m.y,18+prog*10,.6+beatPulse*.3);
     g.strokeStyle=hsla(m.h,100,70,.25+prog*.4);g.lineWidth=1.5;g.beginPath();g.arc(m.x,m.y,m.R*(1-prog*.0),-Math.PI/2,-Math.PI/2+TAU*prog);g.stroke();drawNote(m.x,m.y,6,m.h,1)}
+  for(const c of G.chests){if(!vis(c.x,c.y,200))continue;const bob=Math.sin(c.t*3)*3,y=c.y+bob;const bg=g.createLinearGradient(0,y-180,0,y);bg.addColorStop(0,hsla(48,100,70,0));bg.addColorStop(1,hsla(48,100,70,.22));
+    g.fillStyle=bg;g.fillRect(c.x-9,y-180,18,180);dg(48,c.x,y,48+beatPulse*12,.75);
+    g.globalCompositeOperation='source-over';g.fillStyle='#2a1a08';g.strokeStyle='#ffd76b';g.lineWidth=2;g.beginPath();g.roundRect?g.roundRect(c.x-13,y-9,26,18,4):g.rect(c.x-13,y-9,26,18);g.fill();g.stroke();
+    g.beginPath();g.moveTo(c.x-13,y-3);g.lineTo(c.x+13,y-3);g.stroke();g.globalCompositeOperation='lighter';drawNote(c.x-1,y+4,4,48,1)}
   g.globalCompositeOperation='source-over';
   // enemies
   for(const e of G.enemies){if(!vis(e.x,e.y,e.r*2))continue;drawEnemy(e,now,song)}
@@ -1024,6 +1084,7 @@ function render(dt){
     g.strokeStyle=hsla(song.a,100,80,.25+beatPulse*.6);g.lineWidth=2;g.beginPath();g.arc(P.x,P.y,pr+7+beatPulse*12,0,TAU);g.stroke();
     if(S.settings.guide&&state==='play'){const beat=60/Seq.bpm,ph=clamp((A.now()-audioLat()-lastBeatT)/beat,0,1),rdy=P.dashCd<=0;
       g.strokeStyle=rdy?hsla(song.a,100,80,ph*ph*.6):hsla(240,20,75,ph*ph*.18);g.lineWidth=rdy?2:1.2;g.beginPath();g.arc(P.x,P.y,pr+9+(1-ph)*40,0,TAU);g.stroke()}
+    if(G.motifs.grace&&G.graceT<=0){g.strokeStyle=hsla(170,100,80,.35+beatPulse*.3);g.lineWidth=1.5;g.beginPath();g.arc(P.x,P.y,pr+16,0,TAU);g.stroke()}
     g.globalCompositeOperation='source-over';g.fillStyle=blink?'rgba(255,255,255,.4)':'#fff';g.beginPath();g.arc(P.x,P.y,pr*.62,0,TAU);g.fill();
     g.strokeStyle=hsla(G.singer.h,100,70,1);g.lineWidth=2.4;g.beginPath();g.arc(P.x,P.y,pr*.9,0,TAU);g.stroke();
     g.fillStyle=hsla(song.a,100,85,.9);g.beginPath();const fa=P.face;g.moveTo(P.x+Math.cos(fa)*(pr+5),P.y+Math.sin(fa)*(pr+5));g.lineTo(P.x+Math.cos(fa+2.6)*(pr+1),P.y+Math.sin(fa+2.6)*(pr+1));g.lineTo(P.x+Math.cos(fa-2.6)*(pr+1),P.y+Math.sin(fa-2.6)*(pr+1));g.fill();
@@ -1043,14 +1104,14 @@ function render(dt){
   g.textAlign='center';g.textBaseline='middle';
   for(const t of G.texts){const a=Math.min(1,t.life/t.max*2);g.font=`700 ${t.sz}px Unbounded,Outfit,sans-serif`;g.fillStyle=hsla(t.h,100,80,a);g.shadowColor=hsla(t.h,100,50,a);g.shadowBlur=10;g.fillText(t.t,t.x,t.y)}
   g.shadowBlur=0;
+  Z=Z0;
   // screen space
   g.setTransform(DPR,0,0,DPR,0,0);
   if(joy.on&&state==='play'){g.strokeStyle='rgba(255,255,255,.18)';g.lineWidth=2;g.beginPath();g.arc(joy.ox,joy.oy,50,0,TAU);g.stroke();
     g.globalCompositeOperation='lighter';dg(song.a,joy.ox+joy.dx*50,joy.oy+joy.dy*50,28,.6);g.globalCompositeOperation='source-over';
     g.fillStyle='rgba(255,255,255,.35)';g.beginPath();g.arc(joy.ox+joy.dx*50,joy.oy+joy.dy*50,14,0,TAU);g.fill()}
-  if(G.gold&&!G.gold.dead){const e=G.gold,sx=(e.x-cam.x)*Z+W/2,sy=(e.y-cam.y)*Z+H/2,m=34;
-    if(sx<0||sx>W||sy<0||sy>H){const ax=clamp(sx,m,W-m),ay=clamp(sy,m+50,H-m-40),a=Math.atan2(sy-H/2,sx-W/2);g.globalCompositeOperation='lighter';dg(48,ax,ay,26+beatPulse*8,.8);g.globalCompositeOperation='source-over';
-      g.fillStyle='#ffe28a';g.beginPath();g.moveTo(ax+Math.cos(a)*14,ay+Math.sin(a)*14);g.lineTo(ax+Math.cos(a+2.4)*9,ay+Math.sin(a+2.4)*9);g.lineTo(ax+Math.cos(a-2.4)*9,ay+Math.sin(a-2.4)*9);g.fill()}}
+  if(G.gold&&!G.gold.dead)edgeArrow(G.gold.x,G.gold.y,48);
+  for(const c of G.chests)edgeArrow(c.x,c.y,38);
   // low hp vignette
   if(P.hp<P.maxHp*.3&&!G.dead){const a=(.3-P.hp/P.maxHp)*1.6*(.6+.4*Math.sin(now*6));g.fillStyle=`rgba(255,20,80,${a*.25})`;g.fillRect(0,0,W,H)}
   post()}
@@ -1126,10 +1187,10 @@ function hud(){if(!G)return;
   const off=251-251*G.cres/100;if(hudC.cr!==Math.round(off)){hudC.cr=Math.round(off);$('#cresring').style.strokeDashoffset=off}
   const rdy=G.cres>=100;if(hudC.rdy!==rdy){hudC.rdy=rdy;$('#cresbtn').classList.toggle('ready',rdy)}
   const dc=P.dashCd>0;if(hudC.dcd!==dc){hudC.dcd=dc;$('#dashbtn').classList.toggle('cd',dc)}
-  const vk=G.voices.map(v=>v.id+v.lvl).join()+'|'+Object.entries(G.harm).map(e=>e.join('')).join()+'|'+Object.keys(G.duets).join();
+  const vk=G.voices.map(v=>v.id+v.lvl).join()+'|'+Object.entries(G.harm).map(e=>e.join('')).join()+'|'+Object.keys(G.duets).join()+'|'+Object.keys(G.motifs).join();
   if(hudC.vk!==vk){hudC.vk=vk;
     $('#vrow').innerHTML=G.voices.map(v=>{const V=VOICES[v.id];return`<div class="vi" style="--h:${V.h}">${V.icon}<b>${v.lvl}</b></div>`}).join('');
-    $('#hrow').innerHTML=Object.keys(G.duets).map(id=>`<div class="vi h duet" style="--h:${DUETS[id].h}">${DUETS[id].icon}</div>`).join('')+Object.entries(G.harm).map(([id,l])=>{const Hh=HARM[id];return`<div class="vi h" style="--h:${Hh.h}">${Hh.icon}</div>`}).join('')}
+    $('#hrow').innerHTML=Object.keys(G.motifs).map(id=>`<div class="vi h motif" style="--h:${MOTIFS[id].h}">${MOTIFS[id].icon}</div>`).join('')+Object.keys(G.duets).map(id=>`<div class="vi h duet" style="--h:${DUETS[id].h}">${DUETS[id].icon}</div>`).join('')+Object.entries(G.harm).map(([id,l])=>{const Hh=HARM[id];return`<div class="vi h" style="--h:${Hh.h}">${Hh.icon}</div>`}).join('')}
 }
 function banner(t,sub,cls){const b=$('#banner');b.className='';b.querySelector('h2').textContent=t;b.querySelector('p').textContent=sub||'';void b.offsetWidth;b.className='go '+(cls||'')}
 function toast(icon,title,sub){const t=document.createElement('div');t.className='toast';t.innerHTML=`<div class="i">${icon}</div><div><b>${title}</b><small>${sub}</small></div>`;$('#toasts').appendChild(t);setTimeout(()=>t.remove(),3800)}
@@ -1155,9 +1216,10 @@ function buildBook(){const sec=(t,html)=>`<div class="sect">${t}</div>${html}`;
   const v=Object.values(VOICES).map(V=>{cnt(1);return row(V.icon,V.h,V.name,V.d[0]+'<br><i>At its peak:</i> '+V.d[4])}).join('');
   const d=Object.entries(DUETS).map(([id,D])=>{const f=cnt(!!S.seen.d[id]);return row(f?D.icon:'?',D.h,f?D.name:'Undiscovered Duet',`<span class="pair">${VOICES[D.a].icon} ${VOICES[D.a].name} + ${VOICES[D.b].icon} ${VOICES[D.b].name}, both at their peak</span>`+(f?'<br>'+D.d:''),!f)}).join('');
   const h=Object.values(HARM).map(Hh=>{cnt(1);return row(Hh.icon,Hh.h,Hh.name,Hh.d)}).join('');
+  const mo=Object.entries(MOTIFS).map(([id,M])=>{const f=cnt(!!S.seen.m[id]);return row(f?M.icon:'?',M.h,f?M.name:'Undiscovered Motif',f?M.d:'Hidden in a music box. Elite Hushlings and every Hush carry one.',!f)}).join('');
   const e=FOES.map(F=>{const f=cnt(!!S.seen.e[F.id]);return row(f?F.ic:'?',0,f?F.n:'Unheard',f?F.d:'You have not met this one yet.',!f,'foe')}).join('');
   $('#bookSub').textContent=`${found} of ${total} pages written`;
-  $('#bookBody').innerHTML=sec('Voices',v)+sec('Duets',d)+sec('Harmonies',h)+sec('The Hush',e);show('#book')}
+  $('#bookBody').innerHTML=sec('Voices',v)+sec('Duets',d)+sec('Motifs',mo)+sec('Harmonies',h)+sec('The Hush',e);show('#book')}
 function goTitle(){wake(false);if(G){G=null}state='menu';Seq.mode='menu';Seq.setBpm(84);A.muffle(false);$('#bossbar').classList.remove('on');$('#hud').classList.remove('on');buildBg();
   const dc=dailyCfg(),ds=SINGERS.find(s=>s.id===dc.singer);const stk=(S.lastDaily===dc.seed||S.lastDaily===prevDayKey(dc.seed))?S.dailyStreak:0;$('#dailyInfo').textContent=`${ds.name} · ${SONGS[dc.song].name} · ${dc.mod.name}`+(S.daily[dc.seed]?` · best ${S.daily[dc.seed]}`:'')+(stk?` · 🔥${stk}`:'');
   show('#title')}
@@ -1177,9 +1239,10 @@ $('#songs').addEventListener('click',e=>{const c=e.target.closest('[data-song]')
 
 let lastOpt=null;
 function startRun(opt){A.init();Seq.start();wake(true);lastOpt=opt;newGame(opt);state='play';hideAll();$('#hud').classList.add('on');for(const k in hudC)delete hudC[k];
+  if(IS_IOS&&!S.iosHint){S.iosHint=1;save();setTimeout(()=>toast('🔔','Hear the song','No sound? Flip your ringer switch on — HUSH is meant to be heard.'),900)}
   if(opt.daily)banner('DAILY HUM',opt.mod.name+' — '+opt.mod.d);else banner(SONGS[opt.song].name.toUpperCase(),'sing back the silence');
   if(!S.seenTip){showTip('Drag to move · your voices play on the beat · tap DASH right on the beat',6500);S.seenTip=1;save()}
-  else if(Math.random()<.5)showTip(['Lurchers lunge on the downbeat — sidestep on 1','Getting hit breaks your harmony combo','Tempo makes every voice play faster','Chorus notes block dark notes','DASH as the ring closes for a PERFECT','Two voices at their peak can become a Duet','Your Songbook remembers every Hushling you meet','Crescendo when the ring glows — Space or tap ✺'][Math.floor(Math.random()*8)],4000)}
+  else if(Math.random()<.5)showTip(['Lurchers lunge on the downbeat — sidestep on 1','Getting hit breaks your harmony combo','Tempo makes every voice play faster','Chorus notes block dark notes','DASH as the ring closes for a PERFECT','Two voices at their peak can become a Duet','Your Songbook remembers every Hushling you meet','Tap ✺ when the Crescendo ring glows'][Math.floor(Math.random()*8)],4000)}
 function showTip(t,ms){const el=$('#tip');el.textContent=t;el.classList.add('on');clearTimeout(showTip.h);showTip.h=setTimeout(()=>el.classList.remove('on'),ms)}
 
 /* level up */
@@ -1190,28 +1253,38 @@ function rollCards(n){const pool=[];
   for(const id in DUETS){const D=DUETS[id];if(!G.duets[id]&&vl(D.a)>=5&&vl(D.b)>=5)pool.push({k:'duet',id,w:6})}
   const out=[];while(out.length<n&&pool.length){let tot=0;for(const p of pool)tot+=p.w;let r=R()*tot;let i=0;for(;i<pool.length;i++){r-=pool[i].w;if(r<=0)break}out.push(pool.splice(Math.min(i,pool.length-1),1)[0])}
   if(!out.length)out.push({k:'encore'});return out}
-function openLevel(){state='levelup';A.muffle(true);A.sLevel(chordFreqs(3).slice(0,4));G.cards=rollCards(meta('cards')?4:3);renderCards();show('#levelup')}
-function renderCards(){$('#lvtag').textContent='LEVEL '+(G.level-G.pending+1);$('#lvh').textContent=G.pending>1?`A New Harmony (+${G.pending-1})`:'A New Harmony';
+function openLevel(){state='levelup';A.muffle(true);A.sLevel(chordFreqs(3).slice(0,4));G.cardMode=G.pendingMotif>0?'motif':'level';G.cards=G.cardMode==='motif'?rollMotifs(3):rollCards(cardCount());renderCards();show('#levelup')}
+function renderCards(){const mm=G.cardMode==='motif';$('#lvtag').textContent=mm?'A MUSIC BOX OPENS':'LEVEL '+(G.level-G.pending+1);$('#lvh').textContent=mm?'Choose a Motif':G.pending>1?`A New Harmony (+${G.pending-1})`:'A New Harmony';
   $('#cards').innerHTML=G.cards.map((c,i)=>{let ic,h,name,kind,desc,lvl,isNew=false;
     if(c.k==='voice'){const V=VOICES[c.id],cur=vl(c.id);ic=V.icon;h=V.h;name=V.name;lvl=cur+1;isNew=!cur;kind=isNew?'Voice':'Voice · Lv '+lvl;desc=V.d[lvl-1]}
     else if(c.k==='harm'){const Hh=HARM[c.id],cur=G.harm[c.id]||0;ic=Hh.icon;h=Hh.h;name=Hh.name;lvl=cur+1;kind='Harmony · Lv '+lvl;desc=Hh.d;isNew=!cur}
     else if(c.k==='duet'){const D=DUETS[c.id];ic=D.icon;h=D.h;name=D.name;lvl=0;kind='Duet · '+VOICES[D.a].icon+' + '+VOICES[D.b].icon;desc=D.d}
+    else if(c.k==='motif'){const M=MOTIFS[c.id];ic=M.icon;h=M.h;name=M.name;lvl=0;kind='Motif';desc=M.d;isNew=!S.seen.m[c.id]}
     else{ic='❀';h=130;name='Encore';kind='Gift';desc='Heal 40 and gain 15 Echoes.';lvl=0}
     const pips=lvl?`<div class="pips" style="--h:${h}">${[1,2,3,4,5].map(j=>`<i class="${j<=lvl?'on':''}"></i>`).join('')}</div>`:'';
-    return`<button class="lcard ${isNew?'new':''} ${c.k==='duet'?'duet':''}" data-i="${i}" style="--h:${h};animation-delay:${i*.07}s"><div class="top"><div class="ic">${ic}</div><div><div class="k">${kind}</div><h3>${name}</h3></div></div><div class="txt"><div class="mob"><div class="k">${kind}</div><h3>${name}</h3></div><p>${desc}</p>${pips}</div></button>`}).join('');
-  $('#reroll').style.display=G.rerolls>0?'':'none';$('#rerollN').textContent='('+G.rerolls+')'}
+    return`<button class="lcard ${isNew?'new':''} ${c.k==='duet'||c.k==='motif'?'duet':''}" data-i="${i}" style="--h:${h};animation-delay:${i*.07}s"><div class="top"><div class="ic">${ic}</div><div><div class="k">${kind}</div><h3>${name}</h3></div></div><div class="txt"><div class="mob"><div class="k">${kind}</div><h3>${name}</h3></div><p>${desc}</p>${pips}</div></button>`}).join('');
+  $('#reroll').style.display=G.rerolls>0&&!mm?'':'none';$('#rerollN').textContent='('+G.rerolls+')'}
 function pickCard(i){const c=G.cards&&G.cards[i];if(!c||state!=='levelup')return;
   if(c.k==='voice'){const v=G.voices.find(v=>v.id===c.id);if(v)v.lvl++;else G.voices.push({id:c.id,lvl:1});addText(P.x,P.y-30,VOICES[c.id].name+(v?' '+v.lvl:' joins'),VOICES[c.id].h,15,1.4)}
   else if(c.k==='duet'){G.duets[c.id]=1;S.seen.d[c.id]=1;ach('duet');if(Object.keys(S.seen.d).length>=Object.keys(DUETS).length)ach('duets4');save();banner('DUET',DUETS[c.id].name);flash(.4,'#ffd76b');burst(P.x,P.y,48,40,320,3.5,.9,false)}
   else if(c.k==='harm'){G.harm[c.id]=(G.harm[c.id]||0)+1;if(c.id==='vigor')P.hp+=20;addText(P.x,P.y-30,HARM[c.id].name,HARM[c.id].h,15,1.2)}
-  else{P.hp=Math.min(P.maxHp,P.hp+40);G.bonusEchoes+=15}
-  recalc();P.hp=Math.min(P.hp,P.maxHp);A.sBuy();G.pending--;
-  if(G.pending>0){G.cards=rollCards(meta('cards')?4:3);renderCards()}else{state='play';A.muffle(false);hideAll();P.inv=Math.max(P.inv,.5)}}
+  else if(c.k==='motif'){G.motifs[c.id]=1;S.seen.m[c.id]=1;if(c.id==='encoreseal')G.revive++;ach('motif');if(Object.keys(G.motifs).length>=5)ach('motif5');if(Object.keys(MOTIFS).every(k=>S.seen.m[k]))ach('motifall');save();
+    banner(MOTIFS[c.id].name.toUpperCase(),'a motif joins your song');flash(.35,'#ffd76b')}
+  else{P.hp=Math.min(P.maxHp,P.hp+40*(G.heal||1));G.bonusEchoes+=15}
+  const wasM=G.cardMode==='motif';recalc();if(c.k==='motif'&&c.id==='keysig')P.hp+=20;P.hp=Math.min(P.hp,P.maxHp);A.sBuy();if(wasM)G.pendingMotif--;else G.pending--;
+  if(G.pendingMotif>0){G.cardMode='motif';G.cards=rollMotifs(3);renderCards()}
+  else if(G.pending>0){G.cardMode='level';G.cards=rollCards(cardCount());renderCards()}
+  else{state='play';A.muffle(false);hideAll();P.inv=Math.max(P.inv,.6);levelWave()}}
+function levelWave(){const song=SONGS[G.song];G.rings.push({x:P.x,y:P.y,r:P.r,R:170,life:.45,max:.45,h:song.a,w:6});G.rings.push({x:P.x,y:P.y,r:P.r,R:120,life:.35,max:.35,h:song.b,w:3});
+  buildGrid();inRadius(P.x,P.y,170,(e,dx,dy)=>{if(e.type!=='boss'){const l=Math.hypot(dx,dy)||1;e.kbx+=dx/l*520;e.kby+=dy/l*520}});burst(P.x,P.y,song.a,16,260,3,.5,false)}
 $('#cards').addEventListener('click',e=>{const c=e.target.closest('.lcard');if(c)pickCard(+c.dataset.i)});
-$('#reroll').addEventListener('click',()=>{if(G&&G.rerolls>0&&state==='levelup'){G.rerolls--;A.sClick();G.cards=rollCards(meta('cards')?4:3);renderCards()}});
+$('#reroll').addEventListener('click',()=>{if(G&&G.rerolls>0&&state==='levelup'&&G.cardMode!=='motif'){G.rerolls--;A.sClick();G.cards=rollCards(cardCount());renderCards()}});
 
 /* pause / win / over */
-function pause(){if(state!=='play'||!G||G.dead)return;state='paused';A.muffle(true);$('#pauseInfo').textContent=`${SONGS[G.song].name} · ${fmt(G.T)} · Lv ${G.level}`+(G.modName?' · '+G.modName:'');show('#pause')}
+function buildList(){const ch=(ic,h,t,sub)=>`<span class="ch" style="--h:${h}"><i>${ic}</i>${t}${sub?` <small>${sub}</small>`:''}</span>`;const sec=(t,a)=>a.length?`<div class="bh">${t}</div><div class="bc">${a.join('')}</div>`:'';
+  return sec('VOICES',G.voices.map(v=>ch(VOICES[v.id].icon,VOICES[v.id].h,VOICES[v.id].name,'Lv '+v.lvl)))+sec('DUETS',Object.keys(G.duets).map(id=>ch(DUETS[id].icon,DUETS[id].h,DUETS[id].name)))
+   +sec('MOTIFS',Object.keys(G.motifs).map(id=>ch(MOTIFS[id].icon,MOTIFS[id].h,MOTIFS[id].name)))+sec('HARMONIES',Object.entries(G.harm).map(([id,l])=>ch(HARM[id].icon,HARM[id].h,HARM[id].name,'Lv '+l)))}
+function pause(){if(state!=='play'||!G||G.dead)return;state='paused';A.muffle(true);const pb=$('#pauseBuild');pb.className='build';pb.innerHTML=buildList();$('#pauseInfo').textContent=`${SONGS[G.song].name} · ${fmt(G.T)} · Lv ${G.level}`+(G.modName?' · '+G.modName:'');show('#pause')}
 function resume(){if(state!=='paused')return;state='play';wake(true);A.muffle(false);hideAll();A.init()}
 function openWin(){state='win';A.muffle(true);A.sBossDie(chordFreqs(3));flash(.7,'#fff');show('#win')}
 function showOver(){
@@ -1259,7 +1332,7 @@ $('#shopList').addEventListener('click',e=>{const b=e.target.closest('[data-buy]
 function buildAchs(){const got=ACH.filter(a=>S.ach[a.id]).length;$('#achSub').textContent=`${got} of ${ACH.length} feats earned`;
   $('#achList').innerHTML=ACH.map(a=>`<div class="lrow ${S.ach[a.id]?'got':'not'}"><div class="i">${S.ach[a.id]?a.i:'?'}</div><div class="m"><b>${a.n}</b><small>${a.d}</small></div><span class="echo" style="font-weight:700;font-size:13px">◈ ${a.rw}</span></div>`).join('');
   $('#lifeStats').innerHTML=[['Songs',S.stats.runs],['Silenced',S.stats.kills],['Hours',(S.stats.time/3600).toFixed(1)],['Hushes',S.stats.bosses],['Best',fmt(S.best.time)],['Echoes',S.lifetime]].map(([k,v])=>`<div class="stat"><b>${v}</b><small>${k}</small></div>`).join('');show('#achs')}
-function buildSettings(){$('#sMusic').value=S.settings.music;$('#sSfx').value=S.settings.sfx;$('#sShake').classList.toggle('on',!!S.settings.shake);$('#sFx').classList.toggle('on',!!S.settings.fx);$('#sNums').classList.toggle('on',!!S.settings.nums);$('#sHap').classList.toggle('on',!!S.settings.haptic);$('#sGuide').classList.toggle('on',!!S.settings.guide);$('#sLat').value=S.settings.lat||0;$('#latV').textContent=(S.settings.lat||0)+' ms';$('#sReset').textContent='Reset';show('#settings')}
+function buildSettings(){$('#sMusic').value=S.settings.music;$('#sSfx').value=S.settings.sfx;$('#sShake').classList.toggle('on',!!S.settings.shake);$('#sFx').classList.toggle('on',!!S.settings.fx);$('#sNums').classList.toggle('on',!!S.settings.nums);$('#sHap').classList.toggle('on',!!S.settings.haptic);$('#sGuide').classList.toggle('on',!!S.settings.guide);$('#sLat').value=S.settings.lat||0;$('#latV').textContent=(S.settings.lat||0)+' ms';$('#sReset').textContent='Reset';$('#setHap').style.display=('vibrate' in navigator)?'':'none';show('#settings')}
 $('#sLat').addEventListener('input',e=>{S.settings.lat=+e.target.value;$('#latV').textContent=S.settings.lat+' ms';save()});
 $('#sMusic').addEventListener('input',e=>{S.settings.music=+e.target.value;A.setVol();save()});
 $('#sSfx').addEventListener('input',e=>{S.settings.sfx=+e.target.value;A.setVol();save();A.sClick()});
@@ -1321,7 +1394,7 @@ function frame(ts){
     if(G&&state==='play')onStep(ev.step);
     else if(ev.step%4===0)beatPulse=1;}
   beatPulse=Math.max(0,beatPulse-dt*4.5);
-  shakeA=Math.max(0,shakeA-dt*shakeA*7-dt*2);
+  shakeA=Math.max(0,shakeA-dt*shakeA*7-dt*2);zoomP=Math.max(0,zoomP-dt*zoomP*4-dt*.01);
   flashA=Math.max(0,flashA-dt*2.2);$('#flash').style.opacity=flashA*.6;
   menuT+=dt;
   if(G&&state==='play')update(dt*timeScale);
