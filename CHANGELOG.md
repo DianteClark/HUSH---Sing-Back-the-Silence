@@ -1,5 +1,33 @@
 # Changelog
 
+## 8.0 — "Signatures"
+Every song now feels like its own fight. Harder songs hit harder, mid-song Rest Marks take shapes, and a new song waits beyond Dream.
+
+**Signature Hushlings**: one per song, found only there. Each gives a clear warning before it strikes and carries a name tag and health bar.
+- **Gilded Herald** (Dawn): every two bars, fires a ring of golden notes with gaps to weave through.
+- **Weeping Veil** (Dusk): fast and faint. It weeps sorrow pools on the path you're about to take; they slow and burn. It leaves one more when it falls.
+- **Lightweavers** (Aurora): a pair that circles you with a curtain of light strung between them. It flickers for half a bar, then burns for a full bar.
+- **The Maw** (Abyss): a slow, vast hunger that drags you in and inhales hard every fourth bar.
+- **Somnambulist** (Dream): marks where you're heading, then steps out of the dream onto that spot.
+- **Leviathan** (Tide): sights you down a long channel, tracks you for a moment, then locks on and charges through.
+- **Bellows** (Ember): draws breath, tracks you, then exhales a cone of fire on the downbeat.
+- **Hollow Lantern** (Hallow): its dirge whips nearby Hushlings into a frenzy and calls up more.
+
+They arrive sooner, and more often, on harder songs. More can be alive at once as the song goes on and in Endless, and later ones can be elite. Silencing one pays bonus Echoes.
+
+**Requiem**: a new song in Locrian, the darkest musical mode. It's the hardest song yet (difficulty 2.6, Echoes ×3.8) and every Signature appears there. It unlocks once you've restored Dream.
+
+**Shaped Silence**: mid-song (sooner on harder songs) and during boss fights, Rest Marks take shapes:
+- **Lines** and **crosses** across the arena. Step aside.
+- **Chords**: one mark on you and three around you.
+- **Fermata**: a ring where the only safe place is the still eye in the middle. For once, hold still.
+
+**Harder songs hit harder**
+- Hushling contact damage now scales with song difficulty (Dawn ×1.0 up to Requiem ×1.48). Before, harder songs only made Hushlings tougher, not more dangerous.
+- Rest Marks start earlier, ramp faster and hit harder on harder songs.
+
+**New feats**: *Signature*, *Every Voice of Silence* (silence all eight), *Requiem* and *Eye of the Storm* (survive a Fermata). The Songbook gains entries for all eight Signatures, and How to Play explains them.
+
 ## 7.0 — "Nocturne"
 The Hush fights back. A first run on fresh data reached level 120 and 20 minutes of Endless without moving or using Crescendo. That can't happen anymore: standing still is now the most dangerous thing you can do.
 
