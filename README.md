@@ -3,13 +3,16 @@
 <h1 align="center">HUSH — Sing Back the Silence</h1>
 <p align="center"><i>A rhythm survival game of light &amp; sound. The world forgot its song. Sing it back.</i></p>
 
+<p align="center"><a href="https://dianteclark.github.io/HUSH---Sing-Back-the-Silence/"><b>▶&nbsp; Play HUSH now</b></a><br><sub>dianteclark.github.io/HUSH---Sing-Back-the-Silence — open on your phone and <i>Add to Home Screen</i></sub></p>
+
 ---
 
 You are a small light in a world gone quiet. Dark **Hushlings** drift in to swallow every sound — and every weapon you wield is an *instrument*. Pulse fires on the beat, Thump is the kick drum, Snare Arc cracks on 2 &amp; 4, Glissando sweeps once a bar. **Your build is your band**: each voice you gain adds a layer to a soundtrack that is generated live from how you play. Every Hushling you silence plays a note; chain them into a harmony and the melody climbs.
 
 ## Play
 
-- **Web:** open `index.html` in any modern browser — no build step, no dependencies.
+- **Play online:** https://dianteclark.github.io/HUSH---Sing-Back-the-Silence/
+- **Locally:** open `index.html` in any modern browser — no build step, no dependencies.
 - **Install it:** host it (e.g. GitHub Pages), open it on your phone, and choose *Add to Home Screen*. It runs fullscreen with its own icon and works offline after the first load.
 
 **Controls** — drag anywhere to move (or WASD / arrows). Voices attack on their own, on the beat. Tap ✺ / Space for a Crescendo when the ring is full. `P`/`Esc` pauses, `1–4` pick harmonies, `R` rerolls.
