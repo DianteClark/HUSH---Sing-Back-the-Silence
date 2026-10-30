@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.1 — Balance
+Tuned from a real first playthrough, which became unkillable by 9:00, stopped leveling at 47 and nearly maxed Resonance in one run.
+
+- **Fixed: leveling could stall.** Once 420 pickups were scattered across the field, new light merged into far-off pickups you'd never reach. Light now merges into the nearest pickup, drifts to you after 25 seconds (sooner when the field is crowded), and is never stranded.
+- **Builds have limits:** a song now holds at most **6 Motifs** and **3 Dissonances**. Music boxes are rarer (11% from elites, +3% per Fortune), stop dropping once your build is full, and let you **keep the box closed** instead of taking a Dissonance.
+- **Overflow:** once every voice and harmony is maxed, level-ups grant +1% damage (up to +30%) instead of Echoes.
+- **Endless bites back:** after the song is restored, Hushlings grow far tougher and hit harder every minute, and elites become common. Expect Endless to end you somewhere past the quarter-hour.
+- Leveling slows after level 45.
+- **Echo economy:** Echoes from kills now grow with the square root of kills, time past 10:00 counts for less, and Hallow pays ×1.5 (was ×2). Resonance costs ×2.5; Singers, trails and Familiars cost ×2. A strong 10-minute song earns roughly 800–1,500 Echoes, so maxing Resonance is a long road.
+- Harmony's score multiplier caps at ×500 combo.
+- The pause screen shows how full your Motif and Dissonance slots are.
+
 ## 5.0 — "Opus"
 An update big enough to skip a number.
 

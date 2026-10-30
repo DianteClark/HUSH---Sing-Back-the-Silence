@@ -269,7 +269,7 @@ body.bigbtn #cresbtn,body.bigbtn #dashbtn{zoom:1.2}body.bigbtn #pausebtn{zoom:1.
     <div class="row"><button class="btn" data-act="achs">✧ Feats</button><button class="btn" data-act="how">? Guide</button></div>
   </div>
   <button class="back" data-act="settings" aria-label="Settings" style="font-size:19px">⚙</button>
-  <div class="ver">HUSH · v5.0 · made with every note</div>
+  <div class="ver">HUSH · v5.1 · made with every note</div>
 </div>
 
 <!-- SELECT -->
@@ -513,7 +513,7 @@ const SONGS={
   dream:{name:'Dream',mode:'Lydian · weightless',root:53,scale:[0,2,4,6,7,9,11],prog:[0,1,4,2],a:180,b:300,hush:35,bg:['#061420','#0d2238','#03080d'],diff:2.2,mult:3,req:'Silence The Great Silence',theme:[4,6,7,-1,6,4,3,-1,4,6,9,7,6,-1,-1,-1]},
   tide:{name:'Tide',mode:'Melodic minor · oceanic',root:49,scale:[0,2,3,5,7,9,11],prog:[0,3,5,4],a:195,b:240,hush:20,bg:['#04121c','#082a3a','#02070b'],diff:1.6,mult:2,req:'Earn 20 stars in The Score',theme:[0,2,4,6,4,-1,3,-1,2,4,5,-1,7,-1,-1,-1],gim:'tide'},
   ember:{name:'Ember',mode:'Mixolydian · fierce',root:47,scale:[0,2,4,5,7,9,10],prog:[0,6,3,0],a:22,b:50,hush:200,bg:['#1a0904','#3a1408','#0a0302'],diff:1.9,mult:2.5,req:'Restore the song 3 times',theme:[0,-1,4,-1,6,5,4,-1,3,4,2,-1,0,-1,-1,-1],gim:'ember'},
-  hallow:{name:'Hallow',mode:'Harmonic minor · spooky',root:50,scale:[0,2,3,5,7,8,11],prog:[0,5,3,4],a:28,b:275,hush:110,bg:['#140a05','#2a1206','#060302'],diff:1.4,mult:2,req:"Only during Hallow's Hush",theme:[0,2,3,-1,6,5,3,-1,4,3,2,-1,0,-1,-1,-1],event:'hallow'},
+  hallow:{name:'Hallow',mode:'Harmonic minor · spooky',root:50,scale:[0,2,3,5,7,8,11],prog:[0,5,3,4],a:28,b:275,hush:110,bg:['#140a05','#2a1206','#060302'],diff:1.4,mult:1.5,req:"Only during Hallow's Hush",theme:[0,2,3,-1,6,5,3,-1,4,3,2,-1,0,-1,-1,-1],event:'hallow'},
 };
 const VOICES={
   pulse:{name:'Pulse',icon:'♪',h:48,d:['Fires a bright bolt at the nearest Hushling on every beat.','+1 bolt each beat.','Bolts pierce through one more foe.','+1 bolt and +30% damage.','Plays in double time — bolts on every eighth note.']},
@@ -637,12 +637,12 @@ const QUESTS=[
 ];
 const TRAILS={
   star:{n:'Starlight',d:'Your light, as it is.',cost:0},
-  ember:{n:'Ember',d:'Warm sparks that rise like a hearth.',cost:250},
-  ink:{n:'Ink',d:'Wisps of borrowed darkness.',cost:350},
-  notes:{n:'Little Notes',d:'Tiny notes tumble in your wake.',cost:450},
-  petals:{n:'Petals',d:'A drift of soft pink petals.',cost:500},
-  prism:{n:'Prism',d:'Every color of the song at once.',cost:600},
-  comet:{n:'Comet',d:'A long, bright streak through the dark.',cost:700},
+  ember:{n:'Ember',d:'Warm sparks that rise like a hearth.',cost:500},
+  ink:{n:'Ink',d:'Wisps of borrowed darkness.',cost:700},
+  notes:{n:'Little Notes',d:'Tiny notes tumble in your wake.',cost:900},
+  petals:{n:'Petals',d:'A drift of soft pink petals.',cost:1000},
+  prism:{n:'Prism',d:'Every color of the song at once.',cost:1200},
+  comet:{n:'Comet',d:'A long, bright streak through the dark.',cost:1400},
   aurora:{n:'Aurora',d:'Northern light. Earned by restoring the song.',feat:'t10'},
   gilded:{n:'Gilded',d:'Pure gold. Earned by restoring a song at forte.',feat:'dyn4'},
   hollow:{n:'Hollow',d:'The silence itself, tamed. Earned at silenzio.',feat:'dyn8'},
@@ -657,12 +657,12 @@ const EVENTS=[{id:'hallow',n:"Hallow's Hush",from:1020,to:1107,song:'hallow',chi
 function evActive(){const d=new Date(),v=(d.getMonth()+1)*100+d.getDate();return EVENTS.find(e=>e.from<=e.to?(v>=e.from&&v<=e.to):(v>=e.from||v<=e.to))||null}
 const songOpen=id=>S.songs[id]&&(!SONGS[id].event||(evActive()||{}).id===SONGS[id].event);
 const FAMS={
-  finch:{n:'Metronome Finch',ic:'♩',h:45,d:'Fires a bright bolt at a nearby Hushling on every beat.',cost:400},
-  moth:{n:'Lantern Moth',ic:'✧',h:55,d:'Flutters out to gather light from far away and bring it home.',cost:500},
-  bell:{n:'Little Bell',ic:'♡',h:340,d:'Rings on every downbeat, healing you a little.',cost:600},
-  shell:{n:'Hymn Shell',ic:'◍',h:200,d:'Circles close and swallows dark notes before they reach you.',cost:700},
-  firefly:{n:'Firefly',ic:'✷',h:90,d:'Darts at Hushlings and burns what it touches.',cost:800},
-  mock:{n:'Mockingbird',ic:'♬',h:300,d:'Repeats every PERFECT dash shockwave half a beat later.',cost:900},
+  finch:{n:'Metronome Finch',ic:'♩',h:45,d:'Fires a bright bolt at a nearby Hushling on every beat.',cost:800},
+  moth:{n:'Lantern Moth',ic:'✧',h:55,d:'Flutters out to gather light from far away and bring it home.',cost:1000},
+  bell:{n:'Little Bell',ic:'♡',h:340,d:'Rings on every downbeat, healing you a little.',cost:1200},
+  shell:{n:'Hymn Shell',ic:'◍',h:200,d:'Circles close and swallows dark notes before they reach you.',cost:1400},
+  firefly:{n:'Firefly',ic:'✷',h:90,d:'Darts at Hushlings and burns what it touches.',cost:1600},
+  mock:{n:'Mockingbird',ic:'♬',h:300,d:'Repeats every PERFECT dash shockwave half a beat later.',cost:1800},
   jack:{n:'Jack',ic:'☾',h:28,d:"A little lantern spirit. Every two bars it flares and scares Hushlings away. Earned during Hallow's Hush.",feat:'hallow1'},
 };
 const famOwned=id=>(S.fams||{})[id]||(FAMS[id].feat&&S.ach[FAMS[id].feat]);
@@ -723,31 +723,31 @@ const FOES=[
 ];
 const SINGERS=[
   {id:'lumi',name:'Lumi',title:'the Lantern',voice:'pulse',h:45,d:'Balanced and bright. Begins with Pulse.',cost:0,mods:{},solo:{n:'Radiance',d:'A blinding nova that also restores 20% of your health.'}},
-  {id:'bram',name:'Bram',title:'the Drum',voice:'thump',h:20,d:'Sturdy. +30 HP, −6% speed. Begins with Thump.',cost:150,mods:{hp:30,spd:-.06},solo:{n:'Earthshaker',d:'Three quake waves that stun every Hushling for two seconds.'}},
-  {id:'vex',name:'Vex',title:'the Spark',voice:'arp',h:190,d:'Precise. +10% crit. Begins with Arpeggio.',cost:300,mods:{crit:.1},solo:{n:'Starfall',d:'Forty homing sparks burst outward.'}},
-  {id:'oro',name:'Oro',title:'the Chorus',voice:'orbit',h:300,d:'Magnetic. +30% reach. Begins with Chorus.',cost:450,mods:{mag:.3},solo:{n:'Hallelujah',d:'Your Chorus doubles for 8 seconds, and every light on screen flies to you.'}},
-  {id:'sable',name:'Sable',title:'the Storm',voice:'chain',h:255,d:'Swift. +10% speed, −15 HP. Begins with Snare Arc.',cost:650,mods:{spd:.1,hp:-15},solo:{n:'Thunderstorm',d:'Lightning strikes the Hush thirty times in three seconds.'}},
-  {id:'mire',name:'Mire',title:'the Deep',voice:'drone',h:160,d:'Vast. +20% area. Begins with Drone.',cost:850,mods:{area:.2},solo:{n:'Singularity',d:'Drags every Hushling into one point — then detonates it.'}},
-  {id:'kael',name:'Kael',title:'the Wave',voice:'gliss',h:215,d:'Fluid. +8% speed, +10% area. Begins with Glissando.',cost:1400,mods:{spd:.08,area:.1},solo:{n:'Tidal Sweep',d:'Glissando beams grow to two and a half times their length for 6 seconds.'}},
-  {id:'liora',name:'Liora',title:'the Thread',voice:'legato',h:175,d:'Graceful. +12% speed, −10 HP. Begins with Legato.',cost:1800,mods:{spd:.12,hp:-10},solo:{n:'Ribbon Dance',d:'For 8 seconds your ribbon lingers six times longer and burns three times hotter.'}},
-  {id:'tamsin',name:'Tamsin',title:'the Bell',voice:'crash',h:330,d:'Resonant. +25 HP, +10% area. Begins with Crash.',cost:2200,mods:{hp:25,area:.1},solo:{n:'Grand Crash',d:'A Crash on every beat for four seconds.'}},
-  {id:'wren',name:'Wren',title:'the Memory',voice:'echo',h:95,d:'Lucky. +10% XP, +5% crit. Begins with Echo.',cost:1100,mods:{xp:.1,crit:.05},solo:{n:'Remembrance',d:'Ten Echo notes bloom in a ring around you.'}},
+  {id:'bram',name:'Bram',title:'the Drum',voice:'thump',h:20,d:'Sturdy. +30 HP, −6% speed. Begins with Thump.',cost:300,mods:{hp:30,spd:-.06},solo:{n:'Earthshaker',d:'Three quake waves that stun every Hushling for two seconds.'}},
+  {id:'vex',name:'Vex',title:'the Spark',voice:'arp',h:190,d:'Precise. +10% crit. Begins with Arpeggio.',cost:600,mods:{crit:.1},solo:{n:'Starfall',d:'Forty homing sparks burst outward.'}},
+  {id:'oro',name:'Oro',title:'the Chorus',voice:'orbit',h:300,d:'Magnetic. +30% reach. Begins with Chorus.',cost:900,mods:{mag:.3},solo:{n:'Hallelujah',d:'Your Chorus doubles for 8 seconds, and every light on screen flies to you.'}},
+  {id:'sable',name:'Sable',title:'the Storm',voice:'chain',h:255,d:'Swift. +10% speed, −15 HP. Begins with Snare Arc.',cost:1300,mods:{spd:.1,hp:-15},solo:{n:'Thunderstorm',d:'Lightning strikes the Hush thirty times in three seconds.'}},
+  {id:'mire',name:'Mire',title:'the Deep',voice:'drone',h:160,d:'Vast. +20% area. Begins with Drone.',cost:1700,mods:{area:.2},solo:{n:'Singularity',d:'Drags every Hushling into one point — then detonates it.'}},
+  {id:'kael',name:'Kael',title:'the Wave',voice:'gliss',h:215,d:'Fluid. +8% speed, +10% area. Begins with Glissando.',cost:2800,mods:{spd:.08,area:.1},solo:{n:'Tidal Sweep',d:'Glissando beams grow to two and a half times their length for 6 seconds.'}},
+  {id:'liora',name:'Liora',title:'the Thread',voice:'legato',h:175,d:'Graceful. +12% speed, −10 HP. Begins with Legato.',cost:3600,mods:{spd:.12,hp:-10},solo:{n:'Ribbon Dance',d:'For 8 seconds your ribbon lingers six times longer and burns three times hotter.'}},
+  {id:'tamsin',name:'Tamsin',title:'the Bell',voice:'crash',h:330,d:'Resonant. +25 HP, +10% area. Begins with Crash.',cost:4400,mods:{hp:25,area:.1},solo:{n:'Grand Crash',d:'A Crash on every beat for four seconds.'}},
+  {id:'wren',name:'Wren',title:'the Memory',voice:'echo',h:95,d:'Lucky. +10% XP, +5% crit. Begins with Echo.',cost:2200,mods:{xp:.1,crit:.05},solo:{n:'Remembrance',d:'Ten Echo notes bloom in a ring around you.'}},
 ];
 const META=[
-  {id:'hp',icon:'♥',name:'Inner Strength',d:'+12 max health',max:10,cost:l=>40+l*45+l*l*14},
-  {id:'dmg',icon:'✸',name:'Brilliance',d:'+6% damage',max:10,cost:l=>60+l*55+l*l*18},
-  {id:'spd',icon:'➶',name:'Grace',d:'+5% movement speed',max:5,cost:l=>50+l*45+l*l*10},
-  {id:'mag',icon:'❂',name:'Attraction',d:'+20% pickup reach',max:5,cost:l=>40+l*40+l*l*10},
-  {id:'xp',icon:'✎',name:'Quick Study',d:'+8% experience',max:6,cost:l=>70+l*65+l*l*15},
-  {id:'cres',icon:'✺',name:'Swelling Heart',d:'Crescendo charges 15% faster',max:3,cost:l=>60+l*60},
-  {id:'reroll',icon:'↻',name:'Second Thoughts',d:'+1 reroll each song',max:3,cost:l=>80+l*90},
-  {id:'echo',icon:'◈',name:'Echo Finder',d:'+10% Echoes earned',max:8,cost:l=>100+l*85+l*l*25},
-  {id:'cards',icon:'❖',name:'Wider Repertoire',d:'Choose from 4 harmonies instead of 3',max:1,cost:()=>420},
-  {id:'revive',icon:'☀',name:'Encore',d:'Once per song, rise again at half health',max:1,cost:()=>650},
-  {id:'luck',icon:'✉',name:'Fortune',d:'+5% chance elites carry a music box',max:4,cost:l=>120+l*90},
-  {id:'dash',icon:'»',name:'Quick Feet',d:'Dash recharges 8% faster',max:3,cost:l=>100+l*80},
-  {id:'prelude',icon:'𝄆',name:'Prelude',d:'Begin every song with a random Motif',max:1,cost:()=>1500},
-  {id:'golden',icon:'✪',name:'Golden Hour',d:'Golden Notes appear 25% more often',max:2,cost:l=>200+l*150},
+  {id:'hp',icon:'♥',name:'Inner Strength',d:'+12 max health',max:10,cost:l=>Math.round((40+l*45+l*l*14)*2.5)},
+  {id:'dmg',icon:'✸',name:'Brilliance',d:'+6% damage',max:10,cost:l=>Math.round((60+l*55+l*l*18)*2.5)},
+  {id:'spd',icon:'➶',name:'Grace',d:'+5% movement speed',max:5,cost:l=>Math.round((50+l*45+l*l*10)*2.5)},
+  {id:'mag',icon:'❂',name:'Attraction',d:'+20% pickup reach',max:5,cost:l=>Math.round((40+l*40+l*l*10)*2.5)},
+  {id:'xp',icon:'✎',name:'Quick Study',d:'+8% experience',max:6,cost:l=>Math.round((70+l*65+l*l*15)*2.5)},
+  {id:'cres',icon:'✺',name:'Swelling Heart',d:'Crescendo charges 15% faster',max:3,cost:l=>Math.round((60+l*60)*2.5)},
+  {id:'reroll',icon:'↻',name:'Second Thoughts',d:'+1 reroll each song',max:3,cost:l=>Math.round((80+l*90)*2.5)},
+  {id:'echo',icon:'◈',name:'Echo Finder',d:'+10% Echoes earned',max:8,cost:l=>Math.round((100+l*85+l*l*25)*2.5)},
+  {id:'cards',icon:'❖',name:'Wider Repertoire',d:'Choose from 4 harmonies instead of 3',max:1,cost:()=>1050},
+  {id:'revive',icon:'☀',name:'Encore',d:'Once per song, rise again at half health',max:1,cost:()=>1625},
+  {id:'luck',icon:'✉',name:'Fortune',d:'+3% chance elites carry a music box',max:4,cost:l=>Math.round((120+l*90)*2.5)},
+  {id:'dash',icon:'»',name:'Quick Feet',d:'Dash recharges 8% faster',max:3,cost:l=>Math.round((100+l*80)*2.5)},
+  {id:'prelude',icon:'𝄆',name:'Prelude',d:'Begin every song with a random Motif',max:1,cost:()=>3750},
+  {id:'golden',icon:'✪',name:'Golden Hour',d:'Golden Notes appear 25% more often',max:2,cost:l=>Math.round((200+l*150)*2.5)},
 ];
 const ACH=[
   {id:'first',i:'♪',n:'First Breath',d:'Finish your first song',rw:20},
@@ -1013,7 +1013,7 @@ const keys={};const joy={on:false,id:null,ox:0,oy:0,x:0,y:0,dx:0,dy:0};
 const amb=Array.from({length:70},()=>({x:Math.random(),y:Math.random(),vx:rnd(-.01,.01),vy:rnd(-.02,-.004),s:rnd(1,3.2),h:Math.random()}));
 const ambDark=Array.from({length:9},()=>({x:Math.random(),y:Math.random(),a:Math.random()*TAU,s:rnd(10,22)}));
 
-function xpNeed(l){return Math.floor(5+l*4.5+Math.pow(l,1.75)*.55)}
+function xpNeed(l){return Math.floor((5+l*4.5+Math.pow(l,1.75)*.55)*(l>45?1+(l-45)*.06:1))}
 function todayKey(){const d=new Date();return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate()}
 function dailyCfg(){const k=todayKey();const r=mulberry32(k*7919);const singer=SINGERS[Math.floor(r()*SINGERS.length)];const song=['dawn','dusk','dawn','dusk','abyss'][Math.floor(r()*5)];const mod=MODS[Math.floor(r()*MODS.length)];return{seed:k,singer:singer.id,song,mod,daily:true}}
 
@@ -1055,6 +1055,7 @@ function recalc(){const s=G.singer.mods,h=id=>G.harm[id]||0;
   P.dmg*=1+.015*(mLvl(G.singer.id)-1);
   P.xpMul=(1+meta('xp')*.08+(s.xp||0)+m('hymnal')*.25)*G.mod.xp;
   P.cresMul=(1+meta('cres')*.15)*(m('dynamo')?1.5:1);
+  P.dmg*=1+.01*Math.min(30,G.overflow||0);
   const x=id=>G.diss&&G.diss[id];if(x('brittle')){P.dmg*=1.6;P.maxHp=Math.max(1,Math.round(P.maxHp*.6))}if(x('frenzy'))P.spd*=1.3;if(x('overdrive')){P.dmg*=1.45;P.cresMul*=.5}if(x('deafen'))P.xpMul*=1.6;if(x('swarm'))P.xpMul*=1.7;
   const bpm=clamp(96+h('tempo')*7+G.bpmBonus+(G.endless?G.bossKills*2:0),60,178);Seq.setBpm(bpm);
   if(bpm>=140)ach('bpm');
@@ -1077,9 +1078,9 @@ function nearestN(x,y,n,maxD,excl){const out=[];const md=maxD*maxD;
   return out.map(o=>o[1])}
 
 /* ---------------- enemies ---------------- */
-function enemyScale(){const ET=G.T+(G.t0||0);return(1+ET/60*.3+(G.endless?Math.pow((G.T-600)/60,1.3)*.35:0))*SONGS[G.song].diff*G.mod.ehp}
+function enemyScale(){const ET=G.T+(G.t0||0);return(1+ET/60*.3+(G.endless?Math.pow(Math.max(0,G.T-(G.wonAt||600))/60,1.6)*.7:0))*SONGS[G.song].diff*G.mod.ehp}
 function makeEnemy(type,x,y,elite){const d=EN[type],sc=enemyScale();
-  const e={type,x,y,vx:0,vy:0,kbx:0,kby:0,r:d.r*(elite?1.45:1),hp:d.hp*sc*(elite?5:1),spd:d.spd*(1+Math.min(.35,(G.T+(G.t0||0))/600*.25))*(elite?.9:1),dmg:d.dmg*(elite?1.5:1)*(1+Math.min(1,(G.T+(G.t0||0))/600*.5)),
+  const e={type,x,y,vx:0,vy:0,kbx:0,kby:0,r:d.r*(elite?1.45:1),hp:d.hp*sc*(elite?5:1),spd:d.spd*(1+Math.min(.35,(G.T+(G.t0||0))/600*.25))*(elite?.9:1),dmg:d.dmg*(elite?1.5:1)*(1+Math.min(1,(G.T+(G.t0||0))/600*.5))*(G.endless?1+Math.max(0,G.T-(G.wonAt||600))/120*.5:1),
     xp:d.xp,elite:!!elite,t:(S.seen.e[type]=1,R()*10),flash:0,orbCd:0,slow:0,dead:false,charge:0,dash:0,ang:R()*TAU,shield:type==='veil',stun:0,haste:0,ph:R()*TAU,solid:true};
   if(G.giant&&type!=='boss'&&type!=='crystal'&&type!=='gold')e.r*=G.giant;
   e.maxHp=e.hp;G.enemies.push(e);return e}
@@ -1087,7 +1088,7 @@ function spawnPos(extra=0){const a=R()*TAU;const d=Math.hypot(W,H)/2/Z+50+extra;
 function spawnRandom(){const T=G.T+(G.t0||0);
   const w=G.only?Object.entries(G.only):[['mote',10],['shard',T>25?2.2:0],['lurch',T>60?4:0],['wisp',T>100?3:0],['bloat',T>140?2:0],['veil',T>200?2.4:0],['moth',T>150?1.6:0],['cond',T>260?1:0],['phantom',T>320?1.8:0],['leech',T>380?1:0]];
   let tot=0;for(const x of w)tot+=x[1];let r=R()*tot,type='mote';for(const x of w){r-=x[1];if(r<=0){type=x[0];break}}
-  const elite=R()<(.012+Math.min(.04,T/600*.03))*(G.eliteMul||1);
+  const em=G.endless?Math.max(0,G.T-(G.wonAt||600))/60:0;const elite=R()<(.012+Math.min(.04,T/600*.03)+Math.min(.3,em*.025))*(G.eliteMul||1);
   const [x,y]=spawnPos();
   if(type==='shard'){const a=Math.atan2(P.y-y,P.x-x)+rr(-.25,.25);const px=-Math.sin(a),py=Math.cos(a);
     for(let i=0;i<5;i++){const e=makeEnemy('shard',x+px*(i-2)*22-Math.cos(a)*Math.abs(i-2)*18,y+py*(i-2)*22-Math.sin(a)*Math.abs(i-2)*18,false);e.vx=Math.cos(a)*e.spd;e.vy=Math.sin(a)*e.spd;e.ang=a}
@@ -1111,12 +1112,12 @@ function hit(e,dmg,kx=0,ky=0,kb=0){if(e.dead||(e.type==='phantom'&&!e.solid))ret
   if(e.hp<=0)kill(e)}
 function kill(e){e.dead=true;G.kills++;G.combo++;G.comboT=2.8;if(G.combo>G.maxCombo)G.maxCombo=G.combo;
   G.cres=Math.min(100,G.cres+(e.elite?10:e.type==='bloat'?3:1.1)*P.cresMul*(G.boss?.6:1));
-  G.score+=Math.round(10*(1+G.combo*.02)*(e.elite?5:1));
+  G.score+=Math.round(10*(1+Math.min(G.combo,500)*.02)*(e.elite?5:1));
   const song=SONGS[G.song];
   burst(e.x,e.y,e.elite?50:song.a,e.type==='boss'?0:6+e.r*.5,170,2.6,.55,false);
   burst(e.x,e.y,0,4+e.r*.3,120,3.2,.5,true);
   if(S.settings.fx)G.rings.push({x:e.x,y:e.y,r:e.r,R:e.r*2.6,life:.3,max:.3,h:song.a,w:2});
-  let v=e.xp*(e.elite?8:1);if(e.elite){G.bonusEchoes+=2;G.elitesK++;timeScale=Math.min(timeScale,.55);if(R()<.3+meta('luck')*.05)dropChest(e.x,e.y)}
+  let v=e.xp*(e.elite?8:1);if(e.elite){G.bonusEchoes+=2;G.elitesK++;timeScale=Math.min(timeScale,.55);if(R()<.11+meta('luck')*.03)dropChest(e.x,e.y)}
   if(G.motifs.resolution&&G.kills%15===0)P.hp=Math.min(P.maxHp,P.hp+2*G.heal);
   if(G.motifs.vibrato&&R()<.07){const a=R()*TAU;G.shots.push({x:e.x,y:e.y,px:e.x,py:e.y,vx:Math.cos(a)*260,vy:Math.sin(a)*260,r:4,dmg:(10+G.level)*P.dmg,pierce:0,life:1.4,h:MOTIFS.vibrato.h,k:'spark',hits:[e],tgt:null})}
   while(v>0){const p=v>=20?20:v>=5?5:1;v-=p;dropGem(e.x+rnd(-8,8),e.y+rnd(-8,8),p)}
@@ -1159,7 +1160,7 @@ function finalDie(e){G.boss=null;G.bossKills++;S.stats.bosses++;$('#bossbar').cl
   if(G.stage){}else if(G.recital){G.stageDone=true;P.inv=99;G.recTime=G.T;ach('recital');if(G.T<480)ach('recital8');banner('RECITAL COMPLETE',fmt(G.T));setTimeout(()=>{if(G&&state!=='over'){state='over';G.dead=true;hideAll();showOver()}},2600)}else if(!G.won){G.won=true;S.stats.restored=(S.stats.restored||0)+1;ach('t10');if(G.song==='dream')ach('dream');G.wonAt=G.T;
     setTimeout(()=>{if(G&&!G.dead&&state==='play')openWin()},2600)}
   else banner('SILENCE BROKEN','again');recalc()}
-function dropGem(x,y,v){if(G.gems.length>420){G.gems[Math.floor(R()*G.gems.length)].v+=v;return}
+function dropGem(x,y,v){if(G.gems.length>360){let best=G.gems[0],bd=1e18;for(const gm of G.gems){const d=(gm.x-x)**2+(gm.y-y)**2;if(d<bd){bd=d;best=gm}}best.v+=v;return}
   const a=R()*TAU,s=rr(30,110);G.gems.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,v,m:false,t:R()*TAU})}
 function hurt(dmg,sx,sy){if(P.inv>0||G.dead)return;if(G.diss.greed)dmg*=1.25;
   if(G.motifs.grace&&G.graceT<=0){G.graceT=20;P.inv=.7;flash(.25,'#9ff0e0');A.bell(A.now(),1760,.08,'s');addText(P.x,P.y-30,'grace',170,13,.8);G.rings.push({x:P.x,y:P.y,r:P.r,R:70,life:.4,max:.4,h:170,w:5});return}P.hp-=dmg;P.inv=.75;G.lastHit=G.T;G.dmgTaken+=dmg;shake(9);buzz(45);flash(.25,'#ff2d6b');A.sHurt();
@@ -1190,9 +1191,11 @@ function dash(){if(!G||state!=='play'||G.dead||P.dashCd>0)return;
     if(G.perfects>=50)ach('groove');if(G.perfStreak>=16)ach('streak16')}
   else if(grade===1){G.perfStreak=0;P.inv=Math.max(P.inv,.25);G.cres=Math.min(100,G.cres+1.5*P.cresMul);addText(P.x,P.y-30,'good',song.b,12,.6);A.bell(A.now()+.01,chordFreqs(3)[0],.04,'s')}
   else{G.perfStreak=0;P.inv=Math.max(P.inv,.12);A.sDash()}}
-function dropChest(x,y){G.chests.push({x,y,t:0});A.bell(A.now()+.05,1318,.06,'s');A.bell(A.now()+.15,1760,.06,'s')}
-function rollMotifs(n){const pool=Object.keys(MOTIFS).filter(id=>!G.motifs[id]);const out=[];while(out.length<n&&pool.length)out.push({k:'motif',id:pool.splice(Math.floor(R()*pool.length),1)[0]});
-  const dp=Object.keys(DISS).filter(id=>!G.diss[id]);if(dp.length&&R()<.38){const c={k:'diss',id:dp[Math.floor(R()*dp.length)]};if(out.length>=n)out[out.length-1]=c;else out.push(c)}if(!out.length)out.push({k:'encore'});return out}
+const MAXM=6,MAXD=3,mCount=()=>Object.keys(G.motifs).length,dCount=()=>Object.keys(G.diss).length,boxUseful=()=>mCount()<MAXM||dCount()<MAXD;
+function dropChest(x,y){if(!boxUseful()){G.bonusEchoes+=3;burst(x,y,48,14,200,3,.6,false);return}G.chests.push({x,y,t:0});A.bell(A.now()+.05,1318,.06,'s');A.bell(A.now()+.15,1760,.06,'s')}
+function rollMotifs(n){const pool=mCount()<MAXM?Object.keys(MOTIFS).filter(id=>!G.motifs[id]):[];const out=[];while(out.length<n&&pool.length)out.push({k:'motif',id:pool.splice(Math.floor(R()*pool.length),1)[0]});
+  const dp=dCount()<MAXD?Object.keys(DISS).filter(id=>!G.diss[id]):[];if(dp.length&&(!pool.length&&!out.length||R()<.38)){const c={k:'diss',id:dp.splice(Math.floor(R()*dp.length),1)[0]};if(out.length>=n)out[out.length-1]=c;else out.push(c)}
+  if(!out.some(c=>c.k==='motif')&&out.length)out.push({k:'skip'});if(!out.length)out.push({k:'encore'});return out}
 function cardCount(){return 3+(meta('cards')?1:0)+(G.motifs.overture?1:0)}
 function edgeArrow(wx,wy,h){const sx=(wx-cam.x)*Z+W/2,sy=(wy-cam.y)*Z+H/2,m=34;if(sx>=0&&sx<=W&&sy>=0&&sy<=H)return;
   const ax=clamp(sx,m,W-m),ay=clamp(sy,m+60,H-m-110),a=Math.atan2(sy-H/2,sx-W/2);g.globalCompositeOperation='lighter';dg(h,ax,ay,26+beatPulse*8,.8);g.globalCompositeOperation='source-over';
@@ -1435,7 +1438,8 @@ function update(dt){
   G.ebul=G.ebul.filter(b=>b.life>0);
   // gems
   const mag2=P.mag*P.mag;
-  for(const gm of G.gems){gm.t+=dt;const dx=P.x-gm.x,dy=P.y-gm.y,d2=dx*dx+dy*dy;
+  const crowd=G.gems.length>220;
+  for(const gm of G.gems){gm.t+=dt;if(!gm.m&&(gm.t>25||(crowd&&gm.t>8)))gm.m=true;const dx=P.x-gm.x,dy=P.y-gm.y,d2=dx*dx+dy*dy;
     if(!gm.m&&d2<mag2)gm.m=true;
     if(gm.m){const d=Math.sqrt(d2)||1;const sp=Math.min(900,(gm.sp=(gm.sp||150)+900*dt));gm.vx=lerp(gm.vx,dx/d*sp,.25);gm.vy=lerp(gm.vy,dy/d*sp,.25);
       if(d<P.r+10){gm.dead=true;collect(gm.v)}}
@@ -1835,7 +1839,8 @@ function renderCards(){const mm=G.cardMode==='motif';$('#lvtag').textContent=mm?
     else if(c.k==='duet'){const D=DUETS[c.id];ic=D.icon;h=D.h;name=D.name;lvl=0;kind='Duet · '+VOICES[D.a].icon+' + '+VOICES[D.b].icon;desc=D.d}
     else if(c.k==='motif'){const M=MOTIFS[c.id];ic=M.icon;h=M.h;name=M.name;lvl=0;kind='Motif';desc=M.d;isNew=!S.seen.m[c.id]}
     else if(c.k==='diss'){const D=DISS[c.id];ic=D.ic;h=350;name=D.n;lvl=0;kind='Dissonance';desc=D.d;isNew=!S.seen.x[c.id]}
-    else{ic='❀';h=130;name='Encore';kind='Gift';desc='Heal 40 and gain 15 Echoes.';lvl=0}
+    else if(c.k==='skip'){ic='✕';h=240;name='Keep it closed';kind='Pass';desc='Leave the box shut and walk on. +10 Echoes.';lvl=0}
+    else{ic='❀';h=130;name='Encore';kind='Overflow';desc='Your band is complete. +1% damage for the rest of the song, and heal 10.';lvl=0}
     const pips=lvl?`<div class="pips" style="--h:${h}">${[1,2,3,4,5].map(j=>`<i class="${j<=lvl?'on':''}"></i>`).join('')}</div>`:'';
     return`<button class="lcard ${isNew?'new':''} ${c.k==='duet'||c.k==='motif'?'duet':c.k==='diss'?'diss':''}" data-i="${i}" style="--h:${h};animation-delay:${i*.07}s"><div class="top"><div class="ic">${ic}</div><div><div class="k">${kind}</div><h3>${name}</h3></div></div><div class="txt"><div class="mob"><div class="k">${kind}</div><h3>${name}</h3></div><p>${desc}</p>${pips}</div></button>`}).join('');
   $('#reroll').style.display=G.rerolls>0&&!mm?'':'none';$('#rerollN').textContent='('+G.rerolls+')'}
@@ -1846,7 +1851,8 @@ function pickCard(i){const c=G.cards&&G.cards[i];if(!c||state!=='levelup')return
   else if(c.k==='diss'){G.diss[c.id]=1;S.seen.x[c.id]=1;ach('diss');save();if(c.id==='swarm')G.mod.spawn*=2;if(c.id==='presto'){G.bpmBonus+=25;G.mod.ehp*=1.3}if(c.id==='deafen')$('#beat').style.opacity=0;banner(DISS[c.id].n.toUpperCase(),'a dissonance enters the song');flash(.35,'#ff3d6b')}
   else if(c.k==='motif'){G.motifs[c.id]=1;S.seen.m[c.id]=1;if(c.id==='encoreseal')G.revive++;ach('motif');if(Object.keys(G.motifs).length>=5)ach('motif5');if(Object.keys(MOTIFS).every(k=>S.seen.m[k]))ach('motifall');save();
     banner(MOTIFS[c.id].name.toUpperCase(),'a motif joins your song');flash(.35,'#ffd76b')}
-  else{P.hp=Math.min(P.maxHp,P.hp+40*(G.heal||1));G.bonusEchoes+=15}
+  else if(c.k==='skip'){G.bonusEchoes+=10}
+  else{G.overflow=(G.overflow||0)+1;P.hp=Math.min(P.maxHp,P.hp+10*(G.heal||1))}
   const wasM=G.cardMode==='motif';if(c.k==='diss'&&G.diss.brittle)P.hp=Math.min(P.hp,P.maxHp);recalc();if(c.k==='motif'&&c.id==='keysig')P.hp+=20;P.hp=Math.min(P.hp,P.maxHp);A.sBuy();if(wasM)G.pendingMotif--;else G.pending--;
   if(G.pendingMotif>0){G.cardMode='motif';G.cards=rollMotifs(3);renderCards()}
   else if(G.pending>0){G.cardMode='level';G.cards=rollCards(cardCount());renderCards()}
@@ -1859,7 +1865,7 @@ $('#reroll').addEventListener('click',()=>{if(G&&G.rerolls>0&&state==='levelup'&
 /* pause / win / over */
 function buildList(){const ch=(ic,h,t,sub)=>`<span class="ch" style="--h:${h}"><i>${ic}</i>${t}${sub?` <small>${sub}</small>`:''}</span>`;const sec=(t,a)=>a.length?`<div class="bh">${t}</div><div class="bc">${a.join('')}</div>`:'';
   return sec('VOICES',G.voices.map(v=>ch(VOICES[v.id].icon,VOICES[v.id].h,VOICES[v.id].name,'Lv '+v.lvl)))+sec('DUETS',Object.keys(G.duets).map(id=>ch(DUETS[id].icon,DUETS[id].h,DUETS[id].name)))
-   +sec('DISSONANCES',Object.keys(G.diss).map(id=>ch(DISS[id].ic,350,DISS[id].n)))+sec('MOTIFS',Object.keys(G.motifs).map(id=>ch(MOTIFS[id].icon,MOTIFS[id].h,MOTIFS[id].name)))+sec('HARMONIES',Object.entries(G.harm).map(([id,l])=>ch(HARM[id].icon,HARM[id].h,HARM[id].name,'Lv '+l)))}
+   +sec(`DISSONANCES · ${dCount()}/${MAXD}`,Object.keys(G.diss).map(id=>ch(DISS[id].ic,350,DISS[id].n)))+sec(`MOTIFS · ${mCount()}/${MAXM}`,Object.keys(G.motifs).map(id=>ch(MOTIFS[id].icon,MOTIFS[id].h,MOTIFS[id].name)))+sec('HARMONIES',Object.entries(G.harm).map(([id,l])=>ch(HARM[id].icon,HARM[id].h,HARM[id].name,'Lv '+l)))}
 function pause(){if(state!=='play'||!G||G.dead)return;state='paused';A.muffle(true);const pb=$('#pauseBuild');pb.className='build';pb.innerHTML=buildList();$('#pauseInfo').textContent=`${SONGS[G.song].name}${G.dyn?' · '+DYN[G.dyn].s:''} · ${fmt(G.T)} · Lv ${G.level}`+(G.modName?' · '+G.modName:'');show('#pause')}
 function resume(){if(state!=='paused')return;state='play';wake(true);A.muffle(false);hideAll();A.init()}
 function openWin(){state='win';A.muffle(true);A.sBossDie(chordFreqs(3));flash(.7,'#fff');show('#win')}
@@ -1868,7 +1874,7 @@ function showOver(){
   let streakB=0,streakNote='';
   if(G.daily&&G.T>=30){const dk=G.dailyKey;if(S.lastDaily!==dk){S.dailyStreak=S.lastDaily===prevDayKey(dk)?(S.dailyStreak||0)+1:1;S.lastDaily=dk;streakB=Math.min(7,S.dailyStreak)*10;
     streakNote=`<span class="nb">☼ DAILY STREAK ${S.dailyStreak}</span>+${streakB} Echoes`;if(S.dailyStreak>=7)ach('streak7')}}
-  const base=G.kills*.25+G.T*.3+G.bossKills*50+G.level*3+G.bonusEchoes+streakB+G.perfects*.4;
+  const base=6*Math.sqrt(G.kills)+Math.min(G.T,600)*.25+Math.max(0,G.T-600)*.08+G.bossKills*40+G.level*2+Math.min(G.bonusEchoes,250)+streakB+Math.min(G.perfects,300)*.2;
   let stageGain=0,stageNotes=[],stars=0;
   if(G.stage){const si=G.stageIdx,stg=G.stage;if(G.stageDone){stars=1;for(const c of stg.st){const ok=starOk(c);stageNotes.push(`${ok?'★':'☆'} ${starText(c)}`);if(ok)stars++}}
     S.camp=S.camp||{};const prev=S.camp[si]||0;if(stars>prev){stageGain=(stars-prev)*(20+stg.a*15);S.camp[si]=stars;stageNotes.unshift(`<span class="nb">+${stars-prev} STAR${stars-prev>1?'S':''}</span>`)}
@@ -2023,8 +2029,8 @@ function frame(ts){
   if(G&&state!=='over')hud();
   requestAnimationFrame(frame)}
 applyPrefs();goTitle();Seq.start();requestAnimationFrame(frame);
-const VER='5.0';
-if(S.stats.runs>0&&S.ver!==VER)setTimeout(()=>toast('✦','HUSH '+VER+' — Opus','Tide & Ember · Familiars · Dissonances · Recital, Weekly & Studio · Concert Hall · Fragments · Hallow\'s Hush'),1200);
+const VER='5.1';
+if(S.stats.runs>0&&S.ver!==VER)setTimeout(()=>toast('✦','HUSH '+VER+' — Balance','Fixed leveling stalls · builds hold 6 Motifs & 3 Dissonances · Endless bites back · Echoes rebalanced'),1200);
 S.ver=VER;save();
 try{if('serviceWorker' in navigator&&location.protocol==='https:'&&window.top===window)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 </script>
